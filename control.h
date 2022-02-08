@@ -4,8 +4,8 @@
 class Control {
 public:
 
-	Control(AlphaBot* alphabot) {
-		this->alphabot = alphabot;
+	Control(AlphaBot* alpha) {
+		this->alphabot = alpha;
 	}
 
 	~Control() {
@@ -16,7 +16,7 @@ public:
 
 	void stop();
 
-	void turn();
+	void turn(float speed);
 
 private:
 

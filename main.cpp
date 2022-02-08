@@ -7,7 +7,7 @@ class DataInterface : public A1Lidar::DataInterface {
 public:
 
 	DataInterface(Control* control) {
-		this->control = alphabot;
+		this->control = control;
 	}
 
 	void newScanAvail(float,A1LidarData (&data)[A1Lidar::nDistance]) {
