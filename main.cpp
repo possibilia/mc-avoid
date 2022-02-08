@@ -5,26 +5,34 @@
 
 class DataInterface : public A1Lidar::DataInterface {
 public:
+
+	DataInterface(Control* control) {
+		this->control = alphabot;
+	}
+
 	void newScanAvail(float,A1LidarData (&data)[A1Lidar::nDistance]) {
 		for(A1LidarData &data: data) {
-			if (data.valid & data.r < 0.2 & data.r > 0.0) {
+			if ((data.valid) & (data.r < 0.2) & (data.r > 0.0)) {
 				control.turn(0.2);
 			}
 			else {
 				control.forward(0.2);
 			}
-
 		}
 	}
 
-	AlphaBot alphabot;
-	Control control(&alphabot);
+private:
+	Control* control;
 };
 
 int main(int, char **) {
-	// perception
+	AlphaBot alphabot;
+	alphabot.start();
+	
+	Control control(&alphabot);
+
 	A1Lidar lidar;
-	DataInterface dataInterface;
+	DataInterface dataInterface(&control);
 	lidar.registerInterface(&dataInterface);
 	lidar.start();
 
