@@ -13,10 +13,10 @@ public:
 	void newScanAvail(float,A1LidarData (&data)[A1Lidar::nDistance]) {
 		for(A1LidarData &data: data) {
 			if ((data.valid) & (data.r < 0.2) & (data.r > 0.0)) {
-				control.turn(0.2);
+				control->turn(0.2);
 			}
 			else {
-				control.forward(0.2);
+				control->forward(0.2);
 			}
 		}
 	}
@@ -28,7 +28,7 @@ private:
 int main(int, char **) {
 	AlphaBot alphabot;
 	alphabot.start();
-	
+
 	Control control(&alphabot);
 
 	A1Lidar lidar;
