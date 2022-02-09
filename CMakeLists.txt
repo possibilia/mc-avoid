@@ -10,4 +10,4 @@ set(LIBSRC
 add_library(control STATIC ${LIBSRC})
 
 add_executable(main main.cpp)
-target_link_libraries(main control)
+target_link_libraries(main control alphabot rplidar_rpi)
