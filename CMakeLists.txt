@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.10)
 
 project(ObstacleAvoid)
 
-set(LIBSRC control.cpp)
+set(LIBSRC 
+	control.cpp 
+	../alphabot/alphabot.cpp 
+	../rplidar_rpi/a1lidarrpi.cpp)
 
 add_library(control STATIC ${LIBSRC})
 
