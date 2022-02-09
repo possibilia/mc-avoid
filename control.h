@@ -1,6 +1,8 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
+#include "alphabot.h"
+
 class Control {
 public:
 
