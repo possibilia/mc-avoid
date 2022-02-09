@@ -16,4 +16,4 @@ set(LIBINCLUDE control.h)
 add_library(control STATIC ${LIBSRC})
 
 add_executable(main main.cpp)
-target_link_libraries(main control)
+target_link_libraries(main control alphabot a1lidarrpi)
