@@ -7,8 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(GNUInstallDirs)
 
-find_library(a1lidarrpi)
-find_library(alphabot)
+find_library(a1lidarrpi NAMES a1lidarrpi HINTS "${CMAKE_INSTALL_LIBDIR})
+find_library(alphabot NAMES alphabot HINTS "${CMAKE_INSTALL_LIBDIR}")
 
 set(LIBSRC control.cpp)
 set(LIBINCLUDE control.h)
