@@ -2,22 +2,18 @@ cmake_minimum_required(VERSION 3.10)
 
 project(ObstacleAvoid)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 include(GNUInstallDirs)
 
-find_package(a1lidarrpi)
-find_package(alphabot)
+find_library(a1lidarrpi)
+find_library(alphabot)
 
 set(LIBSRC control.cpp)
 set(LIBINCLUDE control.h)
-set(CMAKE_MODULE_PATH ${CMAKE_INSTALL_LIBDIR})
 
 add_library(control STATIC ${LIBSRC})
-
-set_target_properties(control PROPERTIES
-  POSITION_INDEPENDENT_CODE TRUE
-  PUBLIC_HEADER "${LIBINCLUDE}")
-
-target_link_libraries(control a1lidarrpi alphabot)
 
 add_executable(main main.cpp)
 target_link_libraries(main control)
