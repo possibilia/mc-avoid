@@ -9,6 +9,7 @@ find_package(alphabot)
 
 set(LIBSRC control.cpp)
 set(LIBINCLUDE control.h)
+set(CMAKE_MODULE_PATH ${CMAKE_INSTALL_LIBDIR})
 
 add_library(control STATIC ${LIBSRC})
 
