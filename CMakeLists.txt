@@ -15,7 +15,5 @@ set(LIBINCLUDE control.h)
 
 add_library(control STATIC ${LIBSRC})
 
-target_link_libraries(alphabot ${CMAKE_THREAD_LIBS_INIT} pigpio rt cpptimer)
-
 add_executable(main main.cpp)
 target_link_libraries(main control alphabot a1lidarrpi)
