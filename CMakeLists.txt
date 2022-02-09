@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(ObstacleAvoid)
 
+include(GNUInstallDirs)
+
 find_package(a1lidarrpi)
 find_package(alphabot)
 
