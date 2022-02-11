@@ -7,6 +7,8 @@ find_package(Threads)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+add_compile_options(-Wall)
+
 include(GNUInstallDirs)
 
 find_library(a1lidarrpi NAMES a1lidarrpi HINTS "${CMAKE_INSTALL_LIBDIR}")
