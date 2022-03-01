@@ -12,7 +12,6 @@ int main(int, char **) {
 	control.forward(0.2);
 	std::this_thread::sleep_for(std::chrono::seconds(5));
 
-	control.stop();
 	control.turn(0.2);
 	std::this_thread::sleep_for(std::chrono::seconds(5));
 
