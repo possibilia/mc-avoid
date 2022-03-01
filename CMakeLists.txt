@@ -11,6 +11,7 @@ add_compile_options(-Wall)
 
 include(GNUInstallDirs)
 
+find_library(cpptimer NAMES cpptimer HINTS "${CMAKE_INSTALL_LIBDIR}")
 find_library(a1lidarrpi NAMES a1lidarrpi HINTS "${CMAKE_INSTALL_LIBDIR}")
 find_library(alphabot NAMES alphabot HINTS "${CMAKE_INSTALL_LIBDIR}")
 
