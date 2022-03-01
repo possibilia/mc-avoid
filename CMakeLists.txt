@@ -15,8 +15,9 @@ find_library(alphabot NAMES alphabot HINTS "${CMAKE_INSTALL_LIBDIR}")
 
 set(LIBSRC control.cpp)
 set(LIBINCLUDE control.h)
+target_link_libraries(control "${CMAKE_THRED_LIBS_INIT}" pigpio)
 
-add_library(control STATIC ${LIBSRC})
+add_library(control STATIC "${LIBSRC}")
 target_link_libraries(control alphabot)
 
 add_executable(main main.cpp)
