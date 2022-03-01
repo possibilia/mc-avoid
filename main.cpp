@@ -13,8 +13,6 @@ int main(int, char **) {
 	std::this_thread::sleep_for(std::chrono::seconds(5));
 
 	control.stop();
-	std::this_thread::sleep_for(std::chrono::seconds(5));
-
 	control.turn(0.2);
 	std::this_thread::sleep_for(std::chrono::seconds(5));
 
