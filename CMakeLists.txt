@@ -11,16 +11,13 @@ add_compile_options(-Wall)
 
 include(GNUInstallDirs)
 
-find_library(cpptimer NAMES cpptimer HINTS "${CMAKE_INSTALL_LIBDIR}")
-find_library(a1lidarrpi NAMES a1lidarrpi HINTS "${CMAKE_INSTALL_LIBDIR}")
 find_library(alphabot NAMES alphabot HINTS "${CMAKE_INSTALL_LIBDIR}")
 
 set(LIBSRC control.cpp)
 set(LIBINCLUDE control.h)
 
 add_library(control STATIC ${LIBSRC})
-
-target_link_libraries(control ${CMAKE_THRED_LIBS_INIT} pigpio rt cpptimer pthread)
+target_link_libraries(control alphabot)
 
 add_executable(main main.cpp)
-target_link_libraries(main control alphabot a1lidarrpi pigpio rt cpptimer)
+target_link_libraries(main control)

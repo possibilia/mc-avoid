@@ -1,29 +1,6 @@
 #include "alphabot.h"
-#include "a1lidarrpi.h"
 #include "control.h"
-// #include <thread>
-
-class DataInterface : public A1Lidar::DataInterface {
-public:
-
-	DataInterface(Control* control) {
-		this->control = control;
-	}
-
-	void newScanAvail(float,A1LidarData (&data)[A1Lidar::nDistance]) {
-		for(A1LidarData &data: data) {
-			if ((data.valid) & (data.r < 0.2) & (data.r > 0.0)) {
-				control->turn(0.2);
-			}
-			else {
-				control->forward(0.2);
-			}
-		}
-	}
-
-private:
-	Control* control;
-};
+#include <thread>
 
 int main(int, char **) {
 	AlphaBot alphabot;
@@ -31,14 +8,19 @@ int main(int, char **) {
 
 	Control control(&alphabot);
 
-	A1Lidar lidar;
-	DataInterface dataInterface(&control);
-	lidar.registerInterface(&dataInterface);
-	lidar.start();
+	// start test
+	control.forward(0.2);
+	std::this_thread::sleep_for(std::chrono::seconds(5));
 
-	do {
-	} while (!getchar());
+	control.stop();
+	std::this_thread::sleep_for(std::chrono::seconds(5));
 
-	lidar.stop();
-	fprintf(stderr,"\n");
+	control.turn(0.2);
+	std::this_thread::sleep_for(std::chrono::seconds(5));
+
+	control.stop();
+	alphabot.stop();
+
+	// exit 
+	return 0;
 }
