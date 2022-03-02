@@ -39,6 +39,7 @@ int main(int, char **) {
 	lidar.registerInterface(&data);
 	lidar.start();
 
+	std::cout << "Hello" + "\n";
 	while(true) {
 		std::string command;
 		std::cin >> command;
@@ -47,7 +48,6 @@ int main(int, char **) {
 			break;
 		}
 
-		std::cout << "Hello" + "\n";
 		// unsigned action = data.getAction();
 		// std::cout << action << std::endl;
 		// if (action == 1) {
