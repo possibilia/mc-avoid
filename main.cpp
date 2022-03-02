@@ -48,7 +48,7 @@ int main(int, char **) {
 		}
 	}
 
-	stop threads
+	// stop threads
 	alphabot.stop();
 	lidar.stop();
 
