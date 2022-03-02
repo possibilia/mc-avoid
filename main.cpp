@@ -2,6 +2,10 @@
 #include "control.h"
 #include <thread>
 
+void north(AlphaBot alphabot, float speed);
+
+void south(AlphaBot alphabot, float speed);
+
 int main(int, char **) {
 	AlphaBot alphabot;
 	alphabot.start();
@@ -9,22 +13,24 @@ int main(int, char **) {
 	Control control(&alphabot);
 
 	// start test
-	alphabot.setLeftWheelSpeed(0.2);
-	alphabot.setRightWheelSpeed(0.2);
+	north(alphabot, 0.2)
 	std::this_thread::sleep_for(std::chrono::seconds(5));
 
-	alphabot.setLeftWheelSpeed(0.0);
-	alphabot.setRightWheelSpeed(0.0);
+	south(alphabot, 0.2)
 	std::this_thread::sleep_for(std::chrono::seconds(5));
 
-	alphabot.setLeftWheelSpeed(-0.2);
-	alphabot.setRightWheelSpeed(0.2);
-	std::this_thread::sleep_for(std::chrono::seconds(5));
-
-	alphabot.setLeftWheelSpeed(0.0);
-	alphabot.setRightWheelSpeed(0.0);
 	alphabot.stop();
 
 	// exit 
 	return 0;
+}
+
+void north(AlphaBot alphabot, float speed) {
+	alphabot.setLeftWheelSpeed(speed);
+	alphabot.setRightWheelSpeed(speed);
+}
+
+void south(AlphaBot alphabot, float speed) {
+	alphabot.setLeftWheelSpeed(-speed);
+	alphabot.setRightWheelSpeed(-speed);
 }
