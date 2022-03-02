@@ -47,7 +47,7 @@ int main(int, char **) {
 			break;
 		}
 
-		int action = data.getAction();
+		unsigned action = data.getAction();
 		if (action == 1) {
 			turn(&alphabot, 0.2);
 		} else {
