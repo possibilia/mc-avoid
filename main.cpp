@@ -30,39 +30,27 @@ private:
 };
 
 int main(int, char **) {
-	// AlphaBot alphabot;
-	// alphabot.start();
+	AlphaBot alphabot;
+	alphabot.start();
 
-	// DataInterface data;
+	DataInterface data;
 
-	// A1Lidar lidar;
-	// lidar.registerInterface(&data);
-	// lidar.start();
+	A1Lidar lidar;
+	lidar.registerInterface(&data);
+	lidar.start();
 
 	while(true) {
-		std::string command;
-		std::cin >> command;
-
-		if (command == "q") {
-			break;
+		unsigned action = data.getAction();
+		if (action == 1) {
+			turn(&alphabot, 0.2);
+		} else {
+			forward(&alphabot, 0.2);
 		}
-
-		std::cout << "Hello" << "\n";
-			
-		// unsigned action = data.getAction();
-		// std::cout << action << std::endl;
-		// if (action == 1) {
-		// 	std::cout << "1" << std::endl;
-		// 	turn(&alphabot, 0.2);
-		// } else {
-		// 	std::cout << "0" << std::endl;
-		// 	forward(&alphabot, 0.2);
-		// }
 	}
 
-	// stop threads
-	// alphabot.stop();
-	// lidar.stop();
+	stop threads
+	alphabot.stop();
+	lidar.stop();
 
 	// exit 
 	return 0;
