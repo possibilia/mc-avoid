@@ -13,11 +13,5 @@ include(GNUInstallDirs)
 
 find_library(alphabot NAMES alphabot HINTS "${CMAKE_INSTALL_LIBDIR}")
 
-set(LIBSRC control.cpp)
-set(LIBINCLUDE control.h)
-
-add_library(control STATIC "${LIBSRC}")
-target_link_libraries(control alphabot pigpio)
-
 add_executable(main main.cpp)
-target_link_libraries(main control)
+target_link_libraries(main alphabot)

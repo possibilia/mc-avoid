@@ -1,5 +1,4 @@
 #include "alphabot.h"
-#include "control.h"
 #include <thread>
 
 void north(AlphaBot alphabot, float speed);
