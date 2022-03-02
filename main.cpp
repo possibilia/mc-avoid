@@ -48,12 +48,12 @@ int main(int, char **) {
 		}
 
 		unsigned action = data.getAction();
-		std::cout << action;
+		std::cout << action << std::endl;
 		if (action == 1) {
-			std::cout << "1";
+			std::cout << "1" << std::endl;
 			turn(&alphabot, 0.2);
 		} else {
-			std::cout << "0";
+			std::cout << "0" << std::endl;
 			forward(&alphabot, 0.2);
 		}
 	}
