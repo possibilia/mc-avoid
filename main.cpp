@@ -40,7 +40,7 @@ int main(int, char **) {
 	lidar.start();
 
 	while(true) {
-		string command;
+		std::string command;
 		std::cin >> command;
 
 		if (command == "q") {
