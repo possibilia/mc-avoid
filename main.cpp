@@ -25,7 +25,7 @@ public:
 	}
 
 private:
-	unsigned action = 0;
+	unsigned action;
 
 };
 
@@ -41,7 +41,7 @@ int main(int, char **) {
 
 	while(true) {
 		unsigned action = data.getAction();
-		std::cout << action;
+		std::cout << action << "\n";
 		if (action == 1) {
 			turn(&alphabot, 0.2);
 		} else {
