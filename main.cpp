@@ -39,7 +39,7 @@ int main(int, char **) {
 	lidar.registerInterface(&data);
 	lidar.start();
 
-	std::cout << "Hello" + "\n";
+	std::cout << "Hello" << "\n";
 	while(true) {
 		std::string command;
 		std::cin >> command;
