@@ -15,7 +15,7 @@ public:
 			if ((data.valid) & (data.r < 0.2) & (data.r >= 0.0)) {
 				action = 1;
 			} else {
-				action = 0;
+				action = 2;
 			}
 		}
 	}
@@ -40,7 +40,7 @@ int main(int, char **) {
 	lidar.start();
 
 	while(true) {
-		unsigned action = &data->getAction();
+		unsigned action = data.getAction();
 		std::cout << action << "\n";
 		if (action == 1) {
 			turn(&alphabot, 0.2);
