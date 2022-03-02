@@ -12,6 +12,7 @@ add_compile_options(-Wall)
 include(GNUInstallDirs)
 
 find_library(alphabot NAMES alphabot HINTS "${CMAKE_INSTALL_LIBDIR}")
+find_library(a1lidarrpi NAMES a1lidarrpi HINTS "${CMAKE_INSTALL_LIBDIR}")
 
 add_executable(main main.cpp)
-target_link_libraries(main alphabot pigpio)
+target_link_libraries(main alphabot a1lidarrpi pigpio)

@@ -1,26 +1,64 @@
 #include "alphabot.h"
+#include "a1lidarrpi.h"
 #include <thread>
+#include <string>
+#include <iostream>
 
 void forward(AlphaBot* alphabot, float speed);
 
 void turn(AlphaBot* alphabot, float speed);
 
+class DataInterface : public A1Lidar::DataInterface {
+public:
+	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
+		for(A1LidarData &data: data) {
+			if (data.valid & (data.r < 0.2 & data.r > 0.0)) {
+				action = 1;
+			} else {
+				action = 0;
+			}
+		}
+	}
+
+	int getAction() {
+		return action;
+	}
+
+private:
+	unsigned action = 0;
+	
+};
+
 int main(int, char **) {
 	AlphaBot alphabot;
 	alphabot.start();
 
-	// start test
-	forward(&alphabot, 0.2);
-	std::this_thread::sleep_for(std::chrono::seconds(5));
+	DataInterface data;
+	data.start();
 
-	turn(&alphabot, 0.2);
-	std::this_thread::sleep_for(std::chrono::seconds(5));
+	A1Lidar lidar;
+	lidar.registerInterface(&data);
+	lidar.start();
 
-	forward(&alphabot, 0.2);
-	std::this_thread::sleep_for(std::chrono::seconds(5));
+	while(true) {
+		string command;
+		cin >> command;
 
-	// stop thread
+		if (command == "q") {
+			break;
+		}
+
+		action = data.getAction();
+		if (action == 1) {
+			turn(&alphabot, 0.2);
+		} else {
+			forward(&alphabot, 0.2);
+		}
+	}
+
+	// stop threads
 	alphabot.stop();
+	lidar.stop();
 
 	// exit 
 	return 0;
