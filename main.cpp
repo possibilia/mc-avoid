@@ -14,18 +14,20 @@ public:
 		for(A1LidarData &data: data) {
 			if ((data.valid) & (data.r < 0.2) & (data.r >= 0.0)) {
 				action = 1;
-			} else if (data.valid){
-				action = 0;
-			}
+			} 
 		}
 	}
 
 	int getAction() {
+		if (action == 1) {
+			action = 0;
+			return 1;
+		}	
 		return action;
 	}
 
 private:
-	unsigned action;
+	unsigned action = 0;
 
 };
 
