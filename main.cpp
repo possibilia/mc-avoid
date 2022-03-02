@@ -30,14 +30,14 @@ private:
 };
 
 int main(int, char **) {
-	AlphaBot alphabot;
-	alphabot.start();
+	// AlphaBot alphabot;
+	// alphabot.start();
 
-	DataInterface data;
+	// DataInterface data;
 
-	A1Lidar lidar;
-	lidar.registerInterface(&data);
-	lidar.start();
+	// A1Lidar lidar;
+	// lidar.registerInterface(&data);
+	// lidar.start();
 
 	while(true) {
 		std::string command;
@@ -48,7 +48,7 @@ int main(int, char **) {
 		}
 
 		std::cout << "Hello" << "\n";
-		std::this_thread::sleep_for(std::chrono::seconds(1));	
+			
 		// unsigned action = data.getAction();
 		// std::cout << action << std::endl;
 		// if (action == 1) {
@@ -61,8 +61,8 @@ int main(int, char **) {
 	}
 
 	// stop threads
-	alphabot.stop();
-	lidar.stop();
+	// alphabot.stop();
+	// lidar.stop();
 
 	// exit 
 	return 0;
