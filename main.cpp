@@ -9,13 +9,20 @@ int main(int, char **) {
 	Control control(&alphabot);
 
 	// start test
-	control.forward(0.2);
+	alphabot.setLeftWheelSpeed(0.2);
+	alphabot.setRightWheelSpeed(0.2);
 	std::this_thread::sleep_for(std::chrono::seconds(5));
 
-	control.turn(0.2);
+	alphabot.setLeftWheelSpeed(0.0);
+	alphabot.setRightWheelSpeed(0.0);
 	std::this_thread::sleep_for(std::chrono::seconds(5));
 
-	control.stop();
+	alphabot.setLeftWheelSpeed(-0.2);
+	alphabot.setRightWheelSpeed(0.2);
+	std::this_thread::sleep_for(std::chrono::seconds(5));
+
+	alphabot.setLeftWheelSpeed(0.0);
+	alphabot.setRightWheelSpeed(0.0);
 	alphabot.stop();
 
 	// exit 
