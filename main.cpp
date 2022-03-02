@@ -40,7 +40,7 @@ int main(int, char **) {
 	lidar.start();
 
 	while(true) {
-		unsigned action = data.getAction();
+		unsigned action = &data->getAction();
 		std::cout << action << "\n";
 		if (action == 1) {
 			turn(&alphabot, 0.2);
