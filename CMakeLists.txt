@@ -14,4 +14,4 @@ include(GNUInstallDirs)
 find_library(alphabot NAMES alphabot HINTS "${CMAKE_INSTALL_LIBDIR}")
 
 add_executable(main main.cpp)
-target_link_libraries(main alphabot)
+target_link_libraries(main alphabot pigpio)
