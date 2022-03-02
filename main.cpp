@@ -49,8 +49,10 @@ int main(int, char **) {
 
 		unsigned action = data.getAction();
 		if (action == 1) {
+			std::cout << "1";
 			turn(&alphabot, 0.2);
 		} else {
+			std::cout << "0";
 			forward(&alphabot, 0.2);
 		}
 	}
