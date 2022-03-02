@@ -19,7 +19,6 @@ public:
 	}
 
 	unsigned getAction() {	
-		std::cout << action << "\n";
 		return action;
 	}
 
@@ -38,6 +37,7 @@ int main(int, char **) {
 	lidar.registerInterface(&data);
 	lidar.start();
 
+	// need to call action once!
 	while(true) {
 		unsigned action = data.getAction();
 		if (action == 1) {
