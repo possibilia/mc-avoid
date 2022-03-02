@@ -48,6 +48,7 @@ int main(int, char **) {
 		}
 
 		unsigned action = data.getAction();
+		std::cout << action;
 		if (action == 1) {
 			std::cout << "1";
 			turn(&alphabot, 0.2);
