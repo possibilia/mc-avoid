@@ -12,10 +12,10 @@ int main(int, char **) {
 	Control control(&alphabot);
 
 	// start test
-	north(alphabot, 0.2)
+	north(alphabot, 0.2);
 	std::this_thread::sleep_for(std::chrono::seconds(5));
 
-	south(alphabot, 0.2)
+	south(alphabot, 0.2);
 	std::this_thread::sleep_for(std::chrono::seconds(5));
 
 	alphabot.stop();
