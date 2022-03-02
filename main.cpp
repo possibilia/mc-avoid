@@ -47,7 +47,7 @@ int main(int, char **) {
 			break;
 		}
 
-		turn(&alphabot, 0.2);
+		std::cout << "Hello" + "\n";
 		// unsigned action = data.getAction();
 		// std::cout << action << std::endl;
 		// if (action == 1) {
