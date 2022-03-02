@@ -13,21 +13,18 @@ public:
 	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
 		for(A1LidarData &data: data) {
 			if ((data.valid) & (data.r < 0.2) & (data.r >= 0.0)) {
-				this->action = 1;
+				action = 1;
 			} 
 		}
 	}
 
-	int getAction() {
-		if (action == 1) {
-			this->action = 0;
-			return 1;
-		}	
+	unsigned getAction() {	
+		std::cout << action << "\n";
 		return action;
 	}
 
 private:
-	unsigned action = 0;
+	unsigned action;
 
 };
 
@@ -43,7 +40,6 @@ int main(int, char **) {
 
 	while(true) {
 		unsigned action = data.getAction();
-		std::cout << action << "\n";
 		if (action == 1) {
 			turn(&alphabot, 0.2);
 		} else {
