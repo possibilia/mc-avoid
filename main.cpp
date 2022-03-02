@@ -46,8 +46,9 @@ int main(int, char **) {
 		if (command == "q") {
 			break;
 		}
-		
+
 		std::cout << "Hello" << "\n";
+		std::this_thread::sleep_for(std::chrono::seconds(1));	
 		// unsigned action = data.getAction();
 		// std::cout << action << std::endl;
 		// if (action == 1) {
