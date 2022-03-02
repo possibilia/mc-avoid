@@ -12,7 +12,7 @@ class DataInterface : public A1Lidar::DataInterface {
 public:
 	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
 		for(A1LidarData &data: data) {
-			if (data.valid & (data.r < 0.2 & data.r > 0.0)) {
+			if ((data.valid) & (data.r < 0.2) & (data.r > 0.0)) {
 				action = 1;
 			} else {
 				action = 0;
@@ -26,7 +26,7 @@ public:
 
 private:
 	unsigned action = 0;
-	
+
 };
 
 int main(int, char **) {
@@ -34,7 +34,6 @@ int main(int, char **) {
 	alphabot.start();
 
 	DataInterface data;
-	data.start();
 
 	A1Lidar lidar;
 	lidar.registerInterface(&data);
@@ -42,13 +41,13 @@ int main(int, char **) {
 
 	while(true) {
 		string command;
-		cin >> command;
+		std::cin >> command;
 
 		if (command == "q") {
 			break;
 		}
 
-		action = data.getAction();
+		int action = data.getAction();
 		if (action == 1) {
 			turn(&alphabot, 0.2);
 		} else {
