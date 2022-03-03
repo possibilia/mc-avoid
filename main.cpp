@@ -4,9 +4,24 @@
 #include <string>
 #include <iostream>
 
-void forward(AlphaBot* alphabot, float speed);
+class ControlCallback : public AlphaBot::StepCallback {
+public:
+	virtual void step(AlphaBot &alphabot) {
 
-void turn(AlphaBot* alphabot, float speed);
+	}
+
+	void forward(AlphaBot* alphabot, float speed) {
+		alphabot->setLeftWheelSpeed(speed);
+		alphabot->setRightWheelSpeed(speed);
+	}
+
+	void turn(AlphaBot* alphabot, float speed) {
+		alphabot->setLeftWheelSpeed(0.0);
+		alphabot->setRightWheelSpeed(0.0);
+		alphabot->setLeftWheelSpeed(speed);
+		alphabot->setRightWheelSpeed(-speed);
+	}
+};
 
 class DataInterface : public A1Lidar::DataInterface {
 public:
@@ -33,10 +48,11 @@ private:
 };
 
 int main(int, char **) { 
+	DataInterface data;
+	ControlCallback control;
+
 	AlphaBot alphabot;
 	alphabot.start();
-
-	DataInterface data;
 
 	A1Lidar lidar;
 	lidar.registerInterface(&data);
@@ -61,16 +77,4 @@ int main(int, char **) {
 	alphabot.stop();
 	lidar.stop();
 	return 0;
-}
-
-void forward(AlphaBot* alphabot, float speed) {
-	alphabot->setLeftWheelSpeed(speed);
-	alphabot->setRightWheelSpeed(speed);
-}
-
-void turn(AlphaBot* alphabot, float speed) {
-	alphabot->setLeftWheelSpeed(0.0);
-	alphabot->setRightWheelSpeed(0.0);
-	alphabot->setLeftWheelSpeed(speed);
-	alphabot->setRightWheelSpeed(-speed);
 }
