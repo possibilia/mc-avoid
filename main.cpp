@@ -42,7 +42,6 @@ int main(int, char **) {
 	lidar.registerInterface(&data);
 	lidar.start();
 
-	// need to call action once!
 	unsigned forward = 0;
 	unsigned turn = 0;
 
