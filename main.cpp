@@ -19,6 +19,11 @@ public:
 	}
 
 	unsigned getAction() {	
+		if (action == 1) {
+			std::cout << "Hello" << "\n";
+			action = 0;
+			return 1;
+		}
 		return action;
 	}
 
