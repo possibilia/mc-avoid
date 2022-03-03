@@ -43,13 +43,20 @@ int main(int, char **) {
 	lidar.start();
 
 	// need to call action once!
+	unsigned forward = 0;
+	unsigned turn = 0;
+
 	while(true) {
 		unsigned action = data.getAction();
 		std::cout << action << "\n";
-		if (action == 1) {
+		if ((action == 1) & (turn == 0)) {
 			turn(&alphabot, 0.2);
-		} else {
+			forward = 0;
+			turn = 1;
+		} else if ((action = 0) & (forward = 0)) {
 			forward(&alphabot, 0.2);
+			forward = 1;
+			turn = 0;
 		}
 	}
 
