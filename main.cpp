@@ -47,11 +47,11 @@ int main(int, char **) {
 
 	while(true) {
 		unsigned action = data.getAction();
-		if ((action == 1) & (turn == 0)) {
+		if ((action == 1) & (t == 0)) {
 			turn(&alphabot, 0.2);
 			f = 0;
 			t = 1;
-		} else if ((action = 0) & (forward = 0)) {
+		} else if ((action = 0) & (f = 0)) {
 			forward(&alphabot, 0.2);
 			f = 1;
 			t = 0;
