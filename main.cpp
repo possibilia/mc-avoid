@@ -7,7 +7,7 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		
+
 	}
 
 	void forward(AlphaBot* alphabot, float speed) {
@@ -52,6 +52,7 @@ int main(int, char **) {
 	ControlCallback control;
 
 	AlphaBot alphabot;
+	alphabot.registerStepCallback(&control);
 	alphabot.start();
 
 	A1Lidar lidar;
