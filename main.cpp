@@ -4,6 +4,45 @@
 #include <string>
 #include <iostream>
 
+class ControlCallback : public AlphaBot::StepCallback {
+public:
+	virtual void step(AlphaBot &alphabot) {
+		unsigned f = 0;
+		unsigned t = 0;
+
+		if ((action == 1) & (t == 0)) {
+			turn(&alphabot, 0.2);
+			f = 0;
+			t = 1;
+		} else if ((action == 0) & (f == 0)) {
+			forward(&alphabot, 0.5);
+			f = 1;
+			t = 0;
+		}
+	}
+
+	void forward(AlphaBot* alphabot, float speed) {
+		alphabot->setLeftWheelSpeed(speed);
+		alphabot->setRightWheelSpeed(speed);
+	}
+
+	void turn(AlphaBot* alphabot, float speed) {
+		alphabot->setLeftWheelSpeed(0.0);
+		alphabot->setRightWheelSpeed(0.0);
+		alphabot->setLeftWheelSpeed(speed);
+		alphabot->setRightWheelSpeed(-speed);
+	}
+
+	void setAction(unsigned action) {
+		action = action;
+	}
+
+private:
+	unsigned action = 0;
+
+};
+
+
 class DataInterface : public A1Lidar::DataInterface {
 public:
 	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
@@ -31,7 +70,6 @@ private:
 int main(int, char **) { 
 	DataInterface data;
 	ControlCallback control;
-	control.registerDataInterface(&data);
 
 	AlphaBot alphabot;
 	alphabot.registerStepCallback(&control);
@@ -41,47 +79,13 @@ int main(int, char **) {
 	lidar.registerInterface(&data);
 	lidar.start();
 
+	while(true) {
+		action = data.getAction();
+		control.setAction(action);
+	}
+
 	alphabot.stop();
 	lidar.stop();
 
 	return 0;
 }
-
-class ControlCallback : public AlphaBot::StepCallback {
-public:
-	virtual void step(AlphaBot &alphabot) {
-		unsigned f = 0;
-		unsigned t = 0;
-
-		unsigned action = this->data.getAction();
-		if ((action == 1) & (t == 0)) {
-			turn(&alphabot, 0.2);
-			f = 0;
-			t = 1;
-		} else if ((action == 0) & (f == 0)) {
-			forward(&alphabot, 0.5);
-			f = 1;
-			t = 0;
-		}
-	}
-
-	void forward(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(speed);
-		alphabot->setRightWheelSpeed(speed);
-	}
-
-	void turn(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(0.0);
-		alphabot->setRightWheelSpeed(0.0);
-		alphabot->setLeftWheelSpeed(speed);
-		alphabot->setRightWheelSpeed(-speed);
-	}
-
-	void registerDataInterface(DataInterface* data) {
-		this->data = data;
-	}
-
-private:
-	DataInterface* data;
-
-};
