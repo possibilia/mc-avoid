@@ -27,7 +27,7 @@ public:
 	}
 
 private:
-	unsigned action;
+	unsigned action = 0;
 
 };
 
