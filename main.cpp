@@ -7,7 +7,19 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
+		unsigned f = 0;
+		unsigned t = 0;
 
+		unsigned action = data->getAction();
+		if ((action == 1) & (t == 0)) {
+			turn(&alphabot, 0.2);
+			f = 0;
+			t = 1;
+		} else if ((action == 0) & (f == 0)) {
+			forward(&alphabot, 0.5);
+			f = 1;
+			t = 0;
+		}
 	}
 
 	void forward(AlphaBot* alphabot, float speed) {
@@ -21,6 +33,14 @@ public:
 		alphabot->setLeftWheelSpeed(speed);
 		alphabot->setRightWheelSpeed(-speed);
 	}
+
+	void registerDataInterface(DataInterface* data) {
+		this->data = data;
+	}
+
+private:
+	DataInterface* data;
+
 };
 
 class DataInterface : public A1Lidar::DataInterface {
@@ -50,6 +70,7 @@ private:
 int main(int, char **) { 
 	DataInterface data;
 	ControlCallback control;
+	control.registerDataInterface(&data);
 
 	AlphaBot alphabot;
 	alphabot.registerStepCallback(&control);
@@ -59,23 +80,8 @@ int main(int, char **) {
 	lidar.registerInterface(&data);
 	lidar.start();
 
-	unsigned f = 0;
-	unsigned t = 0;
-
-	while(true) {
-		unsigned action = data.getAction();
-		if ((action == 1) & (t == 0)) {
-			turn(&alphabot, 0.2);
-			f = 0;
-			t = 1;
-		} else if ((action == 0) & (f == 0)) {
-			forward(&alphabot, 0.5);
-			f = 1;
-			t = 0;
-		}
-	}
-
 	alphabot.stop();
 	lidar.stop();
+	
 	return 0;
 }
