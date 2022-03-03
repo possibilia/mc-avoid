@@ -34,7 +34,7 @@ public:
 	}
 
 	void setAction(unsigned action) {
-		action = action;
+		this->action = action;
 	}
 
 private:
