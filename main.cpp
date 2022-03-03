@@ -19,6 +19,10 @@ public:
 	}
 
 	unsigned getAction() {	
+		if (action == 1) {
+			action = 0;
+			return 1;
+		}
 		return action;
 	}
 
