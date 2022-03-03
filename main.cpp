@@ -80,6 +80,7 @@ int main(int, char **) {
 	lidar.start();
 
 	while(true) {
+		unsigned action;
 		action = data.getAction();
 		control.setAction(action);
 	}
