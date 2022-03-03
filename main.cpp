@@ -4,6 +4,30 @@
 #include <string>
 #include <iostream>
 
+class DataInterface : public A1Lidar::DataInterface {
+public:
+	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
+		if (action == 1) {
+			action = 0;
+		}
+
+		for(A1LidarData &data: data) {
+			if ((data.valid) & (data.r < 0.2) & (data.r >= 0.0) & 
+				(data.phi < 2.0) & (data.phi > -2.0)) {
+				action = 1;
+			} 
+		}
+	}
+
+	unsigned getAction() {	
+		return action;
+	}
+
+private:
+	unsigned action = 0;
+
+};
+
 int main(int, char **) { 
 	DataInterface data;
 	ControlCallback control;
@@ -29,7 +53,7 @@ public:
 		unsigned f = 0;
 		unsigned t = 0;
 
-		unsigned action = data->getAction();
+		unsigned action = this->data.getAction();
 		if ((action == 1) & (t == 0)) {
 			turn(&alphabot, 0.2);
 			f = 0;
@@ -59,29 +83,5 @@ public:
 
 private:
 	DataInterface* data;
-
-};
-
-class DataInterface : public A1Lidar::DataInterface {
-public:
-	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
-		if (action == 1) {
-			action = 0;
-		}
-
-		for(A1LidarData &data: data) {
-			if ((data.valid) & (data.r < 0.2) & (data.r >= 0.0) & 
-				(data.phi < 2.0) & (data.phi > -2.0)) {
-				action = 1;
-			} 
-		}
-	}
-
-	unsigned getAction() {	
-		return action;
-	}
-
-private:
-	unsigned action = 0;
 
 };
