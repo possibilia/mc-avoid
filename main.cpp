@@ -7,7 +7,7 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-
+		
 	}
 
 	void forward(AlphaBot* alphabot, float speed) {
