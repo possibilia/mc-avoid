@@ -58,11 +58,8 @@ int main(int, char **) {
 		}
 	}
 
-	// stop threads
 	alphabot.stop();
 	lidar.stop();
-
-	// exit 
 	return 0;
 }
 
