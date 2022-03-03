@@ -11,6 +11,10 @@ void turn(AlphaBot* alphabot, float speed);
 class DataInterface : public A1Lidar::DataInterface {
 public:
 	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
+		if (action == 1) {
+			action = 0;
+		}
+
 		for(A1LidarData &data: data) {
 			if ((data.valid) & (data.r < 0.2) & (data.r >= 0.0)) {
 				action = 1;
@@ -19,12 +23,7 @@ public:
 	}
 
 	unsigned getAction() {	
-		if (action == 1) {
-			action = 0;
-			return 1;
-		} else {
-			return action;
-		}
+		return action;
 	}
 
 private:
@@ -51,7 +50,7 @@ int main(int, char **) {
 			turn(&alphabot, 0.2);
 			f = 0;
 			t = 1;
-		} else if ((action = 0) & (f = 0)) {
+		} else if ((action == 0) & (f == 0)) {
 			forward(&alphabot, 0.2);
 			f = 1;
 			t = 0;
