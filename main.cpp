@@ -42,19 +42,19 @@ int main(int, char **) {
 	lidar.registerInterface(&data);
 	lidar.start();
 
-	unsigned forward = 0;
-	unsigned turn = 0;
+	unsigned f = 0;
+	unsigned t = 0;
 
 	while(true) {
 		unsigned action = data.getAction();
 		if ((action == 1) & (turn == 0)) {
 			turn(&alphabot, 0.2);
-			forward = 0;
-			turn = 1;
+			f = 0;
+			t = 1;
 		} else if ((action = 0) & (forward = 0)) {
 			forward(&alphabot, 0.2);
-			forward = 1;
-			turn = 0;
+			f = 1;
+			t = 0;
 		}
 	}
 
