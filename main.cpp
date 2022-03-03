@@ -16,7 +16,7 @@ public:
 		}
 
 		for(A1LidarData &data: data) {
-			if ((data.valid) & (data.r < 0.2) & (data.r >= 0.0)) {
+			if ((data.valid) & (data.r < 0.2) & (data.r >= 0.0) & (data.phi < 1) & (data.phi > -1)) {
 				action = 1;
 			} 
 		}
