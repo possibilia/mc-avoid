@@ -4,6 +4,25 @@
 #include <string>
 #include <iostream>
 
+int main(int, char **) { 
+	DataInterface data;
+	ControlCallback control;
+	control.registerDataInterface(&data);
+
+	AlphaBot alphabot;
+	alphabot.registerStepCallback(&control);
+	alphabot.start();
+
+	A1Lidar lidar;
+	lidar.registerInterface(&data);
+	lidar.start();
+
+	alphabot.stop();
+	lidar.stop();
+
+	return 0;
+}
+
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
@@ -66,22 +85,3 @@ private:
 	unsigned action = 0;
 
 };
-
-int main(int, char **) { 
-	DataInterface data;
-	ControlCallback control;
-	control.registerDataInterface(&data);
-
-	AlphaBot alphabot;
-	alphabot.registerStepCallback(&control);
-	alphabot.start();
-
-	A1Lidar lidar;
-	lidar.registerInterface(&data);
-	lidar.start();
-
-	alphabot.stop();
-	lidar.stop();
-	
-	return 0;
-}
