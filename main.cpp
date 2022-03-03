@@ -51,7 +51,7 @@ int main(int, char **) {
 			f = 0;
 			t = 1;
 		} else if ((action == 0) & (f == 0)) {
-			forward(&alphabot, 0.2);
+			forward(&alphabot, 0.5);
 			f = 1;
 			t = 0;
 		}
