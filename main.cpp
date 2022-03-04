@@ -21,6 +21,13 @@ public:
 		}
 	}
 
+	void setAction(unsigned action) {
+		this->action = action;
+	}
+
+private:
+	unsigned action = 0;
+
 	void forward(AlphaBot* alphabot, float speed) {
 		alphabot->setLeftWheelSpeed(speed);
 		alphabot->setRightWheelSpeed(speed);
@@ -33,15 +40,7 @@ public:
 		alphabot->setRightWheelSpeed(-speed);
 	}
 
-	void setAction(unsigned action) {
-		this->action = action;
-	}
-
-private:
-	unsigned action = 0;
-
 };
-
 
 class DataInterface : public A1Lidar::DataInterface {
 public:
