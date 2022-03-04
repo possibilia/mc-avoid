@@ -18,6 +18,8 @@ public:
 			forward(&alphabot, 0.5);
 			f = 1;
 			t = 0;
+		} else if ((action == 2) & (s == 0)) {
+			forward(&alphabot, 0.3);
 		}
 	}
 
@@ -39,7 +41,6 @@ private:
 		alphabot->setLeftWheelSpeed(speed);
 		alphabot->setRightWheelSpeed(-speed);
 	}
-
 };
 
 class DataInterface : public A1Lidar::DataInterface {
@@ -53,7 +54,10 @@ public:
 			if ((data.valid) & (data.r < 0.2) & (data.r >= 0.0) & 
 				(data.phi < 2.0) & (data.phi > -2.0)) {
 				action = 1;
-			} 
+			} else if ((data.valid) & (data.r >= 0.2) & (data.r < 0.4) & 
+				(data.phi < 2.0) & (data.phi > -2.0)) {
+				action = 2;
+			}
 		}
 	}
 
