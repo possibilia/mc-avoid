@@ -6,21 +6,15 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		if (t == 0) {
-			turn(&alphabot, speed);
-			t = 1;
-		} else {
-			stop(&alphabot, speed);
-			t = 0;
-		}
+		stop(&alphabot, speed);
+		turn(&alphabot, speed);
 	}
-
+	
 	void setSpeed(float speed) {
 		this->speed = speed;
 	}
 
 private:
-	unsigned t = 0;
 	float speed = 0.0;
 
 	void stop(AlphaBot* alphabot, float speed) {
@@ -33,7 +27,6 @@ private:
 		alphabot->setRightWheelSpeed(-speed);
 	}
 };
-
 
 int main(int, char **) { 
 	ControlCallback control;
