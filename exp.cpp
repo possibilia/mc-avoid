@@ -10,7 +10,7 @@ public:
 			turn(&alphabot, speed);
 			t = 1;
 		} else {
-			forward(&alphabot, speed);
+			stop(&alphabot, speed);
 			t = 0;
 		}
 	}
@@ -23,14 +23,12 @@ private:
 	unsigned t = 0;
 	float speed = 0.0;
 
-	void forward(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(speed);
-		alphabot->setRightWheelSpeed(speed);
+	void stop(AlphaBot* alphabot, float speed) {
+		alphabot->setLeftWheelSpeed(0.0);
+		alphabot->setRightWheelSpeed(0.0);
 	}
 
 	void turn(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(0.0);
-		alphabot->setRightWheelSpeed(0.0);
 		alphabot->setLeftWheelSpeed(speed);
 		alphabot->setRightWheelSpeed(-speed);
 	}
