@@ -49,7 +49,7 @@ int main(int, char **) {
 
 	while(true) {
 		std::string command;
-		command = std::cin >> "q";
+		std::cin >> command;
 
 		if (command == "q") {
 			alphabot.stop();
