@@ -49,10 +49,10 @@ public:
 
 		for(A1LidarData &data: data) {
 			if ((data.valid) & (data.r < 0.2) & (data.r >= 0.0) & 
-				(data.phi < 2.0) & (data.phi > -2.0)) {
+				(data.phi > 0.0) & (data.phi < 1.0)) {
 				action = 1;
-			} else if ((data.valid) & (data.r >= 0.2) & (data.r < 0.4) & 
-				(data.phi < 2.0) & (data.phi > -2.0)) {
+			} else if ((data.valid) & (data.r >= 0.2) & (data.r < 0.0) & 
+				(data.phi < 0.0) & (data.phi > -1.0)) {
 				action = 2;
 			}
 		}
