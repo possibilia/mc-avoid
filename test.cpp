@@ -29,13 +29,13 @@ private:
 	}
 
 	void turnLeft(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(speed - 0.2);
-		alphabot->setRightWheelSpeed(speed + 0.2);
+		alphabot->setLeftWheelSpeed(0.0);
+		alphabot->setRightWheelSpeed(speed);
 	}
 
 	void turnRight(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(speed + 0.2);
-		alphabot->setRightWheelSpeed(speed - 0.2);
+		alphabot->setLeftWheelSpeed(0.0);
+		alphabot->setRightWheelSpeed(speed);
 	}
 
 };
@@ -50,10 +50,10 @@ public:
 		for(A1LidarData &data: data) {
 			if ((data.valid) & (data.r < 0.3) & (data.r >= 0.0) & 
 				(data.phi > 0.0) & (data.phi < 1.0)) {
-				action = 1;
+				action = 2;
 			} else if ((data.valid) & (data.r < 0.3) & (data.r >= 0.0) & 
 				(data.phi < 0.0) & (data.phi > -1.0)) {
-				action = 2;
+				action = 1;
 			}
 		}
 	}
