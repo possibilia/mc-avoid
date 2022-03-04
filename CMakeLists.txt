@@ -17,5 +17,5 @@ find_library(a1lidarrpi NAMES a1lidarrpi HINTS "${CMAKE_INSTALL_LIBDIR}")
 add_executable(test test.cpp)
 target_link_libraries(test alphabot a1lidarrpi pigpio pthread)
 
-add_executable(exp test.cpp)
+add_executable(exp exp.cpp)
 target_link_libraries(exp alphabot a1lidarrpi pigpio pthread)
