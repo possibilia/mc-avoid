@@ -8,11 +8,11 @@ class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
 		if (action == 1) {
-			turn(&alphabot, 0.2);
+			turnLeft(&alphabot, 0.5);
 		} else if (action == 0) {
 			forward(&alphabot, 0.5);
 		} else if (action == 2) {
-			forward(&alphabot, 0.3);
+			turnRight(&alphabot, 0.5);
 		}
 	}
 
@@ -28,12 +28,16 @@ private:
 		alphabot->setRightWheelSpeed(speed);
 	}
 
-	void turn(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(0.0);
-		alphabot->setRightWheelSpeed(0.0);
-		alphabot->setLeftWheelSpeed(speed);
-		alphabot->setRightWheelSpeed(-speed);
+	void turnLeft(AlphaBot* alphabot, float speed) {
+		alphabot->setLeftWheelSpeed(speed - 0.2);
+		alphabot->setRightWheelSpeed(speed + 0.2);
 	}
+
+	void turnRight(AlphaBot* alphabot, float speed) {
+		alphabot->setLeftWheelSpeed(speed + 0.2);
+		alphabot->setRightWheelSpeed(speed - 0.2);
+	}
+
 };
 
 class DataInterface : public A1Lidar::DataInterface {
