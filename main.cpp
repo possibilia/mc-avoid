@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 
-class ControlCallback : public AlphaBot::StepCallback {
+class DifferentialDriveCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
 		unsigned f = 0;
@@ -34,18 +34,33 @@ public:
 	}
 
 private:
+	const float wheelBase = 0.00335;
+	const float wheelRadius = 0.142;
+
 	unsigned action = 0;
 
-	void forward(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(speed);
-		alphabot->setRightWheelSpeed(speed);
+	float * forwardKinematics(float wL, float wR) {
+		float velocities[2];
+
+		float v = (wheelRadius / 2) * (wR + wL);
+		float w = (wheelRadius / wheelBase) * (wR - wL);
+
+		velocities[0] = v;
+		velocities[1] = w;
+
+		return velocities;
 	}
 
-	void turn(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(0.0);
-		alphabot->setRightWheelSpeed(0.0);
-		alphabot->setLeftWheelSpeed(speed);
-		alphabot->setRightWheelSpeed(-speed);
+	float * inverseKinematics(float vref, float wref) {
+		float rpms[2];
+
+		float wL = (1 / wheelRadius) * (vref - ((wref * wheelBase) / 2));
+		float wR = (1 / wheelRadius) * (vref + ((wref * wheelBase) / 2));
+
+		rpms[0] = wL;
+		rpms[1] = wR;
+
+		return rpms;
 	}
 };
 
@@ -78,7 +93,7 @@ private:
 
 int main(int, char **) { 
 	DataInterface data;
-	ControlCallback control;
+	DifferentialDriveCallback control;
 
 	AlphaBot alphabot;
 	alphabot.registerStepCallback(&control);
