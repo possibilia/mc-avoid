@@ -7,16 +7,13 @@ class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
 		stop(&alphabot, speed);
+		turn(&alphabot, speed);
 
-		float s = speed;  
-		for (int i = 0; i < 5; i++) {
-			turn(&alphabot, s);
-			s += 0.1;
+		if (speed > 1.0) {
+			speed = 0.0;
+		} else {
+			speed += 0.1;
 		}
-	}
-	
-	void setSpeed(float speed) {
-		this->speed = speed;
 	}
 
 private:
@@ -39,8 +36,6 @@ int main(int, char **) {
 	AlphaBot alphabot;
 	alphabot.registerStepCallback(&control);
 	alphabot.start();
-
-	control.setSpeed(0.2);
 
 	while(true) {
 		std::string command;
