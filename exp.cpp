@@ -7,7 +7,10 @@ class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
 		stop(&alphabot, speed);
-		turn(&alphabot, speed);
+
+		for (int i = 0; i < 5; i++) {
+			turn(&alphabot, speed);
+		}
 	}
 	
 	void setSpeed(float speed) {
@@ -48,4 +51,4 @@ int main(int, char **) {
 	}
 
 	return 0;
-}
+}s
