@@ -8,11 +8,11 @@ class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
 		if (action == 1) {
-			turnLeft(&alphabot, 0.5);
+			turnLeft(&alphabot, 0.3);
 		} else if (action == 0) {
-			forward(&alphabot, 0.5);
+			forward(&alphabot, 0.3);
 		} else if (action == 2) {
-			turnRight(&alphabot, 0.5);
+			turnRight(&alphabot, 0.3);
 		}
 	}
 
@@ -43,7 +43,7 @@ private:
 class DataInterface : public A1Lidar::DataInterface {
 public:
 	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
-		if (action == 1) {
+		if ((action == 1) || (action == 2)) {
 			action = 0;
 		}
 
