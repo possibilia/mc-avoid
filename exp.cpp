@@ -8,8 +8,10 @@ public:
 	virtual void step(AlphaBot &alphabot) {
 		stop(&alphabot, speed);
 
+		float s = speed;  
 		for (int i = 0; i < 5; i++) {
-			turn(&alphabot, speed);
+			turn(&alphabot, s);
+			s += 0.1;
 		}
 	}
 	
