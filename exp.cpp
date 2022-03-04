@@ -53,7 +53,6 @@ int main(int, char **) {
 
 		if (command == "q") {
 			alphabot.stop();
-			lidar.stop();
 			break;
 		}
 	}
