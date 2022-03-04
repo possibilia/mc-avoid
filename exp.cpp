@@ -6,8 +6,6 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		unsigned t = 0;
-
 		if (t == 0) {
 			turn(&alphabot, speed);
 			t = 1;
@@ -22,6 +20,7 @@ public:
 	}
 
 private:
+	unsigned t = 0;
 	float speed = 0.0;
 
 	void forward(AlphaBot* alphabot, float speed) {
