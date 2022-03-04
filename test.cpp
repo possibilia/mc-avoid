@@ -29,8 +29,8 @@ private:
 	}
 
 	void turnLeft(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(0.0);
-		alphabot->setRightWheelSpeed(speed);
+		alphabot->setLeftWheelSpeed(speed);
+		alphabot->setRightWheelSpeed(0.0);
 	}
 
 	void turnRight(AlphaBot* alphabot, float speed) {
