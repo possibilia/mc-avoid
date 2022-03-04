@@ -7,25 +7,12 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		unsigned f = 0;
-		unsigned t = 0;
-		unsigned s = 0;
-
 		if ((action == 1) & (t == 0)) {
 			turn(&alphabot, 0.2);
-			f = 0;
-			t = 1;
-			s = 0;
 		} else if ((action == 0) & (f == 0)) {
 			forward(&alphabot, 0.5);
-			f = 1;
-			t = 0;
-			s = 0;
 		} else if ((action == 2) & (s == 0)) {
 			forward(&alphabot, 0.3);
-			f = 0;
-			t = 0;
-			s = 1;
 		}
 	}
 
