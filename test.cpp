@@ -7,10 +7,10 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		if (action == 1) {
-			turnLeft(&alphabot, 0.3);
-		} else if (action == 0) {
+		if (action == 0) {
 			forward(&alphabot, 0.3);
+		} else if (action == 1) {
+			turnLeft(&alphabot, 0.3);
 		} else if (action == 2) {
 			turnRight(&alphabot, 0.3);
 		}
