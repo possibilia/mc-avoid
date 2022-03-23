@@ -91,6 +91,9 @@ private:
 			                    "&phi=" + std::to_string(data->phi) +
 			                    "&sig=" + std::to_string(data->signal_strength);
 
+
+			printf(query);
+
 			// send data to server
 			curl_easy_setopt(curl, CURLOPT_URL, query);
 			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
