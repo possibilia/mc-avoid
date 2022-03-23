@@ -85,11 +85,11 @@ private:
 			
 			// build the query string
 			std::string query = "http://192.168.0.111:5000/query?t=" + std::to_string(t) +
-			                    "&x=" + std::to_string(data.x) +
-			                    "&y=" + std::to_string(data.y) +
-			                    "&r=" + std::to_string(data.r) +
-			                    "&phi=" + std::to_string(data.phi) +
-			                    "&sig=" + std::to_string(data.signal_strength);
+			                    "&x=" + std::to_string(data->x) +
+			                    "&y=" + std::to_string(data->y) +
+			                    "&r=" + std::to_string(data->r) +
+			                    "&phi=" + std::to_string(data->phi) +
+			                    "&sig=" + std::to_string(data->signal_strength);
 
 			// send data to server
 			curl_easy_setopt(curl, CURLOPT_URL, query);
