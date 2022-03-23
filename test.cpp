@@ -72,7 +72,7 @@ public:
 			                    "&x=" + std::to_string(data.x) +
 			                    "&y=" + std::to_string(data.y) +
 			                    "&r=" + std::to_string(data.r) +
-			                    "&signal=" + std::to_string(data.signal);
+			                    "&signal=" + std::to_string(data.signal_strength);
 
 			// send data to server
 			curl_easy_setopt(curl, CURLOPT_URL, query);
