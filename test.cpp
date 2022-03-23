@@ -85,7 +85,7 @@ public:
 
 		        std::string response_string;
 		        std::string header_string;
-		        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFunction);
+		        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, this->writeFunction);
 		        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
 		        curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string);
 
