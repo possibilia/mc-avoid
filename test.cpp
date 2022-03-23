@@ -79,9 +79,9 @@ private:
 	void dumpData(A1LidarData* data) {
 		// initialise curl
 		auto curl = curl_easy_init();
+		std::cout << curl << "\n";
 
 		if (curl) {
-			std::cout << "here";
 			// get timestamp using unix epoch (secs)
 			auto now = std::chrono::system_clock::now();
 			unsigned t = std::chrono::duration_cast<std::chrono::seconds>(
