@@ -3,6 +3,8 @@
 #include <thread>
 #include <string>
 #include <iostream>
+#include <curl/curl.h>
+#include <boost/format.hpp>
 
 class ControlCallback : public AlphaBot::StepCallback {
 public:
@@ -43,10 +45,15 @@ private:
 class DataInterface : public A1Lidar::DataInterface {
 public:
 	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
+		// setup curl for data
+		auto curl = curl_easy_init();
+
+		// reset action
 		if ((action == 1) || (action == 2)) {
 			action = 0;
 		}
 
+		// determine action
 		for(A1LidarData &data: data) {
 			if ((data.valid) & (data.r < 0.3) & (data.r >= 0.0) & 
 				(data.phi > 0.0) & (data.phi < 1.0)) {
@@ -55,7 +62,22 @@ public:
 				(data.phi < 0.0) & (data.phi > -1.0)) {
 				action = 2;
 			}
+			
+			// get timestamp using unix epoch (secs)
+			auto now = std::chrono::system_clock::now();
+			unsigned t = std::chrono::duration_cast<std::chrono::seconds>(
+						 now.time_since_epoch()).count();
+
+			// send data to server
+			boost::format query = boost::fromat(URL) % t, data.x, 
+								  data.y, data.r, data.phi, data.signal;
+			curl_easy_setopt(curl, query);
 		}
+		
+		// tear down curl for data
+		curl_easy_perform(curl);
+		curl_easy_cleanup(curl);
+        curl = NULL;
 	}
 
 	unsigned getAction() {	
@@ -64,6 +86,7 @@ public:
 
 private:
 	unsigned action = 0;
+	const std::string URL = "https://localhost/query?t=%u&x=%f&y=%f&r=%f&phi=%f&signal=%f";
 
 };
 
@@ -87,6 +110,5 @@ int main(int, char **) {
 
 	alphabot.stop();
 	lidar.stop();
-
 	return 0;
 }
