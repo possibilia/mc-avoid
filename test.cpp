@@ -85,7 +85,7 @@ public:
 
 		        std::string response_string;
 		        std::string header_string;
-		        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, this->writeFunction);
+		        // curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, this->writeFunction);
 		        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
 		        curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string);
 
@@ -110,10 +110,10 @@ public:
 private:
 	unsigned action = 0;
 
-	size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string* data) {
-	    data->append((char*) ptr, size * nmemb);
-	    return size * nmemb;
-	}
+	// size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string* data) {
+	//     data->append((char*) ptr, size * nmemb);
+	//     return size * nmemb;
+	// }
 
 };
 
