@@ -57,7 +57,10 @@ public:
 				(data.phi < 0.0) & (data.phi > -1.0)) {
 				action = 2;
 			}
-			dumpData(&data);
+
+			if (data.valid) {
+				dumpData(&data);
+			}
 		}
 	}
 
@@ -91,8 +94,6 @@ private:
 			                    "&phi=" + std::to_string(data->phi) +
 			                    "&sig=" + std::to_string(data->signal_strength);
 
-			std::cout << query << "\n";
-
 			// send data to server
 			curl_easy_setopt(curl, CURLOPT_URL, query);
 			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
@@ -103,6 +104,9 @@ private:
 
 	        std::string response_string;
 	        std::string header_string;
+
+	        std::cout << response_string << "\n";
+
 	        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, this->writeFunction);
 	        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
 	        curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string);
