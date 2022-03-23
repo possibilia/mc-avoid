@@ -4,7 +4,6 @@
 #include <string>
 #include <iostream>
 #include <curl/curl.h>
-#include <boost/format.hpp>
 
 class ControlCallback : public AlphaBot::StepCallback {
 public:
@@ -76,7 +75,7 @@ public:
 			                    "&signal=" + std::to_string(data.signal);
 
 			// send data to server
-			curl_easy_setopt(curl, query);
+			curl_easy_setopt(curl, CURLOPT_URL, query);
 		}
 		
 		// tear down curl for data
