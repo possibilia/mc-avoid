@@ -105,8 +105,6 @@ private:
 	        std::string response_string;
 	        std::string header_string;
 
-	        std::cout << response_string << "\n";
-
 	        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, this->writeFunction);
 	        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
 	        curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string);
@@ -119,6 +117,9 @@ private:
 	        curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
 	        
 	        curl_easy_perform(curl);
+
+	        std::cout << response_string << "\n";
+	        
 	        curl_easy_cleanup(curl);
 	        curl = NULL;
 		}
