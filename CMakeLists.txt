@@ -21,3 +21,7 @@ target_link_libraries(test alphabot a1lidarrpi pigpio pthread ${CURL_LIBRARIES})
 
 add_executable(exp exp.cpp)
 target_link_libraries(exp alphabot a1lidarrpi pigpio pthread)
+
+add_executable(curlTest curlTest.cpp)
+target_link_libraries(curlTest ${CURL_LIBRARIES})
+
