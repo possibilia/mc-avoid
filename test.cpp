@@ -81,6 +81,7 @@ private:
 		auto curl = curl_easy_init();
 
 		if (curl) {
+			std::cout << "here";
 			// get timestamp using unix epoch (secs)
 			auto now = std::chrono::system_clock::now();
 			unsigned t = std::chrono::duration_cast<std::chrono::seconds>(
@@ -117,9 +118,6 @@ private:
 	        curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
 	        
 	        curl_easy_perform(curl);
-
-	        std::cout << response_string << "\n";
-	        
 	        curl_easy_cleanup(curl);
 	        curl = NULL;
 		}
