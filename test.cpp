@@ -68,7 +68,7 @@ public:
 						 now.time_since_epoch()).count();
 			
 			// build the query string
-			std::string query = "https://localhost:5000/query?t=" + std::to_string(t) +
+			std::string query = "https://192.168.0.111:5000/query?t=" + std::to_string(t) +
 			                    "&x=" + std::to_string(data.x) +
 			                    "&y=" + std::to_string(data.y) +
 			                    "&r=" + std::to_string(data.r) +
