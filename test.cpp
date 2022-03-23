@@ -77,11 +77,11 @@ public:
 
 			// send data to server
 			curl_easy_setopt(curl, CURLOPT_URL, query);
+			curl_easy_perform(curl);
+			curl_easy_cleanup(curl);
 		}
 		
 		// tear down curl for data
-		curl_easy_perform(curl);
-		curl_easy_cleanup(curl);
         curl = NULL;
 	}
 
