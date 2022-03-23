@@ -62,15 +62,20 @@ public:
 				(data.phi < 0.0) & (data.phi > -1.0)) {
 				action = 2;
 			}
-			
+
 			// get timestamp using unix epoch (secs)
 			auto now = std::chrono::system_clock::now();
 			unsigned t = std::chrono::duration_cast<std::chrono::seconds>(
 						 now.time_since_epoch()).count();
+			
+			// build the query string
+			std::string query = "https://localhost:5000/query?t=" + std::to_string(t) +
+			                    "&x=" + std::to_string(data.x) +
+			                    "&y=" + std::to_string(data.y) +
+			                    "&r=" + std::to_string(data.r) +
+			                    "&signal=" + std::to_string(data.signal);
 
 			// send data to server
-			boost::format query = boost::fromat(URL) % t, data.x, 
-								  data.y, data.r, data.phi, data.signal;
 			curl_easy_setopt(curl, query);
 		}
 		
@@ -86,7 +91,6 @@ public:
 
 private:
 	unsigned action = 0;
-	const std::string URL = "https://localhost/query?t=%u&x=%f&y=%f&r=%f&phi=%f&signal=%f";
 
 };
 
