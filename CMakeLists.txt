@@ -11,11 +11,13 @@ add_compile_options(-Wall)
 
 include(GNUInstallDirs)
 
+find_package(boost COMPONENTS format)
+
 find_library(alphabot NAMES alphabot HINTS "${CMAKE_INSTALL_LIBDIR}")
 find_library(a1lidarrpi NAMES a1lidarrpi HINTS "${CMAKE_INSTALL_LIBDIR}")
 
 add_executable(test test.cpp)
-target_link_libraries(test alphabot a1lidarrpi pigpio pthread)
+target_link_libraries(test alphabot a1lidarrpi pigpio pthread, boost)
 
 add_executable(exp exp.cpp)
 target_link_libraries(exp alphabot a1lidarrpi pigpio pthread)
