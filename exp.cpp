@@ -19,7 +19,7 @@ public:
 	}
 
 private:
-	const float max = 0.1425;
+	const float max = (0.1425 * 0.66);
 
 	float distance = 0.2;
 	float theta = 1.5708;
@@ -71,7 +71,7 @@ private:
 		rightDistance += speedR * 0.1;
 
 		delta_distance = (leftDistance + rightDistance) / 2.0; 
-  		delta_theta = (rightDistance - leftDistance) / (0.142 * 0.66); // in radians
+  		delta_theta = (rightDistance - leftDistance) / 0.142; // in radians
 	}
 
 };
