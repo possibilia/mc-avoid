@@ -58,7 +58,7 @@ private:
 
 		// sampling rate 100ms
 		leftDistance = speedL * 0.1;
-		rightDistance = speedr * 0.1;
+		rightDistance = speedR * 0.1;
 
 		leftDistanceLast = leftDistance;
 		rightDistanceLast = rightDistance;
@@ -68,8 +68,6 @@ private:
 
   		std::cout << "Delta distance: " << delta_distance << "\n";
   		std::cout << "Delta theta: " << delta_theta << "\n";
-
-		return s * 0.1; // sampling rate 100 ms
 	}
 
 };
