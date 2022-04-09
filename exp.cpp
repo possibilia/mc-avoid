@@ -1,51 +1,97 @@
 #include "alphabot.h"
+#include "a1lidarrpi.h"
 #include <thread>
 #include <string>
 #include <iostream>
+#include <curl/curl.h>
 
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		stop(&alphabot, speed);
-		turn(&alphabot, speed);
+	std::cout << "Left: " << &alphabot->getLeftDistance() << "\n";
+	std::cout << "Right: " << &alphabot->getRightDistance() << "\n";
 
-		if (speed > 1.0) {
-			speed = 0.0;
-		} else {
-			speed += 0.1;
+		if (action == 0) {
+			forward(&alphabot, 0.3);
+		} else if (action == 1) {
+			turnLeft(&alphabot, 0.3);
+		} else if (action == 2) {
+			turnRight(&alphabot, 0.3);
 		}
 	}
 
-private:
-	float speed = 0.0;
+	void setAction(unsigned action) {
+		this->action = action;
+	}
 
-	void stop(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(0.0);
+private:
+	// should block until path complete unless legit interruption
+	unsigned action = 0;
+
+	void forward(AlphaBot* alphabot, float speed) {
+		alphabot->setLeftWheelSpeed(speed);
+		alphabot->setRightWheelSpeed(speed);
+	}
+
+	void turnLeft(AlphaBot* alphabot, float speed) {
+		alphabot->setLeftWheelSpeed(speed);
 		alphabot->setRightWheelSpeed(0.0);
 	}
 
-	void turn(AlphaBot* alphabot, float speed) {
-		alphabot->setLeftWheelSpeed(speed);
-		alphabot->setRightWheelSpeed(-speed);
+	void turnRight(AlphaBot* alphabot, float speed) {
+		alphabot->setLeftWheelSpeed(0.0);
+		alphabot->setRightWheelSpeed(speed);
 	}
+
+};
+
+class DataInterface : public A1Lidar::DataInterface {
+public:
+	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
+		if ((action == 1) || (action == 2)) {
+			action = 0;
+		}
+
+		for(A1LidarData &data: data) {
+			if ((data.valid) & (data.r < 0.3) & (data.r >= 0.0) & 
+				(data.phi > 0.0) & (data.phi < 1.0)) {
+				action = 1;
+			} else if ((data.valid) & (data.r < 0.3) & (data.r >= 0.0) & 
+				(data.phi < 0.0) & (data.phi > -1.0)) {
+				action = 2;
+			}
+		}
+	}
+
+	unsigned getAction() {	
+		return action;
+	}
+
+private:
+	unsigned action = 0;
+
 };
 
 int main(int, char **) { 
+	DataInterface data;
 	ControlCallback control;
 
 	AlphaBot alphabot;
 	alphabot.registerStepCallback(&control);
 	alphabot.start();
 
-	while(true) {
-		std::string command;
-		std::cin >> command;
+	A1Lidar lidar;
+	lidar.registerInterface(&data);
+	lidar.start();
 
-		if (command == "q") {
-			alphabot.stop();
-			break;
-		}
+	while(true) {
+		// actions should be a set of waypoints [x, y, theta]
+		unsigned action;
+		action = data.getAction();
+		control.setAction(action);
 	}
 
+	alphabot.stop();
+	lidar.stop();
 	return 0;
 }
