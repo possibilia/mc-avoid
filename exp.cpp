@@ -25,7 +25,6 @@ public:
 	}
 
 private:
-	// should block until path complete unless legit interruption
 	unsigned action = 0;
 	float leftDistance = 0;
 	float rightDistance = 0;
