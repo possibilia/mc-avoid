@@ -35,7 +35,7 @@ private:
 
 	void stop(AlphaBot* alphabot) {
 		alphabot->setLeftWheelSpeed(0.0);
-		alphabot-setRightWheelSpeed(0.0);
+		alphabot->setRightWheelSpeed(0.0);
 	}
 
 	void forward(AlphaBot* alphabot, float speed) {
