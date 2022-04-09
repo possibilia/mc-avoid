@@ -9,7 +9,7 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		if (delta_distance < std::abs(theta)) {
+		if (std::abs(delta_distance) < std::abs(theta)) {
 			turn(&alphabot, 0.3);
 		} else {
 			forward(&alphabot, 0.3);
