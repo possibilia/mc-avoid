@@ -8,8 +8,8 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-	std::cout << "Left: " << alphabot.getLeftDistance() << "\n";
-	std::cout << "Right: " << alphabot.getRightDistance() << "\n";
+		std::cout << "Left: " << leftDistance << "\n";
+		std::cout << "Right: " << rightDistance << "\n";
 
 		if (action == 0) {
 			forward(&alphabot, 0.3);
@@ -27,20 +27,33 @@ public:
 private:
 	// should block until path complete unless legit interruption
 	unsigned action = 0;
+	float leftDistance = 0;
+	float right_Distance = 0;
 
 	void forward(AlphaBot* alphabot, float speed) {
 		alphabot->setLeftWheelSpeed(speed);
+		leftDistance = setDistance(speed);
 		alphabot->setRightWheelSpeed(speed);
+		rightDistance = setDistance(speed);
 	}
 
 	void turnLeft(AlphaBot* alphabot, float speed) {
 		alphabot->setLeftWheelSpeed(speed);
+		leftDistance = setDistance(speed);
 		alphabot->setRightWheelSpeed(0.0);
+		rightDistance = setDistance(0.0);
 	}
 
 	void turnRight(AlphaBot* alphabot, float speed) {
 		alphabot->setLeftWheelSpeed(0.0);
+		leftDistance = setDistance(0.0);
 		alphabot->setRightWheelSpeed(speed);
+		rightDistance = setDistance(speed);
+	}
+
+	void setDistance(float speed) {
+		s = 0.1425 * speed: // 0.1425 is measure max speed
+		return s * 0.1 // sampling rate 100 ms
 	}
 
 };
