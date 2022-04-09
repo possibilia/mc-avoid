@@ -29,6 +29,9 @@ private:
 	unsigned action = 0;
 	float leftDistance = 0;
 	float rightDistance = 0;
+	float leftDistanceLast = 0;
+	float rightDistanceLast = 0;
+	const float max = 0.1425;
 
 	void forward(AlphaBot* alphabot, float speed) {
 		alphabot->setLeftWheelSpeed(speed);
@@ -51,8 +54,24 @@ private:
 		rightDistance += getDistance(speed);
 	}
 
-	float getDistance(float speed) {
-		float s = 0.1425 * speed; // 0.1425 is measure max speed
+	void updateDistance(float L, float R) {
+		// 0.1425 is measure max speed
+		float speedL = max * L; 
+		float speedR = max * R; 
+
+		// sampling rate 100ms
+		leftDistance = speedL * 0.1;
+		rightDistance = speedr * 0.1;
+
+		leftDistanceLast = leftDistance;
+		rightDistanceLast = rightDistance;
+
+		float delta_distance = (leftDistance + rightDistance) / 2.0; 
+  		float delta_theta = (rightDistance - leftDistance) / 0.142; // in radians
+
+  		std::cout << "Delta distance: " << delta_distance << "\n";
+  		std::cout << "Delta theta: " << delta_theta << "\n";
+
 		return s * 0.1; // sampling rate 100 ms
 	}
 
