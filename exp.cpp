@@ -28,7 +28,7 @@ private:
 	// should block until path complete unless legit interruption
 	unsigned action = 0;
 	float leftDistance = 0;
-	float right_Distance = 0;
+	float rightDistance = 0;
 
 	void forward(AlphaBot* alphabot, float speed) {
 		alphabot->setLeftWheelSpeed(speed);
@@ -51,8 +51,8 @@ private:
 		rightDistance = setDistance(speed);
 	}
 
-	void setDistance(float speed) {
-		s = 0.1425 * speed: // 0.1425 is measure max speed
+	float getDistance(float speed) {
+		float s = 0.1425 * speed: // 0.1425 is measure max speed
 		return s * 0.1 // sampling rate 100 ms
 	}
 
