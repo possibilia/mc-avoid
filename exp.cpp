@@ -8,8 +8,8 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		std::cout << "ADC_LEFT: " << alphabot.readADC(ADC_DIST_L) << "\n";
-		std::cout << "ADC_RIGHT: " << alphabot.readADC(ADC_DIST_R) << "\n";
+	std::cout << "Left: " << alphabot.getLeftDistance() << "\n";
+	std::cout << "Right: " << alphabot.getRightDistance() << "\n";
 
 		if (action == 0) {
 			forward(&alphabot, 0.3);
