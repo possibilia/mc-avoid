@@ -35,23 +35,20 @@ private:
 
 	void forward(AlphaBot* alphabot, float speed) {
 		alphabot->setLeftWheelSpeed(speed);
-		leftDistance += getDistance(speed);
 		alphabot->setRightWheelSpeed(speed);
-		rightDistance += getDistance(speed);
+		updateDistance(speed, speed);
 	}
 
 	void turnLeft(AlphaBot* alphabot, float speed) {
 		alphabot->setLeftWheelSpeed(speed);
-		leftDistance += getDistance(speed);
 		alphabot->setRightWheelSpeed(0.0);
-		rightDistance += getDistance(0.0);
+		updateDistance(speed, 0.0);
 	}
 
 	void turnRight(AlphaBot* alphabot, float speed) {
 		alphabot->setLeftWheelSpeed(0.0);
-		leftDistance += getDistance(0.0);
 		alphabot->setRightWheelSpeed(speed);
-		rightDistance += getDistance(speed);
+		updateDistance(0.0, speed);
 	}
 
 	void updateDistance(float L, float R) {
