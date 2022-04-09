@@ -77,6 +77,10 @@ int main(int, char **) {
 	alphabot.registerStepCallback(&control);
 	alphabot.start();
 
+	while(true) {
+		// do nothing
+	}
+
 	alphabot.stop();
 	return 0;
 }
