@@ -19,7 +19,7 @@ public:
 	}
 
 private:
-	const float max = (0.1425 * 0.66);
+	const float max = (0.1425 * 1.33);
 
 	float distance = 0.2;
 	float theta = 1.5708;
