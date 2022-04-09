@@ -64,7 +64,7 @@ private:
 		rightDistanceLast = rightDistance;
 
 		float delta_distance = (leftDistance + rightDistance) / 2.0; 
-  		float delta_theta = (rightDistance - leftDistance) / 0.142; // in radians
+  		float delta_theta = (rightDistance - leftDistance) / 0.142 % 3.14; // in radians
 
   		std::cout << "Delta distance: " << delta_distance << "\n";
   		std::cout << "Delta theta: " << delta_theta << "\n";
