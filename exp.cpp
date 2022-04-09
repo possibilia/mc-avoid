@@ -71,7 +71,7 @@ private:
 		rightDistance += speedR * 0.1;
 
 		delta_distance = (leftDistance + rightDistance) / 2.0; 
-  		delta_theta = (rightDistance - leftDistance) / 0.14; // in radians
+  		delta_theta = (rightDistance - leftDistance) / 0.1; // in radians
 	}
 
 };
