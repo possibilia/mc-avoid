@@ -57,8 +57,8 @@ private:
 		float speedR = max * R; 
 
 		// sampling rate 100ms
-		leftDistance = speedL * 0.1;
-		rightDistance = speedR * 0.1;
+		leftDistance += speedL * 0.1;
+		rightDistance += speedR * 0.1;
 
 		leftDistanceLast = leftDistance;
 		rightDistanceLast = rightDistance;
