@@ -53,7 +53,7 @@ private:
 
 	float getDistance(float speed) {
 		float s = 0.1425 * speed; // 0.1425 is measure max speed
-		return s * 0.1 // sampling rate 100 ms
+		return s * 0.1; // sampling rate 100 ms
 	}
 
 };
