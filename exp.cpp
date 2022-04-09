@@ -11,8 +11,10 @@ public:
 	virtual void step(AlphaBot &alphabot) {
 		if (std::abs(delta_theta) < std::abs(theta)) {
 			turn(&alphabot, 0.3);
-		} else {
+		} else if (delta_distance < distance) {
 			forward(&alphabot, 0.3);
+		} else {
+			stop(&alphabot);
 		}
 	}
 
@@ -30,6 +32,11 @@ private:
 
 	float delta_distance;
 	float delta_theta; 
+
+	void stop(AlphaBot* alphabot) {
+		alphabot->setLeftWheelSpeed(0.0);
+		alphabot-setRightWheelSpeed(0.0);
+	}
 
 	void forward(AlphaBot* alphabot, float speed) {
 		alphabot->setLeftWheelSpeed(speed);
