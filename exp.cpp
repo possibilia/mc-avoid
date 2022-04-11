@@ -16,6 +16,7 @@ public:
 		} else if (delta_distance < action_q.front()[0]) {
 			forward(&alphabot, 0.3);
 			action_q.pop_front();
+		}
 		else if (action_q.empty()){
 			stop(&alphabot);
 		}
