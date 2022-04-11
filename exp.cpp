@@ -14,7 +14,7 @@ struct {
 	std::vector<float> TURN_RIGHT = {0.2, -1.570796};
 	std::vector<float> SWERVE_LEFT = {0.2, 1.570796 / 2};
 	std::vector<float> SWERVE_RIGHT = {0.2, -1.570796 / 2};
-	std::vector<float> TURN_AROUND = {0.0, -1.570796 * 4};
+	std::vector<float> TURN_AROUND = {0.0, -1.570796 * 2};
 } localActions; 
 
 class ControlCallback : public AlphaBot::StepCallback {
