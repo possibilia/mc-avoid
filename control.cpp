@@ -68,7 +68,7 @@ int main(int, char **) {
 	while(true) {
 		std::vector<float> weights;
 		weights = data.getWeights();
-		control.setWeights();
+		control.setWeights(weights);
 	}
 
 	alphabot.stop();
