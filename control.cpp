@@ -57,7 +57,7 @@ public:
 		}
 	}
 
-	float * getWeights() {	
+	std::vector<float> getWeights() {	
 		return weights;
 	}
 
