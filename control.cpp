@@ -18,11 +18,11 @@ class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
 		if (action_q.front()[1] == 0.0) {
-			alphabot->setLeftWheelSpeed(speed);
-			alphabot->setRightWheelSpeed(speed);
+			alphabot.setLeftWheelSpeed(speed);
+			alphabot.setRightWheelSpeed(speed);
 		} else {
-			alphabot->setLeftWheelSpeed(speed);
-			alphabot->setRightWheelSpeed(speed);
+			alphabot.setLeftWheelSpeed(speed);
+			alphabot.setRightWheelSpeed(speed);
 		}
 		action_q.pop_front();
 	}
@@ -49,12 +49,12 @@ public:
 		for(A1LidarData &data: data) {
 			if ((data.valid) & (data.r < 1.0) & (data.r > 0.0) & 
 				(data.phi > 0.0) & (data.phi < 1.0)) {
-				if (data.r < min) {
+				if (data.r < weights[0]) {
 					weights[0] = data.r;
 				}
 			} else if ((data.valid) & (data.r < 1.0) & (data.r > 0.0) & 
 				(data.phi < 0.0) & (data.phi > -1.0)) {
-				if (data.r < min) {
+				if (data.r < weights[1]) {
 					weights[1] = data.r;
 				}
 			}
