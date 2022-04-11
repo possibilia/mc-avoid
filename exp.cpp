@@ -9,15 +9,17 @@
 #include <vector>
 
 struct {
-	std::vector<float> EAST = {0.2, 0.0};
-	std::vector<float> NORTH_EAST = {0.2, 0.785398};
-	std::vector<float> NORTH = {0.2, 0.785398 * 2};
-	std::vector<float> NORTH_WEST = {0.2, 0.785398 * 3};
-	std::vector<float> WEST = {0.2, 0.785398 * 4};
-	std::vector<float> SOUTH_WEST = {0.2, -0.785398 * 3};
-	std::vector<float> SOUTH = {0.2, -0.785398 * 2};
-	std::vector<float> SOUTH_EAST = {0.2, -0.785398};
-} actions; 
+	// has to be the pose so need kinematics
+	// also has to be options to swerve robot
+	std::vector<float> DRIVE_AHEAD = {0.2, 0.0};
+	std::vector<float> DRIVE_LEFT45 = {0.2, 0.785398};
+	std::vector<float> DRIVE_LEFT90 = {0.2, 0.785398 * 2};
+	std::vector<float> DRIVE_LEFT135 = {0.2, 0.785398 * 3};
+	std::vector<float> DRIVE_LEFT180 = {0.2, 0.785398 * 4};
+	std::vector<float> DRIVE_RIGHT135 = {0.2, -0.785398 * 3};
+	std::vector<float> DRIVE_RIGHT90 = {0.2, -0.785398 * 2};
+	std::vector<float> DRIVE_RIGHT45 = {0.2, -0.785398};
+} localActions; 
 
 class ControlCallback : public AlphaBot::StepCallback {
 public:
@@ -101,11 +103,11 @@ int main(int, char **) {
 
 	// distances and angles
 	std::vector<std::vector<float>> sequence = {
-		actions.EAST,
-		actions.NORTH,
-		actions.WEST,
-		actions.SOUTH,
-		actions.EAST,
+		localActions.DRIVE_AHEAD,
+		localActions.DRIVE_LEFT90,
+		localActions.DRIVE_LEFT90,
+		localActions.DRIVE_LEFT90,
+		localActions.DRIVE_LEFT90,
 	};
 
 	control.pushActions(sequence);
