@@ -65,13 +65,13 @@ private:
 
 	void turn(AlphaBot* alphabot, float speed) {
 		if (action_q.front()[1] < 0) { // turn right
-			alphabot->setLeftWheelSpeed(-0.2);
-			alphabot->setRightWheelSpeed(speed+0.2);
-			updateDistance(0.0, speed);
-		} else { // turn left
 			alphabot->setLeftWheelSpeed(speed+0.2);
 			alphabot->setRightWheelSpeed(-0.2);
-			updateDistance(speed, 0.0);
+			updateDistance(speed+0.2, -0.2);
+		} else { // turn left
+			alphabot->setLeftWheelSpeed(-0.2);
+			alphabot->setRightWheelSpeed(speed+0.2);
+			updateDistance(-0.2, speed+0.2);
 		}
 	}
 
