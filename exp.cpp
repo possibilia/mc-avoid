@@ -36,7 +36,7 @@ public:
 
 			delta_distance = 0;
 			delta_theta = 0;
-		}a
+		}
 	}
 
 	void pushActions(std::vector<std::vector<float>> actions) {
