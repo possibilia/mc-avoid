@@ -30,7 +30,7 @@ public:
 
 private:
 	const float speed = 0.3;
-	std::list<std::vector<float>> action_q = {};
+	std::list<std::vector<float>> action_q = {localActions.DRIVE_AHEAD};
 
 };
 
@@ -69,7 +69,7 @@ int main(int, char **) {
 	A1Lidar lidar;
 	lidar.registerInterface(&data);
 	lidar.start();
-	
+
 	AlphaBot alphabot;
 	alphabot.registerStepCallback(&control);
 	alphabot.start();
