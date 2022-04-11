@@ -11,6 +11,9 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
+		std::cout << "Distance: " << action_q.front()[0] << "\n";
+		std::cout << "Theta : " << action_q.front()[1] << "\n";
+
 		if (std::abs(delta_theta) < std::abs(action_q.front()[1])) {
 			std::cout << "A" << "\n";
 			turn(&alphabot, 0.3);
