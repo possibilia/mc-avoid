@@ -18,17 +18,33 @@ public:
 		}
 	}
 
-private:
-	const float max = 0.228;
+	void pushActions(float[][] actions, bool front) {
+		unsigned rows = sizeof(actions) / sizeof(actions[0]);
 
-	float distance = 0.2;
-	float theta = 1.5708;
+		for (unsigned i = 0; i < rows; i++) {
+			if (front) {
+				action_q.push_front(actions[i]);
+			} else {
+				action_q.push_back(actions[i]);
+			}
+		}
+	}
+
+private:
+	// wheel separation m
+	const float L = 0.142;
+
+	// max speed m/s
+	const float actualSpeedMax = 0.228;
+
+	// sampling rate s
+	const float samplingRate = 0.1;
+
+	// maintained queue of actions
+	std::list<float[]> action_q = {};
 
 	float leftDistance = 0;
 	float rightDistance = 0;
-
-	float leftWheelSpeed = 0;
-	float rightWheelSpeed = 0;
 
 	float delta_distance;
 	float delta_theta; 
@@ -45,33 +61,24 @@ private:
 	}
 
 	void turn(AlphaBot* alphabot, float speed) {
-		if (theta < 0) {
-			// turn right if theta -ve
-			leftWheelSpeed = speed;
-			rightWheelSpeed = -speed;
+		if (theta < 0) { // turn right
+			alphabot->setLeftWheelSpeed(speed);
+			alphabot->setRightWheelSpeed(-speed);
+			updateDistance(speed, -speed);
 
-		} else {
-			// otherwise +ve so turn left
-			leftWheelSpeed = -speed;
-			rightWheelSpeed = speed;
+		} else { // turn left
+			alphabot->setLeftWheelSpeed(-speed);
+			alphabot->setRightWheelSpeed(speed);
+			updateDistance(-speed, speed);
 		}
-
-		alphabot->setLeftWheelSpeed(leftWheelSpeed);
-		alphabot->setRightWheelSpeed(rightWheelSpeed);
-		updateDistance(leftWheelSpeed, rightWheelSpeed);
 	}
 
-	void updateDistance(float L, float R) {
-		// 0.1425 is measure max speed
-		float speedL = max * L; 
-		float speedR = max * R; 
-
-		// sampling rate 100ms/0.1s
-		leftDistance += speedL * 0.1;
-		rightDistance += speedR * 0.1;
+	void updateDistance(float scaledSpeedLeft, float scaledSpeedRight) {
+		leftDistance += actualSpeedMax * scaledSpeedLeft * samplingRate;
+		rightDistance += actualSpeedMax * scaledSpeedRight * samplingRate;
 
 		delta_distance = (leftDistance + rightDistance) / 2.0; 
-  		delta_theta = (rightDistance - leftDistance) / 0.142; // in radians
+  		delta_theta = (rightDistance - leftDistance) / L; 
 	}
 
 };
@@ -83,6 +90,16 @@ int main(int, char **) {
 	AlphaBot alphabot;
 	alphabot.registerStepCallback(&control);
 	alphabot.start();
+
+	// distances and angles
+	float[][] actions = {
+		{0.2, 1.5708},
+		{0.2, 1.5708},
+		{0.2, 1.5708},
+		{0.2, 1.5708},
+	};
+
+	control.pushActions(actions, false);
 
 	while(true) {
 		// do nothing
