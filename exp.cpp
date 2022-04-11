@@ -15,7 +15,7 @@ struct {
 	std::vector<float> DRIVE_LEFT = {0.2, 1.570796};
 	std::vector<float> ABOUT_TURN = {0.2, 1.570796 * 4};
 	std::vector<float> DRIVE_RIGHT = {0.2, -1.570796 * 2};
-	std::vector<float> SWERVE_LEFT = {0.0, 1.570796};
+	std::vector<float> SWERVE_LEFT = {0.0, 1.570796 };
 	std::vector<float> SWERVE_RIGHT = {0.0, -1.570796};
 } localActions; 
 
@@ -26,7 +26,7 @@ public:
 			turn(&alphabot, 0.3);
 		} else if (delta_distance < action_q.front()[0]) {
 			forward(&alphabot, 0.3);
-		} else if ((std::abs(delta_theta) < std::abs(action_q.front()[1])) & (action_q.front()[1] == 0.0))  {
+		} else if ((std::abs(delta_theta) < std::abs(action_q.front()[1])) & (action_q.front()[0] == 0.0))  {
 			swerve(&alphabot, 0.3);
 		} else {
 			action_q.pop_front();
