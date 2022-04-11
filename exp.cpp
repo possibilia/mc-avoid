@@ -9,16 +9,14 @@
 #include <vector>
 
 struct {
-	float 45_DEG = 0.785398;
-
 	std::vector<float> EAST = {0.2, 0.0};
-	std::vector<float> NORTH_EAST = {0.2, 45_DEG};
-	std::vector<float> NORTH = {0.2, 45_DEG * 2};
-	std::vector<float> NORTH_WEST = {0.2, 45_DEG * 3};
-	std::vector<float> WEST = {0.2, 45_DEG * 4};
-	std::vector<float> SOUTH_WEST = {0.2, -45_DEG * 3};
-	std::vector<float> SOUTH = {0.2, -45_DEG * 2};
-	std::vector<float> SOUTH_EAST = {0.2, -45_DEG};
+	std::vector<float> NORTH_EAST = {0.2, 0.785398};
+	std::vector<float> NORTH = {0.2, 0.785398 * 2};
+	std::vector<float> NORTH_WEST = {0.2, 0.785398 * 3};
+	std::vector<float> WEST = {0.2, 0.785398 * 4};
+	std::vector<float> SOUTH_WEST = {0.2, -0.785398 * 3};
+	std::vector<float> SOUTH = {0.2, -0.785398 * 2};
+	std::vector<float> SOUTH_EAST = {0.2, -0.785398};
 
 } actions; 
 
