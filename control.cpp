@@ -62,7 +62,7 @@ public:
 	}
 
 private:
-	float weights[] = {1.0, 1.0};
+	std::vector<float> weights = {1.0, 1.0};
 };
 
 int main(int, char **) { 
