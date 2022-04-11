@@ -97,8 +97,12 @@ int main(int, char **) {
 	std::vector<std::vector<float>> sequence = {
 		localActions.DRIVE_AHEAD,
 		localActions.SWERVE_LEFT,
+		localActions.DRIVE_AHEAD,
 		localActions.SWERVE_RIGHT,
 		localActions.DRIVE_AHEAD,
+		localActions.TURN_RIGHT,
+		localActions.DRIVE_AHEAD,
+		localActions.TURN_RIGHT,
 		localActions.DRIVE_AHEAD
 	};
 
