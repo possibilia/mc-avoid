@@ -36,10 +36,10 @@ public:
 
 private:
 	// wheel separation m
-	const float L = 0.142;
+	const float L = 0.142 * 0.9;
 
 	// max speed m/s
-	const float actualSpeedMax = 0.22;
+	const float actualSpeedMax = 0.2;
 
 	// sampling rate s
 	const float samplingRate = 0.1;
