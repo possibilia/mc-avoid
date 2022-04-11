@@ -39,7 +39,7 @@ public:
 
 private:
 	// wheel separation m
-	const float L = 0.142 * 0.86;
+	const float L = 0.142 * 0.865;
 
 	// max speed m/s
 	const float actualSpeedMax = 0.2;
