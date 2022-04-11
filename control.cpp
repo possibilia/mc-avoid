@@ -114,7 +114,7 @@ int main(int, char **) {
 	while(true) {
 		std::vector<float> weights;
 		weights = data.getWeights();
-		localActions.TURN_LEFT[0] = default_speed * weights[0]
+		localActions.TURN_LEFT[0] = default_speed * weights[0];
 		localActions.TURN_RIGHT[0] = default_speed * weights[1];
 	}
 
