@@ -8,18 +8,11 @@
 #include <list>
 #include <vector>
 
-struct {
-	std::vector<float> DRIVE_AHEAD = {0.0, 0.0};
-	std::vector<float> TURN_RIGHT = {0.0, 1.};
-	std::vector<float> TURN_LEFT = {0.0, -1.};
-} localActions; 
-
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
 		alphabot.setLeftWheelSpeed(speed * weights[0]);
-		alphabot.setRightWheelSpeed(speed * weights[0]);
-		action_q.pop_front();
+		alphabot.setRightWheelSpeed(speed * weights[1]);
 	}
 
 	void setWeights(std::vector<float> weights) {
