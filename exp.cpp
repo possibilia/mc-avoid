@@ -17,7 +17,6 @@ struct {
 	std::vector<float> SOUTH_WEST = {0.2, -0.785398 * 3};
 	std::vector<float> SOUTH = {0.2, -0.785398 * 2};
 	std::vector<float> SOUTH_EAST = {0.2, -0.785398};
-
 } actions; 
 
 class ControlCallback : public AlphaBot::StepCallback {
@@ -104,9 +103,9 @@ int main(int, char **) {
 	std::vector<std::vector<float>> sequence = {
 		actions.EAST,
 		actions.NORTH,
-		actions.WEST;
-		actions.SOUTH;
-		actions.EAST;
+		actions.WEST,
+		actions.SOUTH,
+		actions.EAST,
 	};
 
 	control.pushActions(sequence);
