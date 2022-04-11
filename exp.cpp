@@ -39,7 +39,7 @@ private:
 	const float L = 0.142;
 
 	// max speed m/s
-	const float actualSpeedMax = 0.215;
+	const float actualSpeedMax = 0.22;
 
 	// sampling rate s
 	const float samplingRate = 0.1;
