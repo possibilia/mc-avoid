@@ -5,6 +5,8 @@
 #include <iostream>
 #include <cmath>
 #include <curl/curl.h>
+#include <list>
+#include <vector>
 
 class ControlCallback : public AlphaBot::StepCallback {
 public:
@@ -18,7 +20,7 @@ public:
 		}
 	}
 
-	void pushActions(std::vector<std::vector<float>>* actions, bool front) {
+	void pushActions(std::vector<std::vector<float>> actions, bool front) {
 		unsigned rows = 4;
 
 		for (unsigned row : actions) {
