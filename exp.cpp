@@ -12,11 +12,8 @@ struct {
 	// has to be the pose so need kinematics
 	// also has to be options to swerve robot
 	std::vector<float> DRIVE_AHEAD = {0.2, 0.0};
-	std::vector<float> DRIVE_LEFT = {0.2, 1.570796};
-	std::vector<float> ABOUT_TURN = {0.2, 1.570796 * 4};
-	std::vector<float> DRIVE_RIGHT = {0.2, -1.570796 * 2};
-	std::vector<float> SWERVE_LEFT = {0.0, 1.570796};
-	std::vector<float> SWERVE_RIGHT = {0.0, -1.570796};
+	std::vector<float> TURN_LEFT = {0.0, 1.570796};
+	std::vector<float> TURN_RIGHT = {0.0, -1.570796};
 } localActions; 
 
 class ControlCallback : public AlphaBot::StepCallback {
@@ -26,8 +23,6 @@ public:
 			turn(&alphabot, 0.3);
 		} else if (delta_distance < action_q.front()[0]) {
 			forward(&alphabot, 0.3);
-		} else if ((std::abs(delta_theta) < std::abs(action_q.front()[1])) & (action_q.front()[0] == 0.0))  {
-			swerve(&alphabot, 0.3);
 		} else {
 			action_q.pop_front();
 			
@@ -72,26 +67,13 @@ private:
 
 	void turn(AlphaBot* alphabot, float speed) {
 		if (action_q.front()[1] < 0) { // turn right
-			alphabot->setLeftWheelSpeed(speed);
-			alphabot->setRightWheelSpeed(-speed);
-			updateDistance(speed, -speed);
-
+			alphabot->setLeftWheelSpeed(0.0);
+			alphabot->setRightWheelSpeed(speed+0.2);
+			updateDistance(0.0, speed);
 		} else { // turn left
-			alphabot->setLeftWheelSpeed(-speed);
-			alphabot->setRightWheelSpeed(speed);
-			updateDistance(-speed, speed);
-		}
-	}
-
-	void swerve(AlphaBot* alphabot, float speed) {
-		if (action_q.front()[1] < 0) {
-			alphabot->setLeftWheelSpeed(speed);
+			alphabot->setLeftWheelSpeed(speed+0.2);
 			alphabot->setRightWheelSpeed(0.0);
 			updateDistance(speed, 0.0);
-		} else {
-			alphabot->setLeftWheelSpeed(0.0);
-			alphabot->setRightWheelSpeed(speed);
-			updateDistance(0.0, speed);
 		}
 	}
 
@@ -114,8 +96,8 @@ int main(int, char **) {
 	// distances and angles
 	std::vector<std::vector<float>> sequence = {
 		localActions.DRIVE_AHEAD,
-		localActions.SWERVE_LEFT,
-		localActions.DRIVE_AHEAD,
+		localActions.TURN_LEFT,
+		localActions.TURN_RIGHT,
 		localActions.DRIVE_AHEAD,
 		localActions.DRIVE_AHEAD
 	};
