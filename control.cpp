@@ -66,6 +66,7 @@ private:
 };
 
 int main(int, char **) { 
+	DataInterface data;
 	ControlCallback control;
 
 	AlphaBot alphabot;
