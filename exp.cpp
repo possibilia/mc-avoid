@@ -12,13 +12,11 @@ struct {
 	// has to be the pose so need kinematics
 	// also has to be options to swerve robot
 	std::vector<float> DRIVE_AHEAD = {0.2, 0.0};
-	std::vector<float> DRIVE_LEFT45 = {0.2, 0.785398};
-	std::vector<float> DRIVE_LEFT90 = {0.2, 0.785398 * 2};
-	std::vector<float> DRIVE_LEFT135 = {0.2, 0.785398 * 3};
-	std::vector<float> DRIVE_LEFT180 = {0.2, 0.785398 * 4};
-	std::vector<float> DRIVE_RIGHT135 = {0.2, -0.785398 * 3};
-	std::vector<float> DRIVE_RIGHT90 = {0.2, -0.785398 * 2};
-	std::vector<float> DRIVE_RIGHT45 = {0.2, -0.785398};
+	std::vector<float> DRIVE_LEFT = {0.2, 1.570796};
+	std::vector<float> ABOUT_TURN = {0.2, 1.570796 * 4};
+	std::vector<float> DRIVE_RIGHT = {0.2, -1.570796 * 2};
+	std::vector<float> SWERVE_LEFT = {0.0, 1.570796};
+	std::vector<float> SWERVE_RIGHT = {0.0, -1.570796};
 } localActions; 
 
 class ControlCallback : public AlphaBot::StepCallback {
@@ -28,6 +26,8 @@ public:
 			turn(&alphabot, 0.3);
 		} else if (delta_distance < action_q.front()[0]) {
 			forward(&alphabot, 0.3);
+		} else if ((std::abs(delta_theta) < std::abs(action_q.front()[1])) & (action_q.front()[1] == 0.0))  {
+			swerve(&alphabot, 0.3);
 		} else {
 			action_q.pop_front();
 			
@@ -36,7 +36,7 @@ public:
 
 			delta_distance = 0;
 			delta_theta = 0;
-		}
+		}a
 	}
 
 	void pushActions(std::vector<std::vector<float>> actions) {
@@ -83,6 +83,18 @@ private:
 		}
 	}
 
+	void swerve(AlphaBot* alphabot, float speed) {
+		if (action_q.front()[1] < 0) {
+			alphabot->setLeftWheelSpeed(speed);
+			alphabot->setRightWheelSpeed(0.0);
+			updateDistance(speed, 0.0);
+		} else {
+			alphabot->setLeftWheelSpeed(0.0);
+			alphabot->setRightWheelSpeed(speed);
+			updateDistance(0.0, speed);
+		}
+	}
+
 	void updateDistance(float scaledSpeedLeft, float scaledSpeedRight) {
 		leftDistance += actualSpeedMax * scaledSpeedLeft * samplingRate;
 		rightDistance += actualSpeedMax * scaledSpeedRight * samplingRate;
@@ -90,9 +102,7 @@ private:
 		delta_distance = (leftDistance + rightDistance) / 2.0; 
   		delta_theta = (rightDistance - leftDistance) / L; 
 	}
-
 };
-
 
 int main(int, char **) { 
 	ControlCallback control;
@@ -103,12 +113,12 @@ int main(int, char **) {
 
 	// distances and angles
 	std::vector<std::vector<float>> sequence = {
-		localActions.DRIVE_RIGHT45,
-		localActions.DRIVE_LEFT45,
-		localActions.DRIVE_RIGHT45,
-		localActions.DRIVE_LEFT45,
-		localActions.DRIVE_RIGHT45,
-		localActions.DRIVE_LEFT45
+		localActions.DRIVE_AHEAD,
+		localActions.SWERVE_LEFT,
+		localActions.DRIVE_LEFT,
+		localActions.DRIVE_AHEAD,
+		localActions.DRIVE_AHEAD,
+		localActions.DRIVE_AHEAD
 	};
 
 	control.pushActions(sequence);
