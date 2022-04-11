@@ -8,14 +8,26 @@
 #include <list>
 #include <vector>
 
+struct {
+	float 45_DEG = 0.785398;
+
+	std::vector<float> EAST = {0.2, 0.0};
+	std::vector<float> NORTH_EAST = {0.2, 45_DEG};
+	std::vector<float> NORTH = {0.2, 45_DEG * 2};
+	std::vector<float> NORTH_WEST = {0.2, 45_DEG * 3};
+	std::vector<float> WEST = {0.2, 45_DEG * 4};
+	std::vector<float> SOUTH_WEST = {0.2, -45_DEG * 3};
+	std::vector<float> SOUTH = {0.2, -45_DEG * 2};
+	std::vector<float> SOUTH_EAST = {0.2, -45_DEG};
+
+} actions; 
+
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
 		if (std::abs(delta_theta) < std::abs(action_q.front()[1])) {
-			std::cout << "turn " << delta_theta << " rad \n";
 			turn(&alphabot, 0.3);
 		} else if (delta_distance < action_q.front()[0]) {
-			std::cout << "forward " << delta_distance << " m \n";
 			forward(&alphabot, 0.3);
 		} else {
 			action_q.pop_front();
@@ -25,9 +37,6 @@ public:
 
 			delta_distance = 0;
 			delta_theta = 0;
-
-			alphabot.setLeftWheelSpeed(0.0);
-			alphabot.setRightWheelSpeed(0.0);
 		}
 	}
 
@@ -94,11 +103,15 @@ int main(int, char **) {
 	alphabot.start();
 
 	// distances and angles
-	std::vector<std::vector<float>> actions = {
-		{0.0, 1.5708},
+	std::vector<std::vector<float>> sequence = {
+		actions.EAST,
+		actions.NORTH,
+		actions.WEST;
+		actions.SOUTH;
+		actions.EAST;
 	};
 
-	control.pushActions(actions);
+	control.pushActions(sequence);
 
 	while(true) {
 		// do nothing
