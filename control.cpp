@@ -17,20 +17,18 @@ struct {
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		alphabot.setLeftWheelSpeed(speed * action_q.front()[0]);
-		alphabot.setRightWheelSpeed(speed * action_q.front()[1]);
+		alphabot.setLeftWheelSpeed(speed * weights[0]);
+		alphabot.setRightWheelSpeed(speed * weights[0]);
 		action_q.pop_front();
 	}
 
-	void pushActions(std::vector<std::vector<float>> actions) {
-		for (std::vector<float> row : actions) {
-			action_q.push_back(row);
-		}
+	void setWeights(std::vector<float> weights) {
+		this->weights = weights;
 	}
 
 private:
 	const float speed = 0.3;
-	std::list<std::vector<float>> action_q = {localActions.DRIVE_AHEAD};
+	std::vector<float> weights; 
 
 };
 
@@ -74,45 +72,10 @@ int main(int, char **) {
 	alphabot.registerStepCallback(&control);
 	alphabot.start();
 
-	// distances and angles
-	std::vector<std::vector<float>> sequence = {
-		localActions.DRIVE_AHEAD,
-		localActions.TURN_LEFT, 
-		localActions.TURN_LEFT,
-		localActions.TURN_LEFT, 
-		localActions.TURN_LEFT,
-		localActions.TURN_LEFT, 
-		localActions.TURN_LEFT,
-		localActions.TURN_LEFT, 
-		localActions.TURN_LEFT,
-		localActions.TURN_LEFT, 
-		localActions.TURN_LEFT,
-		localActions.TURN_LEFT, 
-		localActions.TURN_LEFT,
-		localActions.TURN_LEFT, 
-		localActions.TURN_LEFT,
-		localActions.TURN_LEFT, 
-		localActions.TURN_LEFT,
-		localActions.TURN_LEFT, 
-		localActions.TURN_LEFT,
-		localActions.TURN_LEFT, 
-		localActions.TURN_LEFT,
-		localActions.TURN_LEFT, 
-		localActions.TURN_LEFT,
-		localActions.TURN_RIGHT, 
-		localActions.TURN_RIGHT,
-		localActions.DRIVE_AHEAD,
-		localActions.DRIVE_AHEAD
-	};
-
-	control.pushActions(sequence);
-	const float default_speed = 0.3;
-
 	while(true) {
 		std::vector<float> weights;
 		weights = data.getWeights();
-		localActions.TURN_LEFT[0] = default_speed * weights[0];
-		localActions.TURN_RIGHT[0] = default_speed * weights[1];
+		control.setWeights();
 	}
 
 	alphabot.stop();
