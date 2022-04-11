@@ -25,6 +25,9 @@ public:
 
 			delta_distance = 0;
 			delta_theta = 0;
+
+			alphabot.setLeftWheelSpeed(0.0);
+			alphabot.setRightWheelSpeed(0.0);
 		}
 	}
 
@@ -92,10 +95,7 @@ int main(int, char **) {
 
 	// distances and angles
 	std::vector<std::vector<float>> actions = {
-		{0.2, 1.5708},
-		{0.2, -1.5708},
-		{0.2, 1.5708},
-		{0.2, -1.5708},
+		{0.0, 1.5708},
 	};
 
 	control.pushActions(actions);
