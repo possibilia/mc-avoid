@@ -19,7 +19,7 @@ public:
 	}
 
 	void pushActions(float* actions, bool front) {
-		unsigned rows = sizeof(&actions) / sizeof(&actions[0]);
+		unsigned rows = 4;
 
 		for (unsigned i = 0; i < rows; i++) {
 			if (front) {
@@ -41,7 +41,7 @@ private:
 	const float samplingRate = 0.1;
 
 	// maintained queue of actions
-	std::list<float[]> action_q = {};
+	std::list<float*> action_q = {};
 
 	float leftDistance = 0;
 	float rightDistance = 0;
@@ -61,7 +61,7 @@ private:
 	}
 
 	void turn(AlphaBot* alphabot, float speed) {
-		if (theta < 0) { // turn right
+		if (action_q.front()[1] < 0) { // turn right
 			alphabot->setLeftWheelSpeed(speed);
 			alphabot->setRightWheelSpeed(-speed);
 			updateDistance(speed, -speed);
@@ -92,7 +92,7 @@ int main(int, char **) {
 	alphabot.start();
 
 	// distances and angles
-	float actions[][] = {
+	float actions[4][2] = {
 		{0.2, 1.5708},
 		{0.2, 1.5708},
 		{0.2, 1.5708},
