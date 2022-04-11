@@ -23,7 +23,7 @@ public:
 	void pushActions(std::vector<std::vector<float>> actions, bool front) {
 		unsigned rows = 4;
 
-		for (unsigned row : actions) {
+		for (std::vector<float> row : actions) {
 			if (front) {
 				action_q.push_front(row);
 			} else {
