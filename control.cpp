@@ -11,8 +11,8 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		alphabot.setLeftWheelSpeed(speed * weights[0]);
-		alphabot.setRightWheelSpeed(speed * weights[1]);
+		alphabot.setLeftWheelSpeed(speed * weights[1]);
+		alphabot.setRightWheelSpeed(speed * weights[0]);
 	}
 
 	void setWeights(std::vector<float> weights) {
@@ -20,7 +20,7 @@ public:
 	}
 
 private:
-	const float speed = 0.3;
+	const float speed = 0.5;
 	std::vector<float> weights = {1.0, 1.0}; 
 
 };
