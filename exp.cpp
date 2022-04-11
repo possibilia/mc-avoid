@@ -9,8 +9,6 @@
 #include <vector>
 
 struct {
-	// has to be the pose so need kinematics
-	// also has to be options to swerve robot
 	std::vector<float> DRIVE_AHEAD = {0.2, 0.0};
 	std::vector<float> TURN_LEFT = {0.0, 1.570796};
 	std::vector<float> TURN_RIGHT = {0.0, -1.570796};
