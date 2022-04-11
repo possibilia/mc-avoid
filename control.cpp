@@ -34,11 +34,7 @@ public:
 	}
 
 private:
-	const float tol = 0.1;
-	const float L = 0.142 * 0.865;
-	const float actualSpeedMax = 0.2;
-	const float samplingRate = 0.1;
-
+	const float speed = 0.3;
 	std::list<std::vector<float>> action_q = {};
 
 };
@@ -61,8 +57,8 @@ public:
 		}
 	}
 
-	float* getWeights() {	
-		return &weights;
+	float * getWeights() {	
+		return weights;
 	}
 
 private:
