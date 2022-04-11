@@ -28,13 +28,9 @@ public:
 		}
 	}
 
-	void pushActions(std::vector<std::vector<float>> actions, bool front) {
+	void pushActions(std::vector<std::vector<float>> actions) {
 		for (std::vector<float> row : actions) {
-			if (front) {
-				action_q.push_front(row);
-			} else {
-				action_q.push_back(row);
-			}
+			action_q.push_back(row);
 		}
 	}
 
@@ -43,7 +39,7 @@ private:
 	const float L = 0.142;
 
 	// max speed m/s
-	const float actualSpeedMax = 0.228;
+	const float actualSpeedMax = 0.21;
 
 	// sampling rate s
 	const float samplingRate = 0.1;
