@@ -21,7 +21,7 @@ public:
 
 private:
 	const float speed = 0.3;
-	std::vector<float> weights; 
+	std::vector<float> weights = {1.0, 1.0}; 
 
 };
 
