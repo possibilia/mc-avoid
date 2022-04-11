@@ -20,7 +20,9 @@ struct {
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		if (std::abs(delta_theta) < std::abs(action_q.front()[1])) {
+		if (action_q.front()[0] == 0.0) {
+			turn_around(&alphabot, 0.3);
+		} else if (std::abs(delta_theta) < std::abs(action_q.front()[1])) {
 			turn(&alphabot, 0.3);
 		} else if (delta_distance < action_q.front()[0]) {
 			forward(&alphabot, 0.3);
@@ -71,6 +73,12 @@ private:
 			alphabot->setRightWheelSpeed(speed+tol);
 			updateDistance(-tol, speed+tol);
 		}
+	}
+
+	void turn_around(AlphaBot* alphabot, float speed) {
+		alphabot->setLeftWheelSpeed(-speed);
+		alphabot->setRightWheelSpeed(speed);
+		updateDistance(-speed, speed);
 	}
 
 	void updateDistance(float scaledSpeedLeft, float scaledSpeedRight) {
