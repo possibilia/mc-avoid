@@ -18,14 +18,14 @@ public:
 		}
 	}
 
-	void pushActions(float[][] actions, bool front) {
-		unsigned rows = sizeof(actions) / sizeof(actions[0]);
+	void pushActions(float* actions, bool front) {
+		unsigned rows = sizeof(&actions) / sizeof(&actions[0]);
 
 		for (unsigned i = 0; i < rows; i++) {
 			if (front) {
-				action_q.push_front(actions[i]);
+				action_q.push_front(&actions[i]);
 			} else {
-				action_q.push_back(actions[i]);
+				action_q.push_back(&actions[i]);
 			}
 		}
 	}
@@ -92,7 +92,7 @@ int main(int, char **) {
 	alphabot.start();
 
 	// distances and angles
-	float[][] actions = {
+	float actions[][] = {
 		{0.2, 1.5708},
 		{0.2, 1.5708},
 		{0.2, 1.5708},
