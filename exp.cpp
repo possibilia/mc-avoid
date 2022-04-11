@@ -11,19 +11,16 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		std::cout << "Distance: " << action_q.front()[0] << "\n";
-		std::cout << "Theta : " << action_q.front()[1] << "\n";
-
 		if (std::abs(delta_theta) < std::abs(action_q.front()[1])) {
-			std::cout << "A" << "\n";
+			std::cout << "turn" << "\n";
 			turn(&alphabot, 0.3);
 		} else if (delta_distance < action_q.front()[0]) {
-			std::cout << "B" << "\n";
+			std::cout << "forward" << "\n";
 			forward(&alphabot, 0.3);
 			action_q.pop_front();
 		}
 		else if (action_q.empty()){
-			std::cout << "C" << "\n";
+			std::cout << "stop" << "\n";
 			stop(&alphabot);
 		}
 	}
@@ -54,8 +51,8 @@ private:
 	float leftDistance = 0;
 	float rightDistance = 0;
 
-	float delta_distance;
-	float delta_theta; 
+	float delta_distance = 0;
+	float delta_theta = 0; 
 
 	void stop(AlphaBot* alphabot) {
 		alphabot->setLeftWheelSpeed(0.0);
