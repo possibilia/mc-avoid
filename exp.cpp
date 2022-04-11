@@ -98,7 +98,7 @@ int main(int, char **) {
 		{0.2, -1.5708},
 	};
 
-	control.pushActions(actions, false);
+	control.pushActions(actions);
 
 	while(true) {
 		// do nothing
