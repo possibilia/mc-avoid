@@ -17,11 +17,12 @@ public:
 		} else if (delta_distance < action_q.front()[0]) {
 			std::cout << "forward" << "\n";
 			forward(&alphabot, 0.3);
-			action_q.pop_front();
 		}
 		else if (action_q.empty()){
 			std::cout << "stop" << "\n";
 			stop(&alphabot);
+		} else {
+			action_q.pop_front();
 		}
 	}
 
