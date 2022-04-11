@@ -18,14 +18,14 @@ public:
 		}
 	}
 
-	void pushActions(float* actions, bool front) {
+	void pushActions(std::vector<std::vector<float>>* actions, bool front) {
 		unsigned rows = 4;
 
-		for (unsigned i = 0; i < rows; i++) {
+		for (unsigned row : actions) {
 			if (front) {
-				action_q.push_front(&actions[i]);
+				action_q.push_front(row);
 			} else {
-				action_q.push_back(&actions[i]);
+				action_q.push_back(row);
 			}
 		}
 	}
@@ -92,7 +92,7 @@ int main(int, char **) {
 	alphabot.start();
 
 	// distances and angles
-	float actions[4][2] = {
+	std::vector<std::vector<float>> = {
 		{0.2, 1.5708},
 		{0.2, 1.5708},
 		{0.2, 1.5708},
