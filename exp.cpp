@@ -10,10 +10,8 @@
 
 struct {
 	std::vector<float> DRIVE_AHEAD = {0.2, 0.0};
-	std::vector<float> TURN_LEFT = {0.0, 1.570796};
-	std::vector<float> TURN_RIGHT = {0.0, -1.570796};
-	std::vector<float> SWERVE_LEFT = {0.0, 1.570796 / 2};
-	std::vector<float> SWERVE_RIGHT = {0.0, -1.570796 / 2};
+	std::vector<float> TURN_LEFT = {0.0, 1.570796 / 2};
+	std::vector<float> TURN_RIGHT = {0.0, -1.570796 / 2};
 } localActions; 
 
 class ControlCallback : public AlphaBot::StepCallback {
@@ -96,12 +94,14 @@ int main(int, char **) {
 	// distances and angles
 	std::vector<std::vector<float>> sequence = {
 		localActions.DRIVE_AHEAD,
-		localActions.SWERVE_LEFT,
-		localActions.DRIVE_AHEAD,
-		localActions.SWERVE_RIGHT,
+		localActions.TURN_LEFT,
 		localActions.DRIVE_AHEAD,
 		localActions.TURN_RIGHT,
 		localActions.DRIVE_AHEAD,
+		localActions.TURN_RIGHT,
+		localActions.TURN_RIGHT,
+		localActions.DRIVE_AHEAD,
+		localActions.TURN_RIGHT,
 		localActions.TURN_RIGHT,
 		localActions.DRIVE_AHEAD
 	};
