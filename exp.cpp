@@ -105,6 +105,7 @@ int main(int, char **) {
 
 	while(true) {
 		// do nothing
+		std::cout << "Working" << "\n";
 	}
 
 	alphabot.stop();
