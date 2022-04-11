@@ -41,7 +41,7 @@ private:
 	const float samplingRate = 0.1;
 
 	// maintained queue of actions
-	std::list<float*> action_q = {};
+	std::list<std::vector<float>> action_q = {};
 
 	float leftDistance = 0;
 	float rightDistance = 0;
@@ -92,7 +92,7 @@ int main(int, char **) {
 	alphabot.start();
 
 	// distances and angles
-	std::vector<std::vector<float>> = {
+	std::vector<std::vector<float>> actions = {
 		{0.2, 1.5708},
 		{0.2, 1.5708},
 		{0.2, 1.5708},
