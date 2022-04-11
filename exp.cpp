@@ -23,6 +23,12 @@ public:
 			stop(&alphabot);
 		} else {
 			action_q.pop_front();
+			
+			leftDistance = 0;
+			right_Distance = 0;
+
+			delta_distance = 0;
+			delta_distance = 0;
 		}
 	}
 
