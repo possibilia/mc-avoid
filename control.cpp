@@ -66,13 +66,13 @@ int main(int, char **) {
 	DataInterface data;
 	ControlCallback control;
 
-	AlphaBot alphabot;
-	alphabot.registerStepCallback(&control);
-	alphabot.start();
-
 	A1Lidar lidar;
 	lidar.registerInterface(&data);
 	lidar.start();
+	
+	AlphaBot alphabot;
+	alphabot.registerStepCallback(&control);
+	alphabot.start();
 
 	// distances and angles
 	std::vector<std::vector<float>> sequence = {
