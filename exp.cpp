@@ -39,16 +39,11 @@ public:
 	}
 
 private:
-	// wheel separation m
+	const float tol = 0.1;
 	const float L = 0.142 * 0.865;
-
-	// max speed m/s
 	const float actualSpeedMax = 0.2;
-
-	// sampling rate s
 	const float samplingRate = 0.1;
-
-	// maintained queue of actions
+	
 	std::list<std::vector<float>> action_q = {};
 
 	float leftDistance = 0;
@@ -65,13 +60,13 @@ private:
 
 	void turn(AlphaBot* alphabot, float speed) {
 		if (action_q.front()[1] < 0) { // turn right
-			alphabot->setLeftWheelSpeed(speed+0.2);
-			alphabot->setRightWheelSpeed(-0.2);
-			updateDistance(speed+0.2, -0.2);
+			alphabot->setLeftWheelSpeed(speed+tol);
+			alphabot->setRightWheelSpeed(-tol);
+			updateDistance(speed+tol, -tol);
 		} else { // turn left
-			alphabot->setLeftWheelSpeed(-0.2);
-			alphabot->setRightWheelSpeed(speed+0.2);
-			updateDistance(-0.2, speed+0.2);
+			alphabot->setLeftWheelSpeed(-tol);
+			alphabot->setRightWheelSpeed(speed+tol);
+			updateDistance(-tol, speed+tol);
 		}
 	}
 
