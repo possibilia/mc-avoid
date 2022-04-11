@@ -71,7 +71,7 @@ private:
 		} else { // turn left
 			alphabot->setLeftWheelSpeed(-0.2);
 			alphabot->setRightWheelSpeed(speed+0.2);
-			updateDistance(-0.1, speed+0.2);
+			updateDistance(-0.2, speed+0.2);
 		}
 	}
 
