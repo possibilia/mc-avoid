@@ -17,13 +17,8 @@ struct {
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		if (action_q.front()[1] == 0.0) {
-			alphabot.setLeftWheelSpeed(speed);
-			alphabot.setRightWheelSpeed(speed);
-		} else {
-			alphabot.setLeftWheelSpeed(speed);
-			alphabot.setRightWheelSpeed(speed);
-		}
+		alphabot.setLeftWheelSpeed(speed * action_q.front()[0]);
+		alphabot.setRightWheelSpeed(speed * action_q.front()[1]);
 		action_q.pop_front();
 	}
 
@@ -42,6 +37,8 @@ private:
 class DataInterface : public A1Lidar::DataInterface {
 public:
 	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
+		weights = {1.0, 1.0};
+
 		for(A1LidarData &data: data) {
 			if ((data.valid) & (data.r < 1.0) & (data.r > 0.0) & 
 				(data.phi > 0.0) & (data.phi < 1.0)) {
@@ -62,7 +59,7 @@ public:
 	}
 
 private:
-	std::vector<float> weights = {1.0, 1.0};
+	std::vector<float> weights;
 };
 
 int main(int, char **) { 
