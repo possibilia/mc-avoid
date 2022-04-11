@@ -103,11 +103,12 @@ int main(int, char **) {
 
 	// distances and angles
 	std::vector<std::vector<float>> sequence = {
-		localActions.DRIVE_AHEAD,
-		localActions.DRIVE_LEFT90,
-		localActions.DRIVE_LEFT90,
-		localActions.DRIVE_LEFT90,
-		localActions.DRIVE_LEFT90,
+		localActions.DRIVE_RIGHT45,
+		localActions.DRIVE_LEFT45,
+		localActions.DRIVE_RIGHT45,
+		localActions.DRIVE_LEFT45,
+		localActions.DRIVE_RIGHT45,
+		localActions.DRIVE_LEFT45
 	};
 
 	control.pushActions(sequence);
