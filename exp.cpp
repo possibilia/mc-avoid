@@ -15,14 +15,13 @@ public:
 			turn(&alphabot, 0.3);
 		} else if (delta_distance < action_q.front()[0]) {
 			forward(&alphabot, 0.3);
-		} else {
+			action_q.pop_front();
+		else if (action_q.empty()){
 			stop(&alphabot);
 		}
 	}
 
 	void pushActions(std::vector<std::vector<float>> actions, bool front) {
-		unsigned rows = 4;
-
 		for (std::vector<float> row : actions) {
 			if (front) {
 				action_q.push_front(row);
