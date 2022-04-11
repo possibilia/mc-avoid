@@ -11,14 +11,17 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		std::cout << "Working" << "\n";
+		std::cout << action_q << "\n";
 		if (std::abs(delta_theta) < std::abs(action_q.front()[1])) {
+			std::cout << "A" << "\n";
 			turn(&alphabot, 0.3);
 		} else if (delta_distance < action_q.front()[0]) {
+			std::cout << "B" << "\n";
 			forward(&alphabot, 0.3);
 			action_q.pop_front();
 		}
 		else if (action_q.empty()){
+			std::cout << "C" << "\n";
 			stop(&alphabot);
 		}
 	}
