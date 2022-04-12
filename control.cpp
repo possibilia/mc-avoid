@@ -19,11 +19,14 @@ public:
 		float targetTheta = action_q.front()[0];
 		float targetDistance = action_q.front()[1];
 
-		if ((deltaTheta < targetTheta) & (targetTheta > 0)) {
-			turnLeft(&alphabot, deltaTheta / targetTheta);
-		} else if ((deltaTheta < targetTheta) & (targetTheta < 0)) {
-			turnRight(&alphabot, deltaTheta / targetTheta);
-		} else if (deltaDistance < targetDistance) {
+		float distancePercent = deltaDistance / targetDistance;
+		float thetaPercent = std::abs(deltaTheta) / std::abs(targetTheta);
+
+		if ((thetaPercent < 1.) & (targetTheta > 0)) {
+			turnLeft(&alphabot, thetaPercent);
+		} else if ((thetaPercent < 1.) & (targetTheta < 0)) {
+			turnRight(&alphabot, thetaPercent);
+		} else if (distancePercent < 1.) {
 			drive(&alphabot);
 		} else {
 			action_q.pop_front();
