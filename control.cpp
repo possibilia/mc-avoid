@@ -53,11 +53,7 @@ public:
 	std::vector<float> getWeights() {	
 		return weights;
 	}
-
-	std::vector<std::vector<float>> getGrid() {
-		return grid;
-	}
-
+	
 private:
 	const float rmax = 2.0;
 	const float rmin = 0.2;
