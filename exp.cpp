@@ -8,9 +8,6 @@
 #include <list>
 #include <vector>
 
-// neeed to implement fine rgrained control too!
-// this one will work better for MDPs anyway
-
 struct {
 	std::vector<float> DRIVE_AHEAD = {0.2, 0.0};
 	std::vector<float> TURN_LEFT = {0.2, 1.570796};
