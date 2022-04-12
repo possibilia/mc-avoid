@@ -14,7 +14,7 @@ public:
 		float targetTheta;
 		float targetDistance;
 
-		if !(action_q.empty()) {
+		if (!action_q.empty()) {
 			targetTheta = action_q.front()[0];
 			targetDistance = action_q.front()[1];
 		}
