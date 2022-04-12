@@ -34,6 +34,7 @@ public:
 				(data.phi > 0.0) & (data.phi < 1.0)) {
 
 				float r = rescale(data.r);
+				std::cout << "r: " << r << "\n";
 				if (r < weights[0]) {
 					weights[0] = r;
 				}
@@ -42,6 +43,7 @@ public:
 				(data.phi < 0.0) & (data.phi > -1.0)) {
 
 				float r = rescale(data.r);
+				std::cout << "r: " << r << "\n";
 				if (r < weights[1]) {
 					weights[1] = r;
 				}
