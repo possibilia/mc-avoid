@@ -150,6 +150,7 @@ int main(int, char **) {
 	alphabot.registerStepCallback(&control);
 	alphabot.start();
 
+	std::vector<std::vector<float>> actions;
 	actions = data.getActions();
 	control.setActions(actions);
 
