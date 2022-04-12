@@ -36,7 +36,7 @@ public:
 					weights[0] = data.r;
 				}
 			} else if ((data.valid) & (data.r < rmax) & (data.r > 0.0) & 
-				(data.phi < 0.5) & (data.phi > -1.5708)) {
+				(data.phi < -0.5) & (data.phi > -1.5708)) {
 				if (data.r < weights[1]) {
 					weights[1] = data.r;
 				}
