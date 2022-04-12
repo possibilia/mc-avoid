@@ -22,7 +22,6 @@ public:
 private:
 	const float speed = 0.5;
 	std::vector<float> weights = {1.0, 1.0}; 
-
 };
 
 class DataInterface : public A1Lidar::DataInterface {
@@ -31,32 +30,43 @@ public:
 		weights = {1.0, 1.0};
 
 		for(A1LidarData &data: data) {
+			updateGrid(data.x, data.y);
 			if ((data.valid) & (data.r < rmax) & (data.r > 0.0) & 
 				(data.phi > 0.0) & (data.phi < 1.0)) {
-				if (data.r < weights[0]) {
-					weights[0] = rescale(data.r);
+
+				float r = rescale(data.r)
+				if (r < weights[0]) {
+					weights[0] = r;
 				}
+
 			} else if ((data.valid) & (data.r < rmax) & (data.r > 0.0) & 
 				(data.phi < 0.0) & (data.phi > -1.0)) {
-				if (data.r < weights[1]) {
-					weights[1] = rescale(data.r);
+
+				float r = rescale(data.r);
+				if (r < weights[1]) {
+					weights[1] = r;
 				}
 			}
 		}
-	}
-
-	float rescale(float r) {
-		return ((r - rmax) / (rmax - rmin)) * 1.0;
 	}
 
 	std::vector<float> getWeights() {	
 		return weights;
 	}
 
+	std::vector<std::vector<float>> getGrid() {
+		return grid;
+	}
+
 private:
 	const float rmax = 2.0;
 	const float rmin = 0.2;
+
 	std::vector<float> weights;
+
+	float rescale(float r) {
+		return ((r - rmax) / (rmax - rmin)) * 1.0;
+	}
 };
 
 int main(int, char **) { 
