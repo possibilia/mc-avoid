@@ -35,8 +35,8 @@ public:
 
 				float r = rescale(data.r);
 				std::cout << "r: " << r << "\n";
-				if (r < weights[0]) {
-					weights[0] = r;
+				if (std::abs(r) < weights[0]) {
+					weights[0] = std::abs(r);
 				}
 
 			} else if ((data.valid) & (data.r < rmax) & (data.r > 0.0) & 
@@ -44,8 +44,8 @@ public:
 
 				float r = rescale(data.r);
 				std::cout << "r: " << r << "\n";
-				if (r < weights[1]) {
-					weights[1] = r;
+				if (std::abs(r) < weights[1]) {
+					weights[1] = std::abs(r);
 				}
 			}
 		}
