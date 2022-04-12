@@ -53,7 +53,7 @@ public:
 
 private:
 	const float speed = 0.5;
-	const float tol = 0.1;
+	const float tol = 0.05;
 	const float L = 0.142 * 0.865;
 	const float actualSpeedMax = 0.2;
 	const float samplingRate = 0.1; 
