@@ -11,19 +11,17 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		if (weights[0] < 0.4 || weights[1] < 0.4 || action_q.empty()) {
-			std::cout << "Evade!!!" << "\n";
-			evade(&alphabot);
-			resetProgress();
-		}
-
 		float targetTheta = action_q.front()[0];
 		float targetDistance = action_q.front()[1];
 
 		float distancePercent = deltaDistance / targetDistance;
 		float thetaPercent = std::abs(deltaTheta) / std::abs(targetTheta);
-
-		if ((thetaPercent < (1. - tol)) & (targetTheta > 0)) {
+		
+		if (weights[0] < 0.4 || weights[1] < 0.4 || action_q.empty()) {
+			std::cout << "Evade!!!" << "\n";
+			evade(&alphabot);
+			resetProgress();
+		} else if ((thetaPercent < (1. - tol)) & (targetTheta > 0)) {
 			std::cout << "Left " << thetaPercent << "\n";
 			turnLeft(&alphabot, thetaPercent);
 		} else if ((thetaPercent < (1. - tol)) & (targetTheta < 0)) {
