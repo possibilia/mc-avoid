@@ -34,7 +34,7 @@ public:
 			if ((data.valid) & (data.r < rmax) & (data.r > 0.0) & 
 				(data.phi > 0.0) & (data.phi < 1.0)) {
 
-				float r = rescale(data.r)
+				float r = rescale(data.r);
 				if (r < weights[0]) {
 					weights[0] = r;
 				}
@@ -53,7 +53,7 @@ public:
 	std::vector<float> getWeights() {	
 		return weights;
 	}
-	
+
 private:
 	const float rmax = 2.0;
 	const float rmin = 0.2;
