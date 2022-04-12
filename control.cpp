@@ -55,7 +55,7 @@ public:
 	}
 
 private:
-	const float rmax = 2.0;
+	const float rmax = 0.5;
 	const float rmin = 0.2;
 
 	std::vector<float> weights;
