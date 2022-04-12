@@ -11,10 +11,10 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		// if (weights[0] < 0.3 || weights[1] < 0.3) {
-		// 	evade(&alphabot);
-		// 	resetProgress();
-		// }
+		if (weights[0] < 0.3 || weights[1] < 0.3) {
+			evade(&alphabot);
+			resetProgress();
+		}
 
 		float targetTheta = action_q.front()[0];
 		float targetDistance = action_q.front()[1];
@@ -67,15 +67,15 @@ private:
 	}
 
 	void turnLeft(AlphaBot* alphabot, float thetaPercent) {
-		alphabot->setLeftWheelSpeed(speed);
-		alphabot->setRightWheelSpeed(speed * thetaPercent);
-		updateProgress(speed, speed * thetaPercent);
-	}
-
-	void turnRight(AlphaBot* alphabot, float thetaPercent) {
 		alphabot->setLeftWheelSpeed(speed * thetaPercent);
 		alphabot->setRightWheelSpeed(speed);
 		updateProgress(speed * thetaPercent, speed);
+	}
+
+	void turnRight(AlphaBot* alphabot, float thetaPercent) {
+		alphabot->setLeftWheelSpeed(speed);
+		alphabot->setRightWheelSpeed(speed * thetaPercent);
+		updateProgress(speed, speed * thetaPercent);
 	}
 
 	void evade(AlphaBot* alphabot) {
