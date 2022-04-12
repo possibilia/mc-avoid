@@ -32,7 +32,7 @@ public:
 		} else if ((thetaPercent < (1. - tol)) & (targetTheta < 0)) {
 			std::cout << "Right " << thetaPercent << "\n";
 			turnRight(&alphabot, thetaPercent);
-		} else if (distancePercent < 1.) {
+		} else if ((distancePercent < 1.) & (thetaPercent > (1. - tol))) {
 			std::cout << "Drive " << distancePercent << "\n";
 			drive(&alphabot);
 		} else {
