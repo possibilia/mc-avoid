@@ -50,7 +50,6 @@ public:
 	}
 
 	std::vector<float> getWeights() {	
-		std::cout << "L: " << weights[0] << " R: " << weights[1] << "\n";
 		return weights;
 	}
 
