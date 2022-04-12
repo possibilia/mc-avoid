@@ -13,6 +13,7 @@ public:
 	virtual void step(AlphaBot &alphabot) {
 		if (weights[0] < 0.3 || weights[1] < 0.3) {
 			evade(&alphabot);
+			resetProgress();
 		}
 
 		float targetTheta = action_q.front()[0];
@@ -26,12 +27,7 @@ public:
 			drive(&alphabot);
 		} else {
 			action_q.pop_front();
-
-			leftDistance = 0;
-			rightDistance = 0;
-
-			deltaDistance = 0;
-			deltaTheta = 0;
+			resetProgress();
 		}
 	}
 
@@ -70,13 +66,13 @@ private:
 	void turnLeft(AlphaBot* alphabot, float thetaPercent) {
 		alphabot->setLeftWheelSpeed(speed);
 		alphabot->setRightWheelSpeed(speed * thetaPercent);
-		updateDistance(speed, speed * thetaPercent);
+		updateProgress(speed, speed * thetaPercent);
 	}
 
 	void turnRight(AlphaBot* alphabot, float thetaPercent) {
 		alphabot->setLeftWheelSpeed(speed * thetaPercent);
 		alphabot->setRightWheelSpeed(speed);
-		updateDistance(speed * thetaPercent, speed);
+		updateProgress(speed * thetaPercent, speed);
 	}
 
 	void evade(AlphaBot* alphabot) {
@@ -90,6 +86,14 @@ private:
 
 		deltaDistance = (leftDistance + rightDistance) / 2.0; 
   		deltaTheta = (rightDistance - leftDistance) / L; 
+	}
+
+	void resetProgress() {
+		leftDistance = 0;
+		rightDistance = 0;
+
+		deltaDistance = 0;
+		deltaTheta = 0;
 	}
 };
 
