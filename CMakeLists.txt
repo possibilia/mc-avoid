@@ -25,6 +25,9 @@ target_link_libraries(exp alphabot a1lidarrpi pigpio pthread)
 add_executable(control control.cpp)
 target_link_libraries(control alphabot a1lidarrpi pigpio pthread)
 
+add_executable(runaway runaway.cpp)
+target_link_libraries(runaway alphabot a1lidarrpi pigpio pthread)
+
 add_executable(curlTest curlTest.cpp)
 target_link_libraries(curlTest ${CURL_LIBRARIES})
 
