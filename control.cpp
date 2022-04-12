@@ -32,9 +32,10 @@ public:
 		} else if ((thetaPercent < 1.) & (targetTheta < 0) & (distancePercent < 1.)) {
 			std::cout << "Right " << thetaPercent << "\n";
 			turnRight(&alphabot, thetaPercent);
-		} else {
-			std::cout << "Pop action " << distancePercent << "\n";
+		} else if ((targetTheta == 0.) & (distancePercent < 1.)) {
+			std::std::cout << "Pop action " << distancePercent << "\n";
 			drive(&alphabot);
+		} else {
 			action_q.pop_front();
 			resetProgress();
 		}
@@ -70,6 +71,7 @@ private:
 	void drive(AlphaBot* alphabot) {
 		alphabot->setLeftWheelSpeed(speed);
 		alphabot->setRightWheelSpeed(speed);
+		updateProgress(speed, speed);
 	}
 
 	void turnLeft(AlphaBot* alphabot, float thetaPercent) {
@@ -141,8 +143,9 @@ private:
 	std::vector<float> weights = {1.0, 1.0};
 	std::vector<std::vector<float>> actions = {
 		{1.5708, 0.2},
+		{0.0, 0.2},
 		{-1.5708, 0.2},
-		{1.5708, 0.2},
+		{0.0, 0.2},
 		{-1.5708, 0.2}
 	};
 };
