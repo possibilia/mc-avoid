@@ -30,7 +30,6 @@ public:
 		weights = {1.0, 1.0};
 
 		for(A1LidarData &data: data) {
-			updateGrid(data.x, data.y);
 			if ((data.valid) & (data.r < rmax) & (data.r > 0.0) & 
 				(data.phi > 0.0) & (data.phi < 1.0)) {
 
