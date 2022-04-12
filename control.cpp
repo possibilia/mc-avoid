@@ -15,12 +15,12 @@ public:
 			evade(&alphabot);
 		}
 
-		float targetTheta = action_q.front()[0]
-		float targetDistance = action_q.front()[1]
+		float targetTheta = action_q.front()[0];
+		float targetDistance = action_q.front()[1];
 
-		if ((deltaTheta < targetTheta) & targetTheta > 0) {
+		if ((deltaTheta < targetTheta) & (targetTheta > 0)) {
 			turnLeft(&alphabot, deltaTheta / targetTheta);
-		} else if ((deltaTheta < targetTheta) & targetTheta < 0) {
+		} else if ((deltaTheta < targetTheta) & (targetTheta < 0)) {
 			turnRight(&alphabot, deltaTheta / targetTheta);
 		} else if (deltaDistance < targetDistance) {
 			drive(&alphabot);
@@ -30,8 +30,8 @@ public:
 			leftDistance = 0;
 			rightDistance = 0;
 
-			delta_distance = 0;
-			delta_theta = 0;
+			deltaDistance = 0;
+			deltaTheta = 0;
 		}
 	}
 
@@ -153,7 +153,7 @@ int main(int, char **) {
 		weights = data.getWeights();
 		actions = data.getActions();
 
-		control.setActions(actions)
+		control.setActions(actions);
 		control.setWeights(weights);
 	}
 
