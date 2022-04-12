@@ -14,11 +14,11 @@ public:
 		float targetTheta;
 		float targetDistance;
 
-		if (action_q.empty()) {
+		if !(action_q.empty()) {
 			targetTheta = action_q.front()[0];
 			targetDistance = action_q.front()[1];
 		}
-		
+
 		float distancePercent = deltaDistance / targetDistance;
 		float thetaPercent = std::abs(deltaTheta) / std::abs(targetTheta);
 
