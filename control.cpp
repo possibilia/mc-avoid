@@ -12,7 +12,7 @@ class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
 		if (weights[0] < 0.5 || weights[1] < 0.5) {
-			std::cout << "Evade!!!" << thetaPercent << "\n";
+			std::cout << "Evade!!!" << "\n";
 			evade(&alphabot);
 			resetProgress();
 		}
