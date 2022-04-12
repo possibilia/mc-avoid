@@ -34,7 +34,6 @@ public:
 				(data.phi > 0.0) & (data.phi < 1.0)) {
 
 				float r = rescale(data.r);
-				std::cout << "r: " << r << "\n";
 				if (std::abs(r) < weights[0]) {
 					weights[0] = std::abs(r);
 				}
@@ -43,7 +42,6 @@ public:
 				(data.phi < 0.0) & (data.phi > -1.0)) {
 
 				float r = rescale(data.r);
-				std::cout << "r: " << r << "\n";
 				if (std::abs(r) < weights[1]) {
 					weights[1] = std::abs(r);
 				}
@@ -52,6 +50,7 @@ public:
 	}
 
 	std::vector<float> getWeights() {	
+		std::cout << "Weights: " << weights << "\n";
 		return weights;
 	}
 
