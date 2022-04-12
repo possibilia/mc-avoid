@@ -26,10 +26,10 @@ public:
 			std::cout << "Evade!!!" << "\n";
 			evade(&alphabot);
 			resetProgress();
-		} else if ((thetaPercent < (1. - tol)) & (targetTheta > 0) & (distancePercent < 1.)) {
+		} else if ((thetaPercent < 1.) & (targetTheta > 0) & (distancePercent < 1.)) {
 			std::cout << "Left " << thetaPercent << "\n";
 			turnLeft(&alphabot, thetaPercent);
-		} else if ((thetaPercent < (1. - tol)) & (targetTheta < 0) & (distancePercent < 1.)) {
+		} else if ((thetaPercent < 1.) & (targetTheta < 0) & (distancePercent < 1.)) {
 			std::cout << "Right " << thetaPercent << "\n";
 			turnRight(&alphabot, thetaPercent);
 		} else {
