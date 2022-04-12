@@ -11,7 +11,7 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
-		if (weights[0] < 0.4 || weights[1] < 0.4) {
+		if (weights[0] < 0.4 || weights[1] < 0.4 || action_q.empty()) {
 			std::cout << "Evade!!!" << "\n";
 			evade(&alphabot);
 			resetProgress();
@@ -52,7 +52,7 @@ public:
 
 private:
 	const float speed = 0.5;
-	const float tol = 0.2;
+	const float tol = 0.1;
 	const float L = 0.142 * 0.865;
 	const float actualSpeedMax = 0.2;
 	const float samplingRate = 0.1; 
