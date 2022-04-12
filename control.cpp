@@ -33,7 +33,7 @@ public:
 			std::cout << "Right " << thetaPercent << "\n";
 			turnRight(&alphabot, thetaPercent);
 		} else if ((targetTheta == 0.) & (distancePercent < 1.)) {
-			std::std::cout << "Pop action " << distancePercent << "\n";
+			std::cout << "Pop action " << distancePercent << "\n";
 			drive(&alphabot);
 		} else {
 			action_q.pop_front();
