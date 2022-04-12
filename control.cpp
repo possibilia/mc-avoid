@@ -156,12 +156,7 @@ int main(int, char **) {
 
 	while(true) {
 		std::vector<float> weights;
-		std::vector<std::vector<float>> actions;
-
 		weights = data.getWeights();
-		actions = data.getActions();
-
-		control.setActions(actions);
 		control.setWeights(weights);
 	}
 
