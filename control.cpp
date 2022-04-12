@@ -23,13 +23,13 @@ public:
 		float distancePercent = deltaDistance / targetDistance;
 		float thetaPercent = std::abs(deltaTheta) / std::abs(targetTheta);
 
-		if ((thetaPercent < 1.) & (targetTheta > 0)) {
+		if ((thetaPercent < (1. - tol)) & (targetTheta > 0)) {
 			std::cout << "Left " << thetaPercent << "\n";
 			turnLeft(&alphabot, thetaPercent);
-		} else if ((thetaPercent < 1.) & (targetTheta < 0)) {
+		} else if ((thetaPercent < (1. - tol)) & (targetTheta < 0)) {
 			std::cout << "Right " << thetaPercent << "\n";
 			turnRight(&alphabot, thetaPercent);
-		} else if (distancePercent < 1.) {
+		} else if (distancePercent < (1. - tol)) {
 			std::cout << "Drive " << distancePercent << "\n";
 			drive(&alphabot);
 		} else {
@@ -52,7 +52,7 @@ public:
 
 private:
 	const float speed = 0.5;
-	const float tol = 0.1;
+	const float tol = 0.05;
 	const float L = 0.142 * 0.865;
 	const float actualSpeedMax = 0.2;
 	const float samplingRate = 0.1; 
