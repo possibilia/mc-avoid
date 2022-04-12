@@ -31,18 +31,22 @@ public:
 		weights = {1.0, 1.0};
 
 		for(A1LidarData &data: data) {
-			if ((data.valid) & (data.r < 1.0) & (data.r > 0.0) & 
+			if ((data.valid) & (data.r < rmax) & (data.r > 0.0) & 
 				(data.phi > 0.0) & (data.phi < 1.0)) {
 				if (data.r < weights[0]) {
-					weights[0] = data.r;
+					weights[0] = rescale(data.r);
 				}
-			} else if ((data.valid) & (data.r < 1.0) & (data.r > 0.0) & 
+			} else if ((data.valid) & (data.r < rmax) & (data.r > 0.0) & 
 				(data.phi < 0.0) & (data.phi > -1.0)) {
 				if (data.r < weights[1]) {
-					weights[1] = data.r;
+					weights[1] = rescale(data.r);
 				}
 			}
 		}
+	}
+
+	float rescale(float r) {
+		return ((r - rmax) / (rmax - rmin)) * 1.0;
 	}
 
 	std::vector<float> getWeights() {	
@@ -50,6 +54,8 @@ public:
 	}
 
 private:
+	const float rmax = 2.0;
+	const float rmin = 0.2;
 	std::vector<float> weights;
 };
 
