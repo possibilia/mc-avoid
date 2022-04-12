@@ -57,7 +57,7 @@ private:
 	const float rmax = 0.5;
 	const float rmin = 0.2;
 
-	std::vector<float> weights;
+	std::vector<float> weights = {1.0, 1.0};
 
 	float rescale(float r) {
 		return ((r - rmax) / (rmax - rmin)) * 1.0;
