@@ -26,17 +26,15 @@ public:
 			std::cout << "Evade!!!" << "\n";
 			evade(&alphabot);
 			resetProgress();
-		} else if ((thetaPercent < (1. - tol)) & (targetTheta > 0)) {
+		} else if ((thetaPercent < (1. - tol)) & (targetTheta > 0) & (distancePercent < 1.)) {
 			std::cout << "Left " << thetaPercent << "\n";
 			turnLeft(&alphabot, thetaPercent);
-		} else if ((thetaPercent < (1. - tol)) & (targetTheta < 0)) {
+		} else if ((thetaPercent < (1. - tol)) & (targetTheta < 0) & (distancePercent < 1.)) {
 			std::cout << "Right " << thetaPercent << "\n";
 			turnRight(&alphabot, thetaPercent);
-		} else if ((distancePercent < 1.) & (thetaPercent > (1. - tol))) {
-			std::cout << "Drive " << distancePercent << "\n";
-			drive(&alphabot);
 		} else {
 			std::cout << "Pop action " << distancePercent << "\n";
+			drive(&alphabot);
 			action_q.pop_front();
 			resetProgress();
 		}
