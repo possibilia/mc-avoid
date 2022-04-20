@@ -31,3 +31,6 @@ target_link_libraries(runaway alphabot a1lidarrpi pigpio pthread)
 add_executable(curlTest curlTest.cpp)
 target_link_libraries(curlTest ${CURL_LIBRARIES})
 
+add_executable(step_exp step_exp.cpp)
+target_link_libraries(step_exp alphabot a1lidarrpi pigpio pthread)
+
