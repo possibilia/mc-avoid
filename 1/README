@@ -1,0 +1,13 @@
+Scenario:  (e.g., "Drives to the right.  Box to the left.")
+
+autoctrl.txt: system log
+
+map<scan number>.*: relevant map data for each scan 
+
+movie.mp4: video of scenario test
+
+plan<scan numer>.*: plan indexed by scan used to generate
+
+stateactor_speed.*: actual speed data for robot in scenario test 
+
+
