@@ -8,6 +8,7 @@
 class ControlCallback : public AlphaBot::StepCallback {
 public:
 	virtual void step(AlphaBot &alphabot) {
+		std::cout << "Battery: " << alphabot.getBatteryLevel();
 		if (action == 0) {
 			forward(&alphabot, 0.3);
 		} else if (action == 1) {
