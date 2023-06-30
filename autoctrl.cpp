@@ -5,13 +5,7 @@ class DataInterface : public A1Lidar::DataInterface {
 public:
 	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
 		for(A1LidarData &data: data) {
-			if ((data.valid) & (data.r < 0.3) & (data.r >= 0.0) & 
-				(data.phi > 0.0) & (data.phi < 1.0)) {
-				std::cout << "hello" << "\n";
-			} else if ((data.valid) & (data.r < 0.3) & (data.r >= 0.0) & 
-				(data.phi < 0.0) & (data.phi > -1.0)) {
-				std::cout << "hello" << "\n";
-			}
+			// TODO
 		}
 	}
 };
