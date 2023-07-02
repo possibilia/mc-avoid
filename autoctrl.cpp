@@ -25,7 +25,7 @@ int main(int, char **) {
 
 	//signal(SIGINT, signal_callback_handler);
 
-	logger.startLogging("autoctrl.txt");
+	logger.startLogging("autoctrl.txt", true);
 	TestLogger test;
 
 	while(true) {
