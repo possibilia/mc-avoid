@@ -21,3 +21,6 @@ add_subdirectory(lib)
 
 add_executable(autoctrl autoctrl.cpp)
 target_link_libraries(autoctrl alphabot a1lidarrpi pigpio pthread lib)
+
+add_executable(collect collect.cpp)
+target_link_libraries(collect alphabot a1lidarrpi pigpio pthread)
