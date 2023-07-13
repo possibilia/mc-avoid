@@ -1,0 +1,5 @@
+Scenario: Merge maneuver from overtake (testing algorithm adjustment)
+Goal: Avoid cutting line which intersect the x-axis behaind the robot in two.  
+Solution: If the absolute different between the first and last x in the scan 
+is small (< 0.01), then we assume that the points are contiguous (i.e., intersects x-axis).
+Result: This issue have been addressed, however needs further testing to be sure. 
