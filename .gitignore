@@ -34,5 +34,11 @@
 # build dir
 /build
 
+# prev experiments
+# control for overwritten data 
+/1
+/2
+/test
+
 navigation.h
 navigation.cpp
