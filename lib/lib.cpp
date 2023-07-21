@@ -1,7 +1,11 @@
 #include "lib.h"
 
-Logger logger;
+int nEvents = 0;
 
-void TestLogger::test(const char* message) {
-	logger.printf(message);
-} 
+void Actor::eventNewRelativeCoordinates(
+	const vector<ObjectIdentifier>& objects) {
+
+	nEvents++;
+	saveMap(objects);
+
+}

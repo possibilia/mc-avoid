@@ -88,7 +88,6 @@ public:
                     cpIdx.push_back(i);
             } 
         }
-        //cpIdx.push_back(points.size()-1);
         if (!intersectX) { cpIdx.push_back(points.size()-1);}
 
         // collect changepoints
@@ -138,15 +137,15 @@ private:
 int main(int, char **) { 
     signal(SIGINT, sig_handler);
 
-    DataInterface data;
-    A1Lidar lidar;
+    // DataInterface data;
+    // A1Lidar lidar;
     AlphaBot alphabot;
 
-    lidar.registerInterface(&data);
-    lidar.start();
+    // lidar.registerInterface(&data);
+    // lidar.start();
     alphabot.start();
 
-    logger.startLogging("../2/manualctrl.txt", true);
+    //logger.startLogging("../2/manualctrl.txt", true);
     
     while(running) {
         int ch = getch();
@@ -173,7 +172,7 @@ int main(int, char **) {
                 break;
             case 'w':
                 alphabot.setLeftWheelSpeed(motorSpeed);
-                alphabot.setRightWheelSpeed(motorSpeed);
+                alphabot.setRightWheelSpeed(motorSpeed+0.0250010341405868);
                 logger.printf("Initiating moving forward...\n");
                 break;
             default:
@@ -181,7 +180,7 @@ int main(int, char **) {
         }
     }
 
-    lidar.stop();
+    //lidar.stop();
     alphabot.stop();
     return 0;
 }
