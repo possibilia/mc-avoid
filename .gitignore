@@ -40,5 +40,7 @@
 /2
 /test
 
+# randome files
 navigation.h
 navigation.cpp
+test.cpp

@@ -24,6 +24,3 @@ target_link_libraries(autoctrl alphabot a1lidarrpi pigpio pthread lib)
 
 add_executable(collect collect.cpp)
 target_link_libraries(collect alphabot a1lidarrpi pigpio pthread)
-
-add_executable(manualctrl manualctrl.cpp)
-target_link_libraries(manualctrl alphabot a1lidarrpi pigpio pthread ncurses lib)
