@@ -1,17 +1,12 @@
 #include "lib.h"
 #include "alphabot.h"
 #include "a1lidarrpi.h"
-#include <signal.h>
 #include <vector>
-#include <typeinfo>
+#include <signal.h>
 #include <iostream>
 #include <stdio.h>
-#include <termios.h>
-#include <list>
-//#include <string>
 
 using namespace std;
-//using namespace std::chrono;
 
 const float safeDistance = 0.15; 
 const float maxDetectRange = 2.0; 
@@ -24,37 +19,6 @@ const float motorSpeed = 0.3;
 const float tolerance = 0.0250010341405868;
 
 bool running = true;
-
-const char* experiment = "2";
-
-//Logger logger;
-
-// terminate sig handler
-void sig_handler(int signo) {
-    if (signo == SIGINT) {
-            running = false;
-    }
-}
-
-int getch(void) {
-    int ch;
-
-    struct termios oldt;
-    struct termios newt;
-  
-    tcgetattr(STDIN_FILENO, &oldt);
-
-    newt = oldt; 
-    newt.c_lflag &= ~(ICANON | ECHO); 
-  
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt); 
-    ch = getchar(); 
-  
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt); 
-  
-    return ch;
-}
-
 
 // every 200 ms
 // 8192 data points 
@@ -82,25 +46,29 @@ public:
             objects.push_back(object);
         }
         actor.eventNewRelativeCoordinates(rpm/60.0f, objects);
-        //logger.printf("RPM = %f, Samplerate = %f\n", rpm, rpm/60.0f);
     }
 };
 
 // closes the loop
-// callback to robot actuators from task event
-// initiated by a scan event from the lidar
-class RoboTakeAction : public TakeAction {
+// callback to robot actuators from current task
+// initiated by actor event handler
+class ActuatorInterface : public TakeAction {
 public:
-    RoboTakeAction(AlphaBot& _alphabot) : alphabot(_alphabot) {}
+    ActuatorInterface(AlphaBot& _alphabot) : alphabot(_alphabot) {}
 
     AlphaBot& alphabot;
     virtual void motorAction(float l, float r) {
-        //if (AIon) {
-            alphabot.setLeftWheelSpeed(l);
-            alphabot.setRightWheelSpeed(r);
-        //}
+        alphabot.setLeftWheelSpeed(l);
+        alphabot.setRightWheelSpeed(r);
     }
 };
+
+// terminate sig handler
+void sig_handler(int signo) {
+    if (signo == SIGINT) {
+            running = false;
+    }
+}
 
 int main(int, char **) { 
     signal(SIGINT, sig_handler);
@@ -114,7 +82,7 @@ int main(int, char **) {
     lidar.start();
 
     AlphaBot alphabot;
-    RoboTakeAction takeAction(alphabot);
+    ActuatorInterface takeAction(alphabot);
 
     shared_ptr<AbstractTask> targetTask = make_shared<StraightTask>();
     targetTask->registerTakeAction(&takeAction);
@@ -125,36 +93,7 @@ int main(int, char **) {
     logger.startLogging("../test/manualctrl.txt", true);
     
     while(running) {
-        int ch = getch();
-        switch (ch) {
-            case ' ':
-                alphabot.setLeftWheelSpeed(0);
-                alphabot.setRightWheelSpeed(0);
-                logger.printf("STOP!\n");
-                break;
-            case 'a':
-                alphabot.setLeftWheelSpeed(-motorSpeed);
-                alphabot.setRightWheelSpeed(motorSpeed);
-                logger.printf("Initiating turning left...\n");
-                break;
-            case 'd':
-                alphabot.setLeftWheelSpeed(motorSpeed);
-                alphabot.setRightWheelSpeed(-motorSpeed);
-                logger.printf("Initiating turning right...\n");
-                break;
-            case 's':
-                alphabot.setLeftWheelSpeed(-motorSpeed);
-                alphabot.setRightWheelSpeed(-motorSpeed);
-                logger.printf("Initiating move backwards...\n");
-                break;
-            case 'w':
-                alphabot.setLeftWheelSpeed(motorSpeed);
-                alphabot.setRightWheelSpeed(motorSpeed);
-                logger.printf("Initiating moving forward...\n");
-                break;
-            default:
-                break;
-        }
+        // do nothing
     }
 
     lidar.stop();

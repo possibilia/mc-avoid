@@ -18,6 +18,7 @@ struct Point {
 	float y = 0.0;
 };
 
+// generalised structure
 class ObjectIdentifier {
 
 public:
@@ -40,10 +41,19 @@ public:
 		return location;
 	}
 
-	float getDistance(ObjectIdentifier const &loc2) const {
-		assert( isValid() && loc2.isValid());
-		float a = pow(location.x - loc2.getLocation().x, 2); 
-		float b = pow(location.y - loc2.getLocation().y, 2);
+	// distance between two objects
+	float getDistance(ObjectIdentifier const &object) const {
+		assert(isValid() && object.isValid());
+		float a = pow(location.x - object.getLocation().x, 2); 
+		float b = pow(location.y - object.getLocation().y, 2);
+		return sqrt(a + b);
+	}
+
+	// distance from origin
+	float getDistance() const {
+		assert(isValid());
+		float a = pow(location.x, 2); 
+		float b = pow(location.y, 2);
 		return sqrt(a + b);
 	}
 
@@ -70,10 +80,9 @@ private:
 	ObjectType label = ObjectType::invalid;
 };
 
-
 ////////////////////////////////// Task hierarchy ////////////////////////////
 
-// abstract intterface to control the motors
+// interface for actuators
 struct TakeAction {
 	virtual void motorAction(float speedLeft, float speedRight) = 0;
 };
@@ -119,7 +128,7 @@ struct StraightTask : AbstractTask {
 };
 
 
-//////////////////////////// Actor event handler //////////////////////////////
+////////////////////////////// Event handler //////////////////////////////
 
 
 class Actor {
@@ -144,9 +153,11 @@ private:
 		FILE* f = fopen(tmp,"wt");
 		for(unsigned i = 0; i < objects.size();i++) {
 			if (objects[i].isValid()) {
-				fprintf(f,"%4.4f %4.4f\n",
+				fprintf(f,"%4.4f %4.4f %4.4f %4.4f\n",
 				objects[i].getLocation().x,
-				objects[i].getLocation().y);
+				objects[i].getLocation().y,
+				objects[i].getDistance(),
+				objects[i].getAngle());
 			}
 		}
 		fclose(f);
