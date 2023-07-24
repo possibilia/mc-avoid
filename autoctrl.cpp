@@ -5,18 +5,12 @@
 #include <signal.h>
 #include <iostream>
 #include <stdio.h>
+#include <ncurses.h>
 
 using namespace std;
 
 const float safeDistance = 0.15; 
 const float maxDetectRange = 2.0; 
-
-const float rThresh = 0.05;
-const float phiThresh = 0.1;
-const float xThresh = 0.01;
-
-const float motorSpeed = 0.3;
-const float tolerance = 0.0250010341405868;
 
 bool running = true;
 
@@ -63,6 +57,7 @@ public:
     }
 };
 
+
 // terminate sig handler
 void sig_handler(int signo) {
     if (signo == SIGINT) {
@@ -94,7 +89,15 @@ int main(int, char **) {
     logger.startLogging("../test/manualctrl.txt", true);
     
     while(running) {
-        // do nothing
+        // blocking
+        int ch = getchar();
+        switch (ch) {
+            case 27:
+                running = false;
+                break;
+            default:
+                 break;
+        }
     }
 
     lidar.stop();

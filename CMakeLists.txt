@@ -20,7 +20,7 @@ include_directories(${CURL_INCLUDE_DIR})
 add_subdirectory(agent)
 
 add_executable(autoctrl autoctrl.cpp)
-target_link_libraries(autoctrl alphabot a1lidarrpi pigpio pthread agent)
+target_link_libraries(autoctrl alphabot a1lidarrpi pigpio pthread agent ncurses)
 
 add_executable(collect collect.cpp)
 target_link_libraries(collect alphabot a1lidarrpi pigpio pthread)

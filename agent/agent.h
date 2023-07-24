@@ -6,10 +6,13 @@
 #include <cassert>
 #include <math.h>
 #include <memory>
+#include <string>
 
 using namespace std;
 
 extern int nEvents;
+
+const float L = 0.147;
 
 ////////////////////////////////// Observations ///////////////////////////////////
 
@@ -99,11 +102,15 @@ public:
 		}
 	};
 
+	// inherits values from previous task for chaining
+	// default init for straight, overriden by rotate
 	virtual void init(shared_ptr<AbstractTask> &t) {
+		// task state info
 		takeAction = t->takeAction;
 		desiredMotorDrive = t->desiredMotorDrive;
 		motorDriveLeft = t->desiredMotorDrive;
 		motorDriveRight = t->desiredMotorDrive;
+		// disturbance
 	}
 
 	virtual TaskResult taskExecutionStep(float samplingrate, 
@@ -119,6 +126,14 @@ public:
 		motorDriveRight = desiredMotorDrive;
 	}
 
+	float getMotorLinearVelocity() {
+		return (motorDriveLeft+motorDriveRight) / 2.0 * robotDrive2realSpeed;
+	}
+
+	float getMotorAngularVelocity() {
+		return (motorDriveRight - motorDriveLeft) / L * robotDrive2realSpeed;	
+	}
+
 protected:
 	void eventNewMotorAction() {
 		if (nullptr != takeAction) {
@@ -126,15 +141,22 @@ protected:
 		}
 	}
 
+	// inhereted for chaining
 	ActionInterface* takeAction = nullptr;
 	float motorDriveLeft = 0.0;
 	float motorDriveRight = 0.0;
 	float desiredMotorDrive = 0.0;
-	float robotDrive2realSpeed = 0.1;
+
+	// the disturbance
 	Observation disturbance;
+
+	// conversion constant
+	const float robotDrive2realSpeed = 0.2;
 };
 
 struct StraightTask : AbstractTask {
+
+	float progress = 0.0;
 
 	virtual TaskResult taskExecutionStep(float samplingrate, 
 		const vector<Observation>& obs);
@@ -143,17 +165,33 @@ struct StraightTask : AbstractTask {
 template <int signedYawScalar>
 struct Rotate90Task : AbstractTask {
 
+	float relativeTimestamp = 0.0;
+
+	// overrides init method in base class
 	virtual void init(shared_ptr<AbstractTask> &t) {
 		AbstractTask::init(t);
+		relativeTimestamp = 0;
 		motorDriveLeft = desiredMotorDrive *(float)signedYawScalar;
 		motorDriveRight = -desiredMotorDrive *(float)signedYawScalar;
 	}
 
 	virtual TaskResult taskExecutionStep(float samplingrate, 
 		const vector<Observation>& obs) {
-		logger.printf("turning");
-		eventNewMotorAction();
 		TaskResult tr;
+
+		float startAngle = M_PI/4; // distrubance angle
+		float omega = getMotorAngularVelocity();
+		float angle = startAngle + omega  * relativeTimestamp * (float)signedYawScalar;
+		logger.printf("startAngle = %f  angel = %f  omega = %f \n", startAngle, angle, getMotorAngularVelocity());
+
+		if (abs(angle - startAngle) > M_PI/2) {
+			tr.result = ResultCodes::disturbance_gone;
+			logger.printf("CLeared !! angle = %f", angle);
+			return tr;
+		}
+
+		eventNewMotorAction();
+		relativeTimestamp += (1/samplingrate);
 		return tr;
 	};
 };
