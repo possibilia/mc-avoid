@@ -1,4 +1,4 @@
-#include "lib.h"
+#include "agent.h"
 #include "alphabot.h"
 #include "a1lidarrpi.h"
 #include <vector>
@@ -24,40 +24,40 @@ bool running = true;
 // 8192 data points 
 // (invalid: corrupted/outside detection zone)
 // scan event -> actor event handler
-class DataInterface : public A1Lidar::DataInterface {
+class A1LidarScanEvent : public A1Lidar::DataInterface {
 public:
-    Actor& actor;
+    Agent& agent;
 
-    DataInterface(Actor& _actor) : actor(_actor) {};
+    A1LidarScanEvent(Agent& _agent) : agent(_agent) {};
 
 public:
     void newScanAvail(float rpm, A1LidarData (&data)[A1Lidar::nDistance]) {
         int nData = 0;
 
-        vector<ObjectIdentifier> objects;
-        ObjectIdentifier object; // invalid by default
+        vector<Observation> obs;
+        Observation ob; // invalid by default
 
         for(A1LidarData &data: data) {
             if (data.valid && data.r > safeDistance 
                 && data.r < maxDetectRange) {
-                object.setObject(data.x, data.y);
+                ob.setObservation(data.x, data.y);
                 nData++;
             } 
-            objects.push_back(object);
+            obs.push_back(ob);
         }
-        actor.eventNewRelativeCoordinates(rpm/60.0f, objects);
+        agent.eventNewRelativeCoordinates(rpm/60.0f, obs);
     }
 };
 
 // closes the loop
 // callback to robot actuators from current task
 // initiated by actor event handler
-class ActuatorInterface : public TakeAction {
+class MotorActionEvent : public ActionInterface {
 public:
-    ActuatorInterface(AlphaBot& _alphabot) : alphabot(_alphabot) {}
+    MotorActionEvent(AlphaBot& _alphabot) : alphabot(_alphabot) {}
 
     AlphaBot& alphabot;
-    virtual void motorAction(float l, float r) {
+    virtual void executeMotorAction(float l, float r) {
         alphabot.setLeftWheelSpeed(l);
         alphabot.setRightWheelSpeed(r);
     }
@@ -73,20 +73,20 @@ void sig_handler(int signo) {
 int main(int, char **) { 
     signal(SIGINT, sig_handler);
 
-    Actor actor;
+    Agent agent;
 
-    DataInterface data(actor);
+    A1LidarScanEvent data(agent);
     A1Lidar lidar;
 
     lidar.registerInterface(&data);
     lidar.start();
 
     AlphaBot alphabot;
-    ActuatorInterface takeAction(alphabot);
+    MotorActionEvent takeAction(alphabot);
 
     shared_ptr<AbstractTask> targetTask = make_shared<StraightTask>();
-    targetTask->registerTakeAction(&takeAction);
-    actor.setTargetTask(targetTask);
+    targetTask->registerInterface(&takeAction);
+    agent.setTargetTask(targetTask);
 
     alphabot.start();
 

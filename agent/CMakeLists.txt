@@ -13,17 +13,13 @@ add_compile_options(-Wall)
 
 #include_directories(${OpenCV_INCLUDE_DIRS})
 
-add_library(lib
-  STATIC
-  lib.cpp
-  )
+add_library(agent STATIC agent.cpp)
 
 # target_link_libraries(lib box2d iir::iir_static)
 
-set_target_properties(lib PROPERTIES
+set_target_properties(agent PROPERTIES
   POSITION_INDEPENDENT_CODE TRUE
-  PUBLIC_HEADER lib.h)
+  PUBLIC_HEADER agent.h)
 
-target_include_directories(lib PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-)
+target_include_directories(agent PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

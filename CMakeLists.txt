@@ -17,10 +17,10 @@ find_library(a1lidarrpi NAMES a1lidarrpi HINTS "${CMAKE_INSTALL_LIBDIR}")
 
 include_directories(${CURL_INCLUDE_DIR})
 
-add_subdirectory(lib)
+add_subdirectory(agent)
 
 add_executable(autoctrl autoctrl.cpp)
-target_link_libraries(autoctrl alphabot a1lidarrpi pigpio pthread lib)
+target_link_libraries(autoctrl alphabot a1lidarrpi pigpio pthread agent)
 
 add_executable(collect collect.cpp)
 target_link_libraries(collect alphabot a1lidarrpi pigpio pthread)
