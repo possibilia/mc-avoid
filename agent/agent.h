@@ -150,7 +150,7 @@ protected:
 	// the disturbance
 	Observation disturbance;
 
-	// conversion constant
+	// conversion constant (changed from 0.1)
 	const float robotDrive2realSpeed = 0.2;
 };
 
@@ -181,12 +181,12 @@ struct Rotate90Task : AbstractTask {
 
 		float startAngle = M_PI/4; // distrubance angle
 		float omega = getMotorAngularVelocity();
-		float angle = startAngle + omega  * relativeTimestamp * (float)signedYawScalar;
-		logger.printf("startAngle = %f  angel = %f  omega = %f \n", startAngle, angle, getMotorAngularVelocity());
+		float angle = startAngle + omega * relativeTimestamp * (float)signedYawScalar;
+		logger.printf("startAngle = %f  angle = %f  omega = %f \n", startAngle, angle, omega);
 
 		if (abs(angle - startAngle) > M_PI/2) {
 			tr.result = ResultCodes::disturbance_gone;
-			logger.printf("CLeared !! angle = %f", angle);
+			logger.printf("Cleared !! angle = %f", angle);
 			return tr;
 		}
 
