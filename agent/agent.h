@@ -98,7 +98,7 @@ public:
 		}
 	};
 
-	virtual TaskResult robotExecutionStep(float samplingrate, 
+	virtual TaskResult taskExecutionStep(float samplingrate, 
 		const vector<Observation>& obs) = 0;
 
 	void registerInterface(ActionInterface* ta) {
@@ -120,7 +120,7 @@ protected:
 };
 
 struct StraightTask : AbstractTask {
-	virtual TaskResult robotExecutionStep(float samplingrate, 
+	virtual TaskResult taskExecutionStep(float samplingrate, 
 		const vector<Observation>& obs);
 };
 

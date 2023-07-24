@@ -7,12 +7,12 @@ Logger logger;
 void Agent::eventNewRelativeCoordinates(float samplingrate,
 	const vector<Observation>& obs) {
 
-	AbstractTask::TaskResult tr = targetTask->robotExecutionStep(samplingrate, obs);
+	AbstractTask::TaskResult tr = targetTask->taskExecutionStep(samplingrate, obs);
 	saveMap(obs);
 	nEvents++;
 }
 
-AbstractTask::TaskResult StraightTask::robotExecutionStep(float samplingrate,
+AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 	const vector<Observation>& obs) {
 
 	eventNewMotorAction();
