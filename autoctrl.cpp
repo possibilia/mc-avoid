@@ -86,6 +86,7 @@ int main(int, char **) {
 
     shared_ptr<AbstractTask> targetTask = make_shared<StraightTask>();
     targetTask->registerInterface(&takeAction);
+    targetTask->setInitialSpeed(0.2f);
     agent.setTargetTask(targetTask);
 
     alphabot.start();

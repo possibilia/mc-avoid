@@ -87,7 +87,8 @@ struct ActionInterface {
 
 class AbstractTask {
 public:
-	enum ResultCodes { nothing = 0, disturbance_gone = 1, failed = 2, new_disturbance = 3 };
+	enum ResultCodes { nothing = 0, disturbance_gone = 1, 
+	failed = 2, new_disturbance = 3 };
 
 	struct TaskResult {
 		ResultCodes result = nothing;
@@ -98,11 +99,24 @@ public:
 		}
 	};
 
+	virtual void init(shared_ptr<AbstractTask> &t) {
+		takeAction = t->takeAction;
+		desiredMotorDrive = t->desiredMotorDrive;
+		motorDriveLeft = t->desiredMotorDrive;
+		motorDriveRight = t->desiredMotorDrive;
+	}
+
 	virtual TaskResult taskExecutionStep(float samplingrate, 
 		const vector<Observation>& obs) = 0;
 
 	void registerInterface(ActionInterface* ta) {
 		takeAction = ta;
+	}
+
+	void setInitialSpeed(const float speed) {
+		desiredMotorDrive = speed;
+		motorDriveLeft = desiredMotorDrive;
+		motorDriveRight = desiredMotorDrive;
 	}
 
 protected:
@@ -113,17 +127,39 @@ protected:
 	}
 
 	ActionInterface* takeAction = nullptr;
-	float motorDriveLeft = 0.2;
-	float motorDriveRight = 0.2;
+	float motorDriveLeft = 0.0;
+	float motorDriveRight = 0.0;
+	float desiredMotorDrive = 0.0;
 	float robotDrive2realSpeed = 0.1;
 	Observation disturbance;
 };
 
 struct StraightTask : AbstractTask {
+
 	virtual TaskResult taskExecutionStep(float samplingrate, 
 		const vector<Observation>& obs);
 };
 
+template <int signedYawScalar>
+struct Rotate90Task : AbstractTask {
+
+	virtual void init(shared_ptr<AbstractTask> &t) {
+		AbstractTask::init(t);
+		motorDriveLeft = desiredMotorDrive *(float)signedYawScalar;
+		motorDriveRight = -desiredMotorDrive *(float)signedYawScalar;
+	}
+
+	virtual TaskResult taskExecutionStep(float samplingrate, 
+		const vector<Observation>& obs) {
+		logger.printf("turning");
+		eventNewMotorAction();
+		TaskResult tr;
+		return tr;
+	};
+};
+
+struct Rotate90Left : Rotate90Task<-1> {};
+struct Rotate90Right : Rotate90Task<1> {};
 
 ////////////////////////////// Agent ////////////////////////////////////////////////
 
