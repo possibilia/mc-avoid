@@ -7,35 +7,33 @@ Logger logger;
 void Agent::eventNewRelativeCoordinates(float samplingrate,
 	const vector<Observation>& obs) { 
 
-	setTrackingError(obs);
-	float trackingError = getTrackingError();
-	logger.printf("tracking error : %f \n", trackingError);
+	setMeanLateralError(obs);
+	float meanLateralError = getMeanLateralError();
+	//logger.printf("tracking error : %f \n", trackingError);
 
-	AbstractTask::TaskResult tr = targetTask->taskExecutionStep(samplingrate, obs, trackingError);
-	shared_ptr<AbstractTask> right  = make_shared<Rotate90Right>();
-	shared_ptr<AbstractTask> straight  = make_shared<StraightTask>();
-
-	if (nEvents == 20) {
-		right->init(targetTask);
-		targetTask = right;
-	}
-
-	if (tr.result == AbstractTask::ResultCodes::disturbance_gone) {
-		straight->init(targetTask);
-		targetTask = straight;
-	}
+	AbstractTask::TaskResult tr = targetTask->taskExecutionStep(samplingrate, obs, meanLateralError);
  
 	nEvents++;
 }
 
 AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
-	const vector<Observation>& obs, float trackingError) {
+	const vector<Observation>& obs, float meanLateralError) {
+
 	TaskResult tr;
+
+	Observation disturbance = checkSafeZone(obs);
+	if (disturbance.isValid()) {
+		tr.setDisturbance(disturbance);
+		logger.printf(" distrubance r = %f, theta = %f \n", 
+			disturbance.getDistance(), disturbance.getAngle());
+	} else {
+		logger.printf(" distrubance r = %f, theta = %f \n", 0.0, 0.0);
+	}
 
 	float distance = getMotorLinearVelocity() * taskDuration;
 	//logger.printf("meters = %f\n", distance);
 
-	eventNewMotorAction(trackingError);
+	eventNewMotorAction(meanLateralError);
 	taskDuration += (1/samplingrate);
 	return tr;
 }

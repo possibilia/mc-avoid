@@ -116,7 +116,7 @@ public:
 	}
 
 	virtual TaskResult taskExecutionStep(float samplingrate, 
-		const vector<Observation>& obs, float trackingError) = 0;
+		const vector<Observation>& obs, float meanLateralError) = 0;
 
 	void registerInterface(ActionInterface* ta) {
 		takeAction = ta;
@@ -139,11 +139,11 @@ public:
 	}
 
 protected:
-	void eventNewMotorAction(float trackingError) {
+	void eventNewMotorAction(float meanLateralError) {
 		if (nullptr != takeAction) {
 			// robot veers to right
 			float motorDriveLeft_ = 0.0;
-			if (abs(trackingError) > trackingErrorThresh) {
+			if ((abs(meanLateralError) > lateralErrorThresh) && (meanLateralError < 0.0)) {
 				motorDriveLeft_ = motorDriveLeft * mechanicalErrorConst * errorSpeedReduction;
 			} else {
 				motorDriveLeft_ = motorDriveLeft * mechanicalErrorConst;
@@ -166,14 +166,34 @@ protected:
 
 	// conversion constant (changed from 0.1)
 	const float robotDrive2realSpeed = 0.2;
-	const float errorSpeedReduction = 0.9;
-	const float trackingErrorThresh = 0.001f;
+	const float errorSpeedReduction = 0.97;
+	const float lateralErrorThresh = 0.001f;
 };
 
 struct StraightTask : AbstractTask {
 
+	float safeZone = 0.2;
+
 	virtual TaskResult taskExecutionStep(float samplingrate, 
-		const vector<Observation>& obs, float trackingError);
+		const vector<Observation>& obs, float meanLateralError);
+
+	// find the nearest observation in safe zone
+	Observation checkSafeZone(const vector<Observation>& obs) {
+		Observation disturbance;
+		float minx = safeZone;
+
+		for (unsigned i = 0; i < obs.size(); i++) {
+			if ((obs[i].isValid())) {
+				Point xy = obs[i].getLocation();
+				if ((abs(xy.x) < safeZone) && (abs(xy.y) < safeZone) 
+					&& (xy.x > 0.15) && (xy.x < minx)) {
+					disturbance = obs[i];
+					minx = xy.x;
+				}
+			} 
+		}
+		return disturbance;
+	}
 };
 
 template <int signedYawScalar>
@@ -187,7 +207,7 @@ struct Rotate90Task : AbstractTask {
 	}
 
 	virtual TaskResult taskExecutionStep(float samplingrate, 
-		const vector<Observation>& obs, float trackingError) {
+		const vector<Observation>& obs, float meanLateralError) {
 		TaskResult tr;
 
 		// distrubance angle
@@ -205,7 +225,7 @@ struct Rotate90Task : AbstractTask {
 			return tr;
 		}
 
-		eventNewMotorAction(trackingError);
+		eventNewMotorAction(meanLateralError);
 		taskDuration += (1/samplingrate);
 		return tr;
 	};
@@ -231,7 +251,7 @@ private:
 
 	float ymeanStart = 0.0;
 	float ymeanCurr = 0.0;
-	float trackingError = 0.0;
+	float meanLateralError = 0.0;
 
 	vector<Observation> previousTrackingPoints;
 
@@ -254,9 +274,10 @@ private:
 		fclose(f);
 	}
 	
-	void setTrackingError(const vector<Observation> obs) {
+	void setMeanLateralError(const vector<Observation> obs) {
 		float ysum = 0.0;
 		int count = 0;
+
 		for (unsigned i = 0; i < obs.size(); i++) {
 			if (obs[i].isValid()) {
 				ysum += obs[i].getLocation().y;
@@ -265,12 +286,12 @@ private:
 		}
 
 		ymeanCurr = ysum / (float)count;
-		trackingError = ymeanCurr - ymeanStart;
+		meanLateralError = ymeanCurr - ymeanStart;
 		ymeanStart = ymeanCurr;
 	}
 
-	float getTrackingError() const {
-		return trackingError;
+	float getMeanLateralError() const {
+		return meanLateralError;
 	}
 };
 
