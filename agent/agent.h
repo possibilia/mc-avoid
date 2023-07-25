@@ -106,13 +106,13 @@ public:
 
 	// inherits values from previous task for chaining
 	// default init for straight, overriden by rotate
-	virtual void init(shared_ptr<AbstractTask> &t) {
+	virtual void init(shared_ptr<AbstractTask> &t, Observation d) {
 		// task state info
 		takeAction = t->takeAction;
 		desiredMotorDrive = t->desiredMotorDrive;
 		motorDriveLeft = t->desiredMotorDrive;
 		motorDriveRight = t->desiredMotorDrive;
-		// disturbance
+		disturbance = d;
 	}
 
 	virtual TaskResult taskExecutionStep(float samplingrate, 
@@ -152,6 +152,21 @@ protected:
 		}
 	}
 
+	void eventNewMotorAction(float meanLateralError, int signedYawScalar) {
+		if (nullptr != takeAction) {
+			float motorDriveRight_ = 0.0;
+
+			if (signedYawScalar == -1) {
+				motorDriveRight_ = motorDriveRight * 1.2;
+			} else {
+				eventNewMotorAction(meanLateralError);
+			}
+			takeAction->executeMotorAction(motorDriveLeft, motorDriveRight_);
+		}
+	}
+
+
+
 	// inhereted for chaining
 	ActionInterface* takeAction = nullptr;
 	float motorDriveLeft = 0.0;
@@ -165,7 +180,7 @@ protected:
 	float taskDuration = 0.0;
 
 	// conversion constant (changed from 0.1)
-	const float robotDrive2realSpeed = 0.2;
+	const float robotDrive2realSpeed = 0.1;
 	const float errorSpeedReduction = 0.995;
 	const float lateralErrorThresh = 0.001f;
 };
@@ -200,8 +215,8 @@ template <int signedYawScalar>
 struct Rotate90Task : AbstractTask {
 
 	// overrides init method in base class
-	virtual void init(shared_ptr<AbstractTask> &t) {
-		AbstractTask::init(t);
+	virtual void init(shared_ptr<AbstractTask> &t, Observation d) {
+		AbstractTask::init(t, d);
 		motorDriveLeft = desiredMotorDrive *(float)signedYawScalar;
 		motorDriveRight = -desiredMotorDrive *(float)signedYawScalar;
 	}
@@ -213,11 +228,15 @@ struct Rotate90Task : AbstractTask {
 		// distrubance angle
 		// same movement as turning
 		// 90 degrees from theta 0
+
 		float startAngle = 0.0; 
+		if (disturbance.isValid()) {
+			startAngle = disturbance.getAngle();
+		}
 
 		float omega = getMotorAngularVelocity();
 		float angle = startAngle + omega * taskDuration;
-		//logger.printf("startAngle = %f  angle = %f  omega = %f \n", startAngle, angle, omega);
+		logger.printf("startAngle = %f  angle = %f  omega = %f \n", startAngle, angle, omega);
 
 		if (abs(angle - startAngle) > M_PI/2) {
 			tr.result = ResultCodes::disturbance_gone;
@@ -225,14 +244,14 @@ struct Rotate90Task : AbstractTask {
 			return tr;
 		}
 
-		eventNewMotorAction(meanLateralError);
+		eventNewMotorAction(meanLateralError, signedYawScalar);
 		taskDuration += (1/samplingrate);
 		return tr;
 	};
 };
 
-struct Rotate90Left : Rotate90Task<-1> {};
-struct Rotate90Right : Rotate90Task<1> {};
+struct Rotate90Left : Rotate90Task<1> {};
+struct Rotate90Right : Rotate90Task<-1> {};
 
 
 ////////////////////////////// Agent ////////////////////////////////////////////////
@@ -245,6 +264,7 @@ public:
 
 	void setTargetTask(shared_ptr<AbstractTask> t) {
 		targetTask = t;
+		currentTask = t;
 	}
 
 private:
@@ -255,7 +275,14 @@ private:
 
 	vector<Observation> previousTrackingPoints;
 
+	// default task straight
 	shared_ptr<AbstractTask> targetTask;
+
+	// the task we are in
+	shared_ptr<AbstractTask> currentTask;
+
+	// the plan if available
+	vector<shared_ptr<AbstractTask>> plan;
 
 	void saveMap(const vector<Observation>& obs) {
 		char tmp[256];
