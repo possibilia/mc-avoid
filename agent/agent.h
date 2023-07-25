@@ -166,7 +166,7 @@ protected:
 
 	// conversion constant (changed from 0.1)
 	const float robotDrive2realSpeed = 0.2;
-	const float errorSpeedReduction = 0.97;
+	const float errorSpeedReduction = 0.995;
 	const float lateralErrorThresh = 0.001f;
 };
 

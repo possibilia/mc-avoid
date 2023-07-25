@@ -24,10 +24,10 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 	Observation disturbance = checkSafeZone(obs);
 	if (disturbance.isValid()) {
 		tr.setDisturbance(disturbance);
-		logger.printf(" distrubance r = %f, theta = %f \n", 
+		logger.printf(" result = %d, r = %f, theta = %f \n", tr.result,
 			disturbance.getDistance(), disturbance.getAngle());
 	} else {
-		logger.printf(" distrubance r = %f, theta = %f \n", 0.0, 0.0);
+		logger.printf(" result = %d, r = %f, theta = %f \n", tr.result, 0.0, 0.0);
 	}
 
 	float distance = getMotorLinearVelocity() * taskDuration;
