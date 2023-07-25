@@ -13,6 +13,8 @@ using namespace std;
 extern int nEvents;
 
 const float L = 0.147;
+const float r = 0.033;
+const float mechanicalErrorConst = 0.8;
 
 ////////////////////////////////// Observations ///////////////////////////////////
 
@@ -114,7 +116,7 @@ public:
 	}
 
 	virtual TaskResult taskExecutionStep(float samplingrate, 
-		const vector<Observation>& obs) = 0;
+		const vector<Observation>& obs, float trackingError) = 0;
 
 	void registerInterface(ActionInterface* ta) {
 		takeAction = ta;
@@ -127,17 +129,26 @@ public:
 	}
 
 	float getMotorLinearVelocity() {
+		// average of both motors converted to m/s
 		return (motorDriveLeft+motorDriveRight) / 2.0 * robotDrive2realSpeed;
 	}
 
 	float getMotorAngularVelocity() {
+		// vr - vl / wheelbase converted to m/s
 		return (motorDriveRight - motorDriveLeft) / L * robotDrive2realSpeed;	
 	}
 
 protected:
-	void eventNewMotorAction() {
+	void eventNewMotorAction(float trackingError) {
 		if (nullptr != takeAction) {
-			takeAction->executeMotorAction(motorDriveLeft,motorDriveRight);
+			// correction for veer to right
+			float motorDriveLeft_ = 0.0;
+			if (abs(trackingError) > trackingErrorThresh) {
+				motorDriveLeft_ = motorDriveLeft * mechanicalErrorConst * errorSpeedReduction;
+			} else {
+				motorDriveLeft_ = motorDriveLeft * mechanicalErrorConst;
+			}
+			takeAction->executeMotorAction(motorDriveLeft_, motorDriveRight);
 		}
 	}
 
@@ -150,48 +161,52 @@ protected:
 	// the disturbance
 	Observation disturbance;
 
+	// based on lidar rpm
+	float taskDuration = 0.0;
+
 	// conversion constant (changed from 0.1)
 	const float robotDrive2realSpeed = 0.2;
+	const float errorSpeedReduction = 0.9;
+	const float trackingErrorThresh = 0.001f;
 };
 
 struct StraightTask : AbstractTask {
 
-	float progress = 0.0;
-
 	virtual TaskResult taskExecutionStep(float samplingrate, 
-		const vector<Observation>& obs);
+		const vector<Observation>& obs, float trackingError);
 };
 
 template <int signedYawScalar>
 struct Rotate90Task : AbstractTask {
 
-	float relativeTimestamp = 0.0;
-
 	// overrides init method in base class
 	virtual void init(shared_ptr<AbstractTask> &t) {
 		AbstractTask::init(t);
-		relativeTimestamp = 0;
 		motorDriveLeft = desiredMotorDrive *(float)signedYawScalar;
 		motorDriveRight = -desiredMotorDrive *(float)signedYawScalar;
 	}
 
 	virtual TaskResult taskExecutionStep(float samplingrate, 
-		const vector<Observation>& obs) {
+		const vector<Observation>& obs, float trackingError) {
 		TaskResult tr;
 
-		float startAngle = M_PI/4; // distrubance angle
+		// distrubance angle
+		// same movement as turning
+		// 90 degrees from theta 0
+		float startAngle = 0.0; 
+
 		float omega = getMotorAngularVelocity();
-		float angle = startAngle + omega * relativeTimestamp * (float)signedYawScalar;
-		logger.printf("startAngle = %f  angle = %f  omega = %f \n", startAngle, angle, omega);
+		float angle = startAngle + omega * taskDuration;
+		//logger.printf("startAngle = %f  angle = %f  omega = %f \n", startAngle, angle, omega);
 
 		if (abs(angle - startAngle) > M_PI/2) {
 			tr.result = ResultCodes::disturbance_gone;
-			logger.printf("Cleared !! angle = %f", angle);
+			//logger.printf("Cleared !! angle = %f", angle);
 			return tr;
 		}
 
-		eventNewMotorAction();
-		relativeTimestamp += (1/samplingrate);
+		eventNewMotorAction(trackingError);
+		taskDuration += (1/samplingrate);
 		return tr;
 	};
 };
@@ -199,11 +214,12 @@ struct Rotate90Task : AbstractTask {
 struct Rotate90Left : Rotate90Task<-1> {};
 struct Rotate90Right : Rotate90Task<1> {};
 
-////////////////////////////// Agent ////////////////////////////////////////////////
 
+////////////////////////////// Agent ////////////////////////////////////////////////
 
 class Agent {
 public:
+
 	void eventNewRelativeCoordinates(float samplingrate,
 		const vector<Observation>& obs);
 
@@ -212,6 +228,10 @@ public:
 	}
 
 private:
+
+	float ymeanStart = 0.0;
+	float ymeanCurr = 0.0;
+	float trackingError = 0.0;
 
 	vector<Observation> previousTrackingPoints;
 
@@ -232,6 +252,25 @@ private:
 			}
 		}
 		fclose(f);
+	}
+	
+	void setTrackingError(const vector<Observation> obs) {
+		float ysum = 0.0;
+		int count = 0;
+		for (unsigned i = 0; i < obs.size(); i++) {
+			if (obs[i].isValid()) {
+				ysum += obs[i].getLocation().y;
+				count++;
+			}
+		}
+
+		ymeanCurr = ysum / (float)count;
+		trackingError = ymeanCurr - ymeanStart;
+		ymeanStart = ymeanCurr;
+	}
+
+	float getTrackingError() const {
+		return trackingError;
 	}
 };
 

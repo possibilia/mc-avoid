@@ -5,34 +5,37 @@ int nEvents = 0;
 Logger logger;
 
 void Agent::eventNewRelativeCoordinates(float samplingrate,
-	const vector<Observation>& obs) {
+	const vector<Observation>& obs) { 
 
-	shared_ptr<AbstractTask> rigth = make_shared<Rotate90Right>();
-	shared_ptr<AbstractTask> straight = make_shared<StraightTask>();
+	setTrackingError(obs);
+	float trackingError = getTrackingError();
+	logger.printf("tracking error : %f \n", trackingError);
 
-	AbstractTask::TaskResult tr = targetTask->taskExecutionStep(samplingrate, obs);
-
-	//saveMap(obs);
-	nEvents++;
+	AbstractTask::TaskResult tr = targetTask->taskExecutionStep(samplingrate, obs, trackingError);
+	shared_ptr<AbstractTask> right  = make_shared<Rotate90Right>();
+	shared_ptr<AbstractTask> straight  = make_shared<StraightTask>();
 
 	if (nEvents == 20) {
-		rigth->init(targetTask);
-		targetTask = rigth;
+		right->init(targetTask);
+		targetTask = right;
 	}
 
-	if (tr.result == 1) {
+	if (tr.result == AbstractTask::ResultCodes::disturbance_gone) {
 		straight->init(targetTask);
 		targetTask = straight;
 	}
+ 
+	nEvents++;
 }
 
 AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
-	const vector<Observation>& obs) {
+	const vector<Observation>& obs, float trackingError) {
 	TaskResult tr;
 
-	progress += getMotorLinearVelocity() * (1/samplingrate);
-	logger.printf("meters = %f\n", progress);
+	float distance = getMotorLinearVelocity() * taskDuration;
+	//logger.printf("meters = %f\n", distance);
 
-	eventNewMotorAction();
+	eventNewMotorAction(trackingError);
+	taskDuration += (1/samplingrate);
 	return tr;
 }

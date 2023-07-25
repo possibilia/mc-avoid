@@ -29,9 +29,8 @@ public:
         int nData = 0;
 
         vector<Observation> obs;
-        Observation ob; // invalid by default
-
         for(A1LidarData &data: data) {
+            Observation ob; // invalid by default
             if (data.valid && data.r > safeDistance 
                 && data.r < maxDetectRange) {
                 ob.setObservation(data.x, data.y);
