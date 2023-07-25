@@ -141,7 +141,7 @@ public:
 protected:
 	void eventNewMotorAction(float trackingError) {
 		if (nullptr != takeAction) {
-			// correction for veer to right
+			// robot veers to right
 			float motorDriveLeft_ = 0.0;
 			if (abs(trackingError) > trackingErrorThresh) {
 				motorDriveLeft_ = motorDriveLeft * mechanicalErrorConst * errorSpeedReduction;
