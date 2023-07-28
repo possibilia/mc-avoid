@@ -10,7 +10,7 @@
 using namespace std;
 
 const float safeDistance = 0.15; 
-const float maxDetectRange = 2.0; 
+const float maxDetectRange = 5.0; 
 
 bool running = true;
 
@@ -80,7 +80,7 @@ int main(int, char **) {
 
     shared_ptr<AbstractTask> targetTask = make_shared<StraightTask>();
     targetTask->registerInterface(&takeAction);
-    targetTask->setInitialSpeed(0.2f);
+    targetTask->setInitialSpeed(0.8f);
     agent.setTargetTask(targetTask);
 
     alphabot.start();

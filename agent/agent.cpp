@@ -7,11 +7,7 @@ Logger logger;
 void Agent::eventNewRelativeCoordinates(float samplingrate,
 	const vector<Observation>& obs) { 
 
-	setMeanLateralError(obs);
-	float meanLateralError = getMeanLateralError();
-	//logger.printf("tracking error : %f \n", trackingError);
-
-	AbstractTask::TaskResult tr = currentTask->taskExecutionStep(samplingrate, obs, meanLateralError);
+	AbstractTask::TaskResult tr = currentTask->taskExecutionStep(samplingrate, obs);
 
 	if (tr.result == 3) {
 		float angle = tr.newDisturbance.getAngle();
@@ -34,20 +30,43 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 }
 
 AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
-	const vector<Observation>& obs, float meanLateralError) {
+	const vector<Observation>& obs) {
+
+	float motorLinearVelocity = getMotorLinearVelocity();
+	vector<float> trackingVelocity = estimateTrackingVelocity(samplingrate, obs);
+
+	// tracking
+	tp = obs;
+
+	float steeringError = 0;
+	if (abs(trackingVelocity[1]) > 0) {
+		// stepoint is zero but need the sign
+		steeringError = trackingVelocity[1];	
+		accSteeringError += steeringError;
+
+		// fixme: crude tracking cutoff
+		if (abs(accSteeringError) > 0.07) {
+			accSteeringError = 0;
+		}
+	} 
+
+	logger.printf("error = %f acc error = %f\n", steeringError, accSteeringError);
+
+	// need to tune and generalise gain for PI control
+	robotSteering = steeringError * 1.0 + accSteeringError * 1.0; 
+	motorDriveLeft = desiredMotorDrive + robotSteering;
+	motorDriveRight = desiredMotorDrive - robotSteering;
+	eventNewMotorAction();
+	
 
 	TaskResult tr;
-
 	Observation disturbance = checkSafeZone(obs);
-	if (disturbance.isValid()) {
-		tr.setDisturbance(disturbance);
-		// logger.printf(" result = %d, r = %f, theta = %f \n", tr.result,
-		// 	disturbance.getDistance(), disturbance.getAngle());
-	} else {
-		//logger.printf(" result = %d, r = %f, theta = %f \n", tr.result, 0.0, 0.0);
-	}
 
-	eventNewMotorAction(meanLateralError);
+	if (disturbance.isValid()) {
+		accSteeringError = 0;
+		tr.setDisturbance(disturbance);
+	} 
+
 	taskDuration += (1/samplingrate);
 	return tr;
 }
