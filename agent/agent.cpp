@@ -14,7 +14,7 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 		if ((obs[i].isValid())) {
 			if ((obs[i].getDistance() < reactionThreshold) 
 				&& (obs[i].getDistance() > lidarMinRange)
-				&& abs(obs[i].getAngle()) < M_PI/4) {
+				&& abs(obs[i].getLocation().y) < wheelbase) {
 				react = true;
 			}
 		} 

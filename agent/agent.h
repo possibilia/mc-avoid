@@ -15,7 +15,7 @@ extern int nEvents;
 
 const float wheelbase = 0.147;
 const float wheelRadius = 0.033;
-const float reactionThreshold = 0.2;
+const float reactionThreshold = 0.22;
 const float lidarMinRange = 0.15;
 
 ////////////////////////////////// Observations ///////////////////////////////////
