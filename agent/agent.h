@@ -24,7 +24,6 @@ struct Point {
 };
 
 class Observation {
-
 public:
 
 	/*
@@ -138,9 +137,16 @@ struct ActionInterface {
 
 class AbstractTask {
 public:
+
+	/* 
+	* enum for task success/failure criteria
+	*/
 	enum ResultCodes { nothing = 0, disturbance_gone = 1, 
 	failed = 2, new_disturbance = 3 };
 
+	/*
+	* task result helper struct
+	*/
 	struct TaskResult {
 		ResultCodes result = nothing;
 		Observation newDisturbance;
@@ -150,10 +156,12 @@ public:
 		}
 	};
 
-	// inherits values from previous task for chaining
-	// default init for straight, overriden by rotate
+	/*
+	* initialises with previous task variables for chaining
+	* called by straight tasks, overriden by avoid tasks
+	*/
 	virtual void init(shared_ptr<AbstractTask> &t, Observation d) {
-		// task state info
+		// fixme: review variables
 		takeAction = t->takeAction;
 		desiredMotorDrive = t->desiredMotorDrive;
 		motorDriveLeft = t->desiredMotorDrive;
@@ -161,30 +169,54 @@ public:
 		disturbance = d;
 	}
 
+	/*
+	* pure virtual method for task execution to be 
+	* implemented by the child class
+	*/
 	virtual TaskResult taskExecutionStep(float samplingrate, 
 		const vector<Observation>& obs) = 0;
 
+	/*
+	* registers actuator interface with target task
+	* (otherwise pointer passed in task init method)
+	*/
 	void registerInterface(ActionInterface* ta) {
 		takeAction = ta;
 	}
 
+	/*
+	* sets the initial/desired motor speed
+	*/
 	void setInitialSpeed(const float speed) {
+		// fixme: review variables
 		desiredMotorDrive = speed;
 		motorDriveLeft = desiredMotorDrive;
 		motorDriveRight = desiredMotorDrive;
 	}
 
+	/*
+	* getter for motor linear velocity
+	* @returns kinematic linear velocity
+	*/
 	float getMotorLinearVelocity() {
 		// average of both motors converted to m/s
 		return (motorDriveLeft+motorDriveRight) / 2.0 * robotDrive2realSpeed;
 	}
 
+	/*
+	* getter for motor angular velocity
+	* @returns kinematic angular velocity
+	*/
 	float getMotorAngularVelocity() {
-		// vr - vl / wheelbase converted to m/s
+		// fixme: doesn't seems to be quite right
 		return (motorDriveLeft - motorDriveRight) / L * robotDrive2realSpeed;
 	}
 
 protected:
+
+	/*
+	* event handler for motors
+	*/
 	void eventNewMotorAction() {
 		if (nullptr != takeAction) {
 			takeAction->executeMotorAction(motorDriveLeft, motorDriveRight);
@@ -203,7 +235,7 @@ protected:
 	// based on lidar rpm
 	float taskDuration = 0.0;
 
-	// conversion constant (changed from 0.1)
+	// fixme: review variables
 	float robotDrive2realSpeed = 0.1;
 	vector<float> actualVelocity = {0, 0};
 };
