@@ -79,9 +79,13 @@ int main(int, char **) {
     MotorActionEvent takeAction(alphabot);
 
     shared_ptr<AbstractTask> targetTask = make_shared<StraightTask>();
+    shared_ptr<AbstractPlanner> planner = make_shared<SimpleInvariantLTL>();
+
     targetTask->registerInterface(&takeAction);
     targetTask->setInitialSpeed(0.8f);
+
     agent.setTargetTask(targetTask);
+    agent.setPlanner(planner);
 
     alphabot.start();
 

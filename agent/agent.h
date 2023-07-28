@@ -1,6 +1,7 @@
 #ifndef AGENT_H
 #define AGENT_H
 
+// todo: review
 #include "logger.h"
 #include <vector>
 #include <cassert>
@@ -12,16 +13,20 @@ using namespace std;
 
 extern int nEvents;
 
-const float L = 0.147;
-const float r = 0.033;
+const float wheelbase = 0.147;
+const float wheelRadius = 0.033;
+const float reactionThreshold = 0.2;
+const float lidarMinRange = 0.15;
 
 ////////////////////////////////// Observations ///////////////////////////////////
 
-// wrapper
+/*
+* wrapper
+*/
 struct Point {
-	float x = 0.0;
-	float y = 0.0;
-};
+	float x = 0;
+	float y = 0;
+}; // todo: review
 
 class Observation {
 public:
@@ -62,17 +67,6 @@ public:
 	Point getLocation() const {
 		assert(isValid());
 		return location;
-	}
-
-	/* 
-	* getter for distance to another observation
-	* @returns euclidian distance to other observation 
-	*/
-	float getDistance(Observation const &ob) const {
-		assert(isValid() && ob.isValid());
-		float a = pow(location.x - ob.getLocation().x, 2); 
-		float b = pow(location.y - ob.getLocation().y, 2);
-		return sqrt(a + b);
 	}
 
 	/*
@@ -208,8 +202,8 @@ public:
 	* @returns kinematic angular velocity
 	*/
 	float getMotorAngularVelocity() {
-		// fixme: doesn't seems to be quite right
-		return (motorDriveLeft - motorDriveRight) / L * robotDrive2realSpeed;
+		// fixme: doesn't seem quite right
+		return (motorDriveLeft - motorDriveRight) / wheelbase * robotDrive2realSpeed;
 	}
 
 protected:
@@ -225,9 +219,9 @@ protected:
 
 	// inhereted for chaining
 	ActionInterface* takeAction = nullptr;
-	float motorDriveLeft = 0.0;
-	float motorDriveRight = 0.0;
-	float desiredMotorDrive = 0.0;
+	float motorDriveLeft = 0;
+	float motorDriveRight = 0;
+	float desiredMotorDrive = 0;
 
 	// the disturbance
 	Observation disturbance;
@@ -235,22 +229,22 @@ protected:
 	// based on lidar rpm
 	float taskDuration = 0.0;
 
-	// fixme: review variables
+	float reactionThreshold = 0.2;
+
+	// todo: motor speed conversion
 	float robotDrive2realSpeed = 0.1;
-	vector<float> actualVelocity = {0, 0};
 };
 
 struct StraightTask : AbstractTask {
 
-	float safeZone = 0.2;
 	float robotSteering = 0;
-	float minDrive = 0.2;
-	float maxDrive = 0.75;
-	float robotDrive = maxDrive;
-	float accSteeringError = 0.0;
-	float accSpeedError = 0.0;
+	float accSteeringError = 0;
+	float accSpeedError = 0;
 
-	vector<Observation> tp;
+	float detectionThreshold = 0;
+	float disturbanceLookahead = 5; 
+
+	vector<Observation> prevTrackingObs;
 
 	/*
 	* task execution step called by agent event handler
@@ -258,75 +252,6 @@ struct StraightTask : AbstractTask {
 	*/
 	virtual TaskResult taskExecutionStep(float samplingrate, 
 		const vector<Observation>& obs);
-
-	/*
-	* finds nearest observation in safe zone around robot
-	* safe zone is defined to allow adequate turning 
-	* @returns the nearest observation in safe zone 
-	*/
-	Observation checkSafeZone(const vector<Observation>& obs) {
-		Observation disturbance;
-		float minx = safeZone;
-
-		for (unsigned i = 0; i < obs.size(); i++) {
-			if ((obs[i].isValid())) {
-				Point xy = obs[i].getLocation();
-				if ((abs(xy.x) < safeZone) && (abs(xy.y) < safeZone) 
-					&& (xy.x > 0.15) && (xy.x < minx)) {
-					disturbance = obs[i];
-					minx = xy.x;
-				}
-			} 
-		}
-		return disturbance;
-	}
-
-	/*
-	* estimates signed mean velocity between 
-	* current and previous lidar scans
-	* @returns mean linear and lateral velocty
-	*/
-	vector<float> estimateTrackingVelocity(float samplingrate, 
-		const vector<Observation>& obs) {
-		vector<Point> current;
-		vector<Point> previous;
-
-		for(unsigned i = 0; i < obs.size();i++) {
-			if (obs[i].isValid()) {
-				if (i < tp.size() ) {
-					if (tp[i].isValid()) {
-						current.push_back(obs[i].getLocation());
-						previous.push_back(tp[i].getLocation());
-					}
-				}
-			}
-		}
-
-		float dx = 0.0;
-		float dy = 0.0;
-
-		vector<float> vxy = {0.0, 0.0};
-		for (unsigned i = 0; i < current.size(); i++) {
-			dx = current[i].x - previous[i].x;
-			dy = current[i].y - previous[i].y;
-
-			vxy[0] += dx / (1/samplingrate);
-			vxy[1] += dy / (1/samplingrate);
-		} 
-
-		vxy[0] = vxy[0] / current.size();
-		vxy[1] = vxy[1] / current.size();
-
-		float min = minDrive * robotDrive2realSpeed;
-		float max = maxDrive * robotDrive2realSpeed;
-
-		// fixme: crude error handling 
-		if (abs(vxy[1]) > max || abs(vxy[1]) > abs(vxy[0])) {
-			vxy = {0, 0};
-		}
-
-		return vxy;
-	}
 };
 
 template <int signedYawScalar>
@@ -343,33 +268,58 @@ struct Rotate90Task : AbstractTask {
 		const vector<Observation>& obs) {
 		TaskResult tr;
 
-		// distrubance angle
-		// same movement as turning
-		// 90 degrees from theta 0
-
 		float startAngle = 0.0; 
 		if (disturbance.isValid()) {
 			startAngle = disturbance.getAngle();
 		}
 
 		float omega = getMotorAngularVelocity();
+		// fixme: numbers don't quite add up hence constant 2
 		float angle = startAngle + omega * taskDuration * 2;
-		logger.printf("duration = %f startAngle = %f  angle = %f  omega = %f \n", taskDuration, startAngle, angle, omega);
 
 		if (abs(angle - startAngle) > M_PI/2) {
 			tr.result = ResultCodes::disturbance_gone;
-			logger.printf("Cleared !! angle = %f\n", abs(angle - startAngle));
+			// todo: new motor action -> straight
+			// todo: what if prev action was avoid?
 			return tr;
 		}
 
 		eventNewMotorAction();
 		taskDuration += (1/samplingrate);
 		return tr;
-	};
+	}
 };
 
 struct Rotate90Left : Rotate90Task<1> {};
 struct Rotate90Right : Rotate90Task<-1> {};
+
+////////////////////////////// Planner /////////////////////////////////////////////
+
+class AbstractPlanner {
+public:
+
+	virtual vector<shared_ptr<AbstractTask>> eventNewDisturbance(
+		float samplingrate, const vector<Observation>& obs) = 0;
+
+};
+
+struct SimpleInvariantLTL : AbstractPlanner {
+
+	struct State {
+		int label;
+		bool safe = false;
+		bool horizon = false;
+	};
+
+	struct Transition {
+		int curr;
+		int next;
+		shared_ptr<AbstractTask> task;
+	};
+
+	virtual vector<shared_ptr<AbstractTask>> eventNewDisturbance(
+		float samplingrate, const vector<Observation>& obs);
+};
 
 
 ////////////////////////////// Agent ////////////////////////////////////////////////
@@ -385,13 +335,19 @@ public:
 		currentTask = t;
 	}
 
-private:
+	void setPlanner(shared_ptr<AbstractPlanner> p) {
+		planner = p;
+	}
 
+private:
 	// default task straight
 	shared_ptr<AbstractTask> targetTask;
 
 	// the task we are in
 	shared_ptr<AbstractTask> currentTask;
+
+	// the planner
+	shared_ptr<AbstractPlanner> planner;	
 
 	// the plan if available
 	vector<shared_ptr<AbstractTask>> plan;
