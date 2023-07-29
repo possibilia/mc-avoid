@@ -29,8 +29,9 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 			planner->eventNewDisturbance(plan, obs, tr.newDisturbance);
 			jobdone = true;
 		}
-	
+
 		float angle = tr.newDisturbance.getAngle();
+	
 		if ((angle < 0) && react) {
 			auto left = make_shared<Rotate90Left>();
 			left->init(currentTask, tr.newDisturbance);
@@ -148,7 +149,10 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 
 	// forward simulate disturbance
  	float d = _disturbance.getLocation().x - reactionThreshold;
- 	Observation disturbance(disturbance.getLocation().x - d, disturbance.getLocation().y);
+ 	Observation disturbance(_disturbance.getLocation().x - d, _disturbance.getLocation().y);
+
+ 	logger.printf("orig disturbance x = %f y = %f\n", _disturbance.getLocation().x, _disturbance.getLocation().y);
+ 	logger.printf("sim disturbance x = %f y = %f\n", disturbance.getLocation().x, disturbance.getLocation().y);
 
  	// forward simulate observations
  	vector<Observation> forwardSimObs;
@@ -156,50 +160,69 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 		if ((obs[i].isValid())) {
 			Point location = obs[i].getLocation();
 			Observation ob(location.x - d, location.y);
-			forwardSimObs.push_back(ob);
-		} 
-	}
-
-	// decide which subtree
-	vector<Observation> subtree;
-	for (unsigned i = 0; i < obs.size(); i++) {
-		if (forwardSimObs[i].isValid()) {
-			if (disturbance.getAngle() < 0) {
-				subtree.push_back(forwardSimObs[i]);
-			} 
-			if (disturbance.getAngle() > 0) {
-				subtree.push_back(forwardSimObs[i]);
-			}
-		}	
-	}
-
-	if (disturbance.getAngle() < 0) {
-		logger.printf("left subtree...\n");
-	} else {
-		logger.printf("right subtree...\n");
-	}
-
-	// nearest ob in subtree
-	Observation nearest;
-	float miny = detectionThreshold;
-	for (unsigned i = 0; i < subtree.size(); i++) {
-		if (subtree[i].isValid()) {
-			Point location = subtree[i].getLocation();
-			if ((abs(location.y) < detectionThreshold) 
-				&& (abs(location.y) <= reactionThreshold) 
-				&& (abs(location.y) > lidarMinRange) 
-				&& (abs(location.y) < miny)) {
-				nearest = subtree[i];
-				miny = abs(location.y);
+			// filter out the flanks
+			if ((abs(ob.getLocation().y) < detectionThreshold) 
+				&& (abs(ob.getLocation().x) <= reactionThreshold) 
+				&& (abs(ob.getLocation().y) > reactionThreshold)) {
+				forwardSimObs.push_back(ob);
 			}
 		} 
 	}
+
+	logger.printf("sim size = %d\n", forwardSimObs.size());
+
+	// // decide which subtree
+	// vector<Observation> subtree;
+	// for (unsigned i = 0; i < obs.size(); i++) {
+	// 	if (forwardSimObs[i].isValid()) {
+	// 		Point location = forwardSimObs[i].getLocation();
+	// 		logger.printf("location.x = %f location.y = %f\n", location.x, location.y);
+	// 		// get detection zone inliers
+	// 		if ((abs(location.y) < detectionThreshold) 
+	// 			&& (abs(location.x) <= reactionThreshold) 
+	// 			&& (abs(location.y) > reactionThreshold)) {
+
+	// 			if (disturbance.getAngle() < 0) {
+	// 				// disturbance right, get left subtree
+	// 				if ((location.y > 0)) {
+	// 					subtree.push_back(forwardSimObs[i]);
+	// 				}	
+	// 			} else {
+	// 				// disturbance left, get right subtree
+	// 				if ((location.y < 0)) {
+	// 					subtree.push_back(forwardSimObs[i]);
+	// 				}	
+	// 			}
+	// 		}
+	// 	}	
+	// }
+
+	// if (disturbance.getAngle() < 0) {
+	// 	logger.printf("left subtree...size = %f\n", subtree.size());
+	// } else {
+	// 	logger.printf("right subtree...size = %f\n", subtree.size());
+	// }
+
+	// // nearest in subtree
+	// Observation nearest;
+	// float miny = detectionThreshold;
+	// for (unsigned i = 0; i < subtree.size(); i++) {
+	// 	if (subtree[i].isValid()) {
+	// 		Point location = subtree[i].getLocation();
+			
+	// 		if ((abs(location.y) < miny)
+	// 			&& (abs(location.x) > 0)) {
+	// 			nearest = subtree[i];
+	// 			miny = abs(location.y);
+	// 		}
+	// 	} 
+	// }
 	
-	if (nearest.isValid()) {
-		logger.printf("nearest x = %f y = %f dist = %f angle = %f\n", 
-			nearest.getLocation().x, nearest.getLocation().y, 
-			nearest.getDistance(), nearest.getAngle());
-	}
+	// if (nearest.isValid()) {
+	// 	logger.printf("nearest x = %f y = %f dist = %f angle = %f\n", 
+	// 		nearest.getLocation().x, nearest.getLocation().y, 
+	// 		nearest.getDistance(), nearest.getAngle());
+	// }
 
  	/* step 2: generate path */
 

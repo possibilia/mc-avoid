@@ -87,7 +87,7 @@ public:
 	*/
 	float getAngle() const {
 		assert(isValid());
-		return -atan2(location.y, location.x);
+		return atan2(location.y, location.x);
 	}
 
 	/*
@@ -290,10 +290,24 @@ struct Rotate90Task : AbstractTask {
 	}
 };
 
-struct Rotate90Left : Rotate90Task<1> {};
-struct Rotate90Right : Rotate90Task<-1> {};
+// todo; flip the signs
+struct Rotate90Left : Rotate90Task<-1> {};
+struct Rotate90Right : Rotate90Task<1> {};
 
 ////////////////////////////// Planner /////////////////////////////////////////////
+
+struct Vertex {
+	int label;
+	bool safe = false;
+	bool horizon = false;
+	Vertex* next;
+};
+
+struct Edge {
+	int source;
+	int destination;
+	shared_ptr<AbstractTask> &task;
+};
 
 class AbstractPlanner {
 public:
@@ -305,18 +319,6 @@ public:
 };
 
 struct SimpleInvariantLTL : AbstractPlanner {
-
-	struct State {
-		int label;
-		bool safe = false;
-		bool horizon = false;
-	};
-
-	struct Transition {
-		int curr;
-		int next;
-		shared_ptr<AbstractTask> &task;
-	};
 
 	virtual vector<shared_ptr<AbstractTask>> eventNewDisturbance(
 		vector<shared_ptr<AbstractTask>> plan, 
@@ -361,11 +363,9 @@ private:
 		FILE* f = fopen(tmp,"wt");
 		for(unsigned i = 0; i < obs.size();i++) {
 			if (obs[i].isValid()) {
-				fprintf(f,"%4.4f %4.4f %4.4f %4.4f\n",
+				fprintf(f,"%4.4f %4.4f \n",
 				obs[i].getLocation().x,
-				obs[i].getLocation().y,
-				obs[i].getDistance(),
-				obs[i].getAngle());
+				obs[i].getLocation().y);
 			}
 		}
 		fclose(f);
