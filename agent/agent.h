@@ -12,6 +12,7 @@
 using namespace std;
 
 extern int nEvents;
+extern float detectionThreshold;
 
 const float wheelbase = 0.147;
 const float wheelRadius = 0.033;
@@ -241,7 +242,6 @@ struct StraightTask : AbstractTask {
 	float accSteeringError = 0;
 	float accSpeedError = 0;
 
-	float detectionThreshold = 0;
 	float disturbanceLookahead = 5; 
 
 	vector<Observation> prevTrackingObs;
@@ -299,7 +299,8 @@ class AbstractPlanner {
 public:
 
 	virtual vector<shared_ptr<AbstractTask>> eventNewDisturbance(
-		float samplingrate, const vector<Observation>& obs) = 0;
+		vector<shared_ptr<AbstractTask>> plan, 
+		const vector<Observation>& obs, const Observation& disturbance) = 0;
 
 };
 
@@ -314,11 +315,12 @@ struct SimpleInvariantLTL : AbstractPlanner {
 	struct Transition {
 		int curr;
 		int next;
-		shared_ptr<AbstractTask> task;
+		shared_ptr<AbstractTask> &task;
 	};
 
 	virtual vector<shared_ptr<AbstractTask>> eventNewDisturbance(
-		float samplingrate, const vector<Observation>& obs);
+		vector<shared_ptr<AbstractTask>> plan, 
+		const vector<Observation>& obs, const Observation& disturbance);
 };
 
 

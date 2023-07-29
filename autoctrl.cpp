@@ -10,7 +10,7 @@
 using namespace std;
 
 const float safeDistance = 0.15; 
-const float maxDetectRange = 5.0; 
+const float maxDetectRange = 1.0; 
 
 bool running = true;
 

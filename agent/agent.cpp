@@ -1,8 +1,11 @@
 #include "agent.h"
 
 int nEvents = 0;
+float detectionThreshold = 0;
 
 Logger logger;
+
+bool jobdone = false;
 
 void Agent::eventNewRelativeCoordinates(float samplingrate,
 	const vector<Observation>& obs) { 
@@ -21,6 +24,12 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 	}
 
 	if (tr.result == 3) {
+		
+		if (!jobdone) {
+			planner->eventNewDisturbance(plan, obs, tr.newDisturbance);
+			jobdone = true;
+		}
+	
 		float angle = tr.newDisturbance.getAngle();
 		if ((angle < 0) && react) {
 			auto left = make_shared<Rotate90Left>();
@@ -34,6 +43,7 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 	}
 
 	if (tr.result == 1) {
+		jobdone = false;
 		currentTask = targetTask;
 	}
 
@@ -131,12 +141,68 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 	return tr;
 }
 
-vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(float samplingrate, 
-	const vector<Observation>& obs) {
+vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<shared_ptr<AbstractTask>> plan, 
+	const vector<Observation>& obs, const Observation& _disturbance) {
  	
  	/* step 1: decide which state should be accepting */
+
+	// forward simulate disturbance
+ 	float d = _disturbance.getLocation().x - reactionThreshold;
+ 	Observation disturbance(disturbance.getLocation().x - d, disturbance.getLocation().y);
+
+ 	// forward simulate observations
+ 	vector<Observation> forwardSimObs;
+ 	for (unsigned i = 0; i < obs.size(); i++) {
+		if ((obs[i].isValid())) {
+			Point location = obs[i].getLocation();
+			Observation ob(location.x - d, location.y);
+			forwardSimObs.push_back(ob);
+		} 
+	}
+
+	// decide which subtree
+	vector<Observation> subtree;
+	for (unsigned i = 0; i < obs.size(); i++) {
+		if (forwardSimObs[i].isValid()) {
+			if (disturbance.getAngle() < 0) {
+				subtree.push_back(forwardSimObs[i]);
+			} 
+			if (disturbance.getAngle() > 0) {
+				subtree.push_back(forwardSimObs[i]);
+			}
+		}	
+	}
+
+	if (disturbance.getAngle() < 0) {
+		logger.printf("left subtree...\n");
+	} else {
+		logger.printf("right subtree...\n");
+	}
+
+	// nearest ob in subtree
+	Observation nearest;
+	float miny = detectionThreshold;
+	for (unsigned i = 0; i < subtree.size(); i++) {
+		if (subtree[i].isValid()) {
+			Point location = subtree[i].getLocation();
+			if ((abs(location.y) < detectionThreshold) 
+				&& (abs(location.y) <= reactionThreshold) 
+				&& (abs(location.y) > lidarMinRange) 
+				&& (abs(location.y) < miny)) {
+				nearest = subtree[i];
+				miny = abs(location.y);
+			}
+		} 
+	}
+	
+	if (nearest.isValid()) {
+		logger.printf("nearest x = %f y = %f dist = %f angle = %f\n", 
+			nearest.getLocation().x, nearest.getLocation().y, 
+			nearest.getDistance(), nearest.getAngle());
+	}
 
  	/* step 2: generate path */
 
  	/* step 3: return sequence of tasks */
+ 	return plan;
 }
