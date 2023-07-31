@@ -165,7 +165,7 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 			Point location = obs[i].getLocation();
 			Observation ob(location.x - d, location.y);
 			// filter out the flanks
-			if ((abs(ob.getLocation().y) < detectionThreshold) 
+			if ((abs(ob.getLocation().y) < detectionThreshold)
 				&& (abs(ob.getLocation().x) <= reactionThreshold) 
 				&& (abs(ob.getLocation().y) > reactionThreshold)) {
 				flanks.push_back(ob);
@@ -249,11 +249,11 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 	}
 
 	// check if the robot has room to plan an extra step
-	float leftTranslation = nearestLeftFlank.getLocation().y - reactionThreshold;
-	bool leftFlankSafe = leftTranslation > reactionThreshold * 0.1;
+	float westOffset = nearestLeftFlank.getLocation().y - reactionThreshold;
+	bool leftFlankSafe = westOffset > 0.02; // max size of object
 
-	float rigthTranslation = abs(nearestRightFlank.getLocation().y) - reactionThreshold;
-	bool rightFlankSafe = rigthTranslation > reactionThreshold * 0.1;
+	float eastOffset = nearestRightFlank.getLocation().y + reactionThreshold;
+	bool rightFlankSafe = abs(eastOffset) > 0.02; // max size of object
 
 	// no flank safe so turn around S_s = {s13, s14}
 	if (!(leftFlankSafe || rightFlankSafe)) {
@@ -264,12 +264,12 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 		return plan;
 	}
 
-	float eastOffset = nearestRightFlank.getLocation().y + reactionThreshold;
-	float westOffset = nearestLeftFlank.getLocation().y - reactionThreshold;
+	// float eastOffset = nearestRightFlank.getLocation().y + reactionThreshold;
+	// float westOffset = nearestLeftFlank.getLocation().y - reactionThreshold;
 
 	logger.printf("east offset = %f west offset = %f\n", eastOffset, westOffset);
 	logger.printf("east y = %f west y = %f\n", nearestRightFlank.getLocation().y, nearestLeftFlank.getLocation().y);
-	logger.printf("laft trans = %f right trans = %f\n", leftTranslation, rigthTranslation);	
+	logger.printf("laft trans = %f right trans = %f\n", westOffset, westOffset);	
 
 	vector<Observation> northEastHorizon;
 	vector<Observation> southEastHorizon;
