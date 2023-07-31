@@ -191,7 +191,8 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 	shared_ptr<AbstractTask> t = make_shared<StraightTask>();
  	plan.push_back(t);
 
-	// way is clear either direction S_flanks = {s1, s2, s3, s4}
+	// way is clear either direction 
+	// S_left U s_right = {s1, s2, s3, s4}
 	if ((leftFlank.size() == 0)  && (rightFlank.size() == 0)) {
 		// two accepting states
 		logger.printf("left/right -> straight\n");
@@ -254,9 +255,8 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 	float rigthTranslation = abs(nearestRightFlank.getLocation().y) - reactionThreshold;
 	bool rightFlankSafe = rigthTranslation > reactionThreshold * 0.1;
 
-	// no flank safe so turn around S_back = {s13, s14}
-	if ((leftFlank.size() > 0)  && (rightFlank.size() > 0) 
-		&& !(leftFlankSafe || rightFlankSafe)) {
+	// no flank safe so turn around S_s = {s13, s14}
+	if (!(leftFlankSafe || rightFlankSafe)) {
 		logger.printf("2left/2right -> straight\n");
 		// set relevant states
 		// get path 
@@ -264,48 +264,112 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 		return plan;
 	}
 
-	// S_NE = {s6, s8}
+	float eastOffset = nearestRightFlank.getLocation().y + reactionThreshold;
+	float westOffset = nearestLeftFlank.getLocation().y - reactionThreshold;
+
+	logger.printf("east offset = %f west offset = %f\n", eastOffset, westOffset);
+	logger.printf("east y = %f west y = %f\n", nearestRightFlank.getLocation().y, nearestLeftFlank.getLocation().y);
+	logger.printf("laft trans = %f right trans = %f\n", leftTranslation, rigthTranslation);	
+
 	vector<Observation> northEastHorizon;
+	vector<Observation> southEastHorizon;
 	for (unsigned i = 0; i < obs.size(); i++) {
 		if ((obs[i].isValid())) {
 			Point location = obs[i].getLocation();
-			Observation ob(location.x - d, location.y);
-			// north east horizon states
-			if ((ob.getLocation().x > detectionThreshold) 
+			Observation ob(location.x - d, location.y - eastOffset);
+			// S_ne = {s6, s8}
+			if ((ob.getLocation().x > reactionThreshold) 
 				&& (ob.getLocation().x <= reactionThreshold * 1.5) 
-				&& (abs(ob.getLocation().y) > reactionThreshold)) {
+				&& (abs(ob.getLocation().y) <= wheelbase)) {
 				northEastHorizon.push_back(ob);
 			}
-
+			// S_se = {s10, s12}
+			if ((ob.getLocation().x < -reactionThreshold) 
+				&& (ob.getLocation().x >= -(reactionThreshold * 1.5)) 
+				&& (abs(ob.getLocation().y) <= wheelbase)) {
+				southEastHorizon.push_back(ob);
+			}
 		} 
 	}
 
+	vector<Observation> northWestHorizon;
+	vector<Observation> southWestHorizon;
+	for (unsigned i = 0; i < obs.size(); i++) {
+		if ((obs[i].isValid())) {
+			Point location = obs[i].getLocation();
+			Observation ob(location.x - d, location.y - westOffset);
+			// S_nw = {s5, s7}
+			if ((ob.getLocation().x > reactionThreshold) 
+				&& (ob.getLocation().x <= reactionThreshold * 1.5) 
+				&& (abs(ob.getLocation().y) <= wheelbase)) {
+				northWestHorizon.push_back(ob);
+			}
+			// S_sw = {s9, s11}
+			if ((ob.getLocation().x < -reactionThreshold) 
+				&& (ob.getLocation().x >= -(reactionThreshold * 1.5)) 
+				&& (abs(ob.getLocation().y) <= wheelbase)) {
+				southWestHorizon.push_back(ob);
+			}
+		} 
+	}
+
+	logger.printf("north east size = %d south east size = %d\n", northEastHorizon.size(), southEastHorizon.size());
+	float northEastProbUnsafe = (float)northEastHorizon.size() / 150;
+	float southEastProbUnsafe = (float)southEastHorizon.size() / 150;
+	logger.printf("north east prob unsafe = %f  south east prob unsafe = %f\n", northEastProbUnsafe, southEastProbUnsafe);
+
+	logger.printf("north west size = %d south west size = %d\n", northWestHorizon.size(), southWestHorizon.size());
+	float northWestProbUnsafe = (float)northWestHorizon.size() / 150;
+	float southWestProbUnsafe = (float)southWestHorizon.size() / 150;
+	logger.printf("north west prob unsafe = %f  south west prob unsafe = %f\n", northWestProbUnsafe, southWestProbUnsafe);
+
 	// room either way so choose direction at random
 	// S_north = {s5, s7, s6, s8), S_south = {s9, s11, s10, s12}
-	if ((leftFlank.size() > 0)  && (rightFlank.size() > 0) 
-		&& (leftFlankSafe && rightFlankSafe)) {
+	if (leftFlankSafe && rightFlankSafe) {
 		// four accepting states
 		logger.printf("4 possible options...\n");
+		if (northEastProbUnsafe < 0.5) {
+			logger.printf("north east safe!\n");
+		}
+		if (southEastProbUnsafe < 0.5) {
+			logger.printf("south east safe!\n");
+		}
+		if (northWestProbUnsafe < 0.5) {
+			logger.printf("north west safe!\n");
+		}
+		if (southWestProbUnsafe < 0.5) {
+			logger.printf("south west safe!\n");
+		}
 		// set relevant states
 		// get path 
 		// extract tasks
 		return plan;
 	}
 
-	if ((leftFlank.size() > 0)  && (rightFlank.size() > 0) 
-		&& (leftFlankSafe && !rightFlankSafe)) {
+	if (leftFlankSafe && !rightFlankSafe) {
 		// two accepting states
 		logger.printf("2 possible options left...\n");
+		if (northWestProbUnsafe < 0.5) {
+			logger.printf("north west safe!\n");
+		}
+		if (southWestProbUnsafe < 0.5) {
+			logger.printf("south west safe!\n");
+		}
 		// set relevant states
 		// get path 
 		// extract tasks
 		return plan;
 	}
 
-	if ((leftFlank.size() > 0)  && (rightFlank.size() > 0) 
-		&& (!leftFlankSafe && rightFlankSafe)) {
+	if (!leftFlankSafe && rightFlankSafe) {
 		// two accepting states
 		logger.printf("2 possible options right...\n");
+		if (northEastProbUnsafe < 0.5) {
+			logger.printf("north east safe!\n");
+		}
+		if (southEastProbUnsafe < 0.5) {
+			logger.printf("south east safe!\n");
+		}
 		// set relevant states
 		// get path 
 		// extract tasks
