@@ -44,3 +44,4 @@
 navigation.h
 navigation.cpp
 snippets.cpp
+test.cpp

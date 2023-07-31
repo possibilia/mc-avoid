@@ -26,8 +26,11 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 	if (tr.result == 3) {
 		
 		if (!jobdone) {
-			planner->eventNewDisturbance(plan, obs, tr.newDisturbance);
-			jobdone = true;
+			plan = planner->eventNewDisturbance(plan, obs, tr.newDisturbance);
+
+			if (!plan.empty()) {
+				jobdone = true;
+			} 
 		}
 
 		float angle = tr.newDisturbance.getAngle();
@@ -123,7 +126,7 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 		if ((obs[i].isValid())) {
 			Point location = obs[i].getLocation();
 			if ((abs(location.x) < detectionThreshold) 
-				&& (abs(location.y) <= reactionThreshold) 
+				&& (abs(location.y) <= wheelbase) 
 				&& (location.x > lidarMinRange) 
 				&& (location.x < minx)) {
 				disturbance = obs[i];
@@ -143,19 +146,20 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 }
 
 vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<shared_ptr<AbstractTask>> plan, 
-	const vector<Observation>& obs, const Observation& _disturbance) {
- 	
- 	/* step 1: decide which state should be accepting */
+	const vector<Observation>& obs, const Observation& disturbance) {
+
+	/* step 1: decide which states should be accepting */
 
 	// forward simulate disturbance
- 	float d = _disturbance.getLocation().x - reactionThreshold;
- 	Observation disturbance(_disturbance.getLocation().x - d, _disturbance.getLocation().y);
+ 	float d = abs(disturbance.getLocation().x - reactionThreshold);
+ 	Observation forwardSimDisturbance(disturbance.getLocation().x - d, disturbance.getLocation().y);
 
- 	logger.printf("orig disturbance x = %f y = %f\n", _disturbance.getLocation().x, _disturbance.getLocation().y);
- 	logger.printf("sim disturbance x = %f y = %f\n", disturbance.getLocation().x, disturbance.getLocation().y);
+ 	// logger.printf("orig disturbance x = %f y = %f\n", disturbance.getLocation().x, disturbance.getLocation().y);
+ 	// logger.printf("sim disturbance x = %f y = %f\n", forwardSimDisturbance.getLocation().x, forwardSimDisturbance.getLocation().y);
 
- 	// forward simulate observations
- 	vector<Observation> forwardSimObs;
+ 	// forward simulate flanks
+ 	// S_flanks = {s1, s2, s3, s4}
+ 	vector<Observation> flanks;
  	for (unsigned i = 0; i < obs.size(); i++) {
 		if ((obs[i].isValid())) {
 			Point location = obs[i].getLocation();
@@ -164,68 +168,154 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 			if ((abs(ob.getLocation().y) < detectionThreshold) 
 				&& (abs(ob.getLocation().x) <= reactionThreshold) 
 				&& (abs(ob.getLocation().y) > reactionThreshold)) {
-				forwardSimObs.push_back(ob);
+				flanks.push_back(ob);
 			}
 		} 
 	}
 
-	logger.printf("sim size = %d\n", forwardSimObs.size());
+	// logger.printf("sim size = %d reactionThreshold = %f  detectionThreshold = %f\n", 
+	// 	flanks.size(), reactionThreshold, detectionThreshold);
 
-	// // decide which subtree
-	// vector<Observation> subtree;
-	// for (unsigned i = 0; i < obs.size(); i++) {
-	// 	if (forwardSimObs[i].isValid()) {
-	// 		Point location = forwardSimObs[i].getLocation();
-	// 		logger.printf("location.x = %f location.y = %f\n", location.x, location.y);
-	// 		// get detection zone inliers
-	// 		if ((abs(location.y) < detectionThreshold) 
-	// 			&& (abs(location.x) <= reactionThreshold) 
-	// 			&& (abs(location.y) > reactionThreshold)) {
+	// S_left = {s1, s3}
+	vector<Observation> leftFlank;
+	// S_right = {s2, s4}
+	vector<Observation> rightFlank;
+	for (unsigned i = 0; i < flanks.size(); i++) {
+		if (flanks[i].getLocation().y > 0) {
+			leftFlank.push_back(flanks[i]);
+		} else {
+			rightFlank.push_back(flanks[i]);
+		}
+	}
 
-	// 			if (disturbance.getAngle() < 0) {
-	// 				// disturbance right, get left subtree
-	// 				if ((location.y > 0)) {
-	// 					subtree.push_back(forwardSimObs[i]);
-	// 				}	
-	// 			} else {
-	// 				// disturbance left, get right subtree
-	// 				if ((location.y < 0)) {
-	// 					subtree.push_back(forwardSimObs[i]);
-	// 				}	
-	// 			}
-	// 		}
-	// 	}	
-	// }
+	shared_ptr<AbstractTask> t = make_shared<StraightTask>();
+ 	plan.push_back(t);
 
-	// if (disturbance.getAngle() < 0) {
-	// 	logger.printf("left subtree...size = %f\n", subtree.size());
-	// } else {
-	// 	logger.printf("right subtree...size = %f\n", subtree.size());
-	// }
+	// way is clear either direction S_flanks = {s1, s2, s3, s4}
+	if ((leftFlank.size() == 0)  && (rightFlank.size() == 0)) {
+		// two accepting states
+		logger.printf("left/right -> straight\n");
+		// set relevant states
+		// get path 
+		// extract tasks
+		return plan;
+	}
 
-	// // nearest in subtree
-	// Observation nearest;
-	// float miny = detectionThreshold;
-	// for (unsigned i = 0; i < subtree.size(); i++) {
-	// 	if (subtree[i].isValid()) {
-	// 		Point location = subtree[i].getLocation();
-			
-	// 		if ((abs(location.y) < miny)
-	// 			&& (abs(location.x) > 0)) {
-	// 			nearest = subtree[i];
-	// 			miny = abs(location.y);
-	// 		}
-	// 	} 
-	// }
-	
-	// if (nearest.isValid()) {
-	// 	logger.printf("nearest x = %f y = %f dist = %f angle = %f\n", 
-	// 		nearest.getLocation().x, nearest.getLocation().y, 
-	// 		nearest.getDistance(), nearest.getAngle());
-	// }
+	// disturbance left so go right S_right = {s2, s4}
+	if ((leftFlank.size() > 0) && (rightFlank.size() == 0)) {
+		logger.printf("right -> straight\n");
+		// set relevant states
+		// get path 
+		// extract tasks
+		return plan;
+	}
+
+	// disturbance right so go left S_left = {s1, s3}
+	if ((leftFlank.size() == 0)  && (rightFlank.size() > 0)) {
+		logger.printf("left -> straight\n");
+		// set relevant states
+		// get path 
+		// extract tasks
+		return plan;
+	}
+
+	// nearest disturbance left
+	Observation nearestLeftFlank;
+	float miny = detectionThreshold;
+	for (unsigned i = 0; i < leftFlank.size(); i++) {
+		if (leftFlank[i].isValid()) {
+			Point location = leftFlank[i].getLocation();
+			if ((abs(location.y) < miny)
+				&& (abs(location.x) < reactionThreshold)) {
+				nearestLeftFlank = leftFlank[i];
+				miny = abs(location.y);
+			}
+		} 
+	}
+
+	// nearest disturbance right
+	Observation nearestRightFlank;
+	miny = detectionThreshold;
+	for (unsigned i = 0; i < rightFlank.size(); i++) {
+		if (rightFlank[i].isValid()) {
+			Point location = rightFlank[i].getLocation();
+			if ((abs(location.y) < miny)
+				&& (abs(location.x) < reactionThreshold)) {
+				nearestRightFlank = rightFlank[i];
+				miny = abs(location.y);
+			}
+		} 
+	}
+
+	// check if the robot has room to plan an extra step
+	float leftTranslation = nearestLeftFlank.getLocation().y - reactionThreshold;
+	bool leftFlankSafe = leftTranslation > reactionThreshold * 0.1;
+
+	float rigthTranslation = abs(nearestRightFlank.getLocation().y) - reactionThreshold;
+	bool rightFlankSafe = rigthTranslation > reactionThreshold * 0.1;
+
+	// no flank safe so turn around S_back = {s13, s14}
+	if ((leftFlank.size() > 0)  && (rightFlank.size() > 0) 
+		&& !(leftFlankSafe || rightFlankSafe)) {
+		logger.printf("2left/2right -> straight\n");
+		// set relevant states
+		// get path 
+		// extract tasks
+		return plan;
+	}
+
+	// S_NE = {s6, s8}
+	vector<Observation> northEastHorizon;
+	for (unsigned i = 0; i < obs.size(); i++) {
+		if ((obs[i].isValid())) {
+			Point location = obs[i].getLocation();
+			Observation ob(location.x - d, location.y);
+			// north east horizon states
+			if ((ob.getLocation().x > detectionThreshold) 
+				&& (ob.getLocation().x <= reactionThreshold * 1.5) 
+				&& (abs(ob.getLocation().y) > reactionThreshold)) {
+				northEastHorizon.push_back(ob);
+			}
+
+		} 
+	}
+
+	// room either way so choose direction at random
+	// S_north = {s5, s7, s6, s8), S_south = {s9, s11, s10, s12}
+	if ((leftFlank.size() > 0)  && (rightFlank.size() > 0) 
+		&& (leftFlankSafe && rightFlankSafe)) {
+		// four accepting states
+		logger.printf("4 possible options...\n");
+		// set relevant states
+		// get path 
+		// extract tasks
+		return plan;
+	}
+
+	if ((leftFlank.size() > 0)  && (rightFlank.size() > 0) 
+		&& (leftFlankSafe && !rightFlankSafe)) {
+		// two accepting states
+		logger.printf("2 possible options left...\n");
+		// set relevant states
+		// get path 
+		// extract tasks
+		return plan;
+	}
+
+	if ((leftFlank.size() > 0)  && (rightFlank.size() > 0) 
+		&& (!leftFlankSafe && rightFlankSafe)) {
+		// two accepting states
+		logger.printf("2 possible options right...\n");
+		// set relevant states
+		// get path 
+		// extract tasks
+		return plan;
+	}
+
 
  	/* step 2: generate path */
 
  	/* step 3: return sequence of tasks */
+
  	return plan;
 }
