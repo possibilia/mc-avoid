@@ -11,44 +11,30 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 	const vector<Observation>& obs) { 
 
 	AbstractTask::TaskResult tr = currentTask->taskExecutionStep(samplingrate, obs);
+	logger.printf("Task result %d\n", tr.result);
+	logger.printf("Plan size %d\n", plan.size());
 
-	bool react = false;
-	for (unsigned i = 0; i < obs.size(); i++) {
-		if ((obs[i].isValid())) {
-			if ((obs[i].getDistance() < reactionThreshold) 
-				&& (obs[i].getDistance() > lidarMinRange)
-				&& abs(obs[i].getLocation().y) < wheelbase) {
-				react = true;
-			}
-		} 
-	}
-
-	if (tr.result == 3) {
-		
-		if (!jobdone) {
-			plan = planner->eventNewDisturbance(plan, obs, tr.newDisturbance);
-
-			if (!plan.empty()) {
-				jobdone = true;
-			} 
-		}
-
-		float angle = tr.newDisturbance.getAngle();
-	
-		if ((angle < 0) && react) {
-			auto left = make_shared<Rotate90Left>();
-			left->init(currentTask, tr.newDisturbance);
-			currentTask = left;
-		} else if (react) {
-			auto right = make_shared<Rotate90Right>();
-			right->init(currentTask, tr.newDisturbance);
-			currentTask = right;
+	if (tr.result == AbstractTask::disturbance_gone)
+	{
+		if (plan.empty()) {
+			currentTask = targetTask;
+		} else {
+			plan[0]->init(currentTask, tr.newDisturbance);
+			currentTask = plan[0];
+			plan.erase(plan.begin());
 		}
 	}
 
-	if (tr.result == 1) {
-		jobdone = false;
-		currentTask = targetTask;
+	if (tr.result == AbstractTask::new_disturbance) {
+		if (tr.newDisturbance.isValid() && plan.empty()) {
+			plan = planner->eventNewDisturbance(obs, tr.newDisturbance);
+		}
+
+		if (tr.newDisturbance.getDistance() <= reactionThreshold) {
+			plan[0]->init(currentTask, tr.newDisturbance);
+			currentTask = plan[0];
+			plan.erase(plan.begin());
+		}
 	}
 
 	nEvents++;
@@ -145,12 +131,10 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 	return tr;
 }
 
-vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<shared_ptr<AbstractTask>> plan, 
+vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	const vector<Observation>& obs, const Observation& disturbance) {
 
-	// for testing
-	shared_ptr<AbstractTask> t = make_shared<StraightTask>();
- 	plan.push_back(t);
+	set<int> accept;
 
 	// get offset from distrbance for forward simulation 
  	float northOffset = abs(disturbance.getLocation().x - reactionThreshold);
@@ -183,26 +167,29 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 	if ((westHorizon.size() == 0)  && (eastHorizon.size() == 0)) {
 		logger.printf("left/right -> straight\n");
 		// set relevant states
-		// get path 
-		// extract tasks
+		accept.insert(3);
+		accept.insert(4);
+		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
+		logger.printf("3 & 4: size = %d\n", plan.size());
+
 		return plan;
 	}
 
 	// disturbance left so go right S_e = {s2, s4}
 	if ((westHorizon.size() > 0) && (eastHorizon.size() == 0)) {
 		logger.printf("right -> straight\n");
-		// set relevant states
-		// get path 
-		// extract tasks
+		accept.insert(4);
+		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
+		logger.printf("4: size = %d\n", plan.size());
 		return plan;
 	}
 
 	// disturbance right so go left S_w = {s1, s3}
 	if ((westHorizon.size() == 0)  && (eastHorizon.size() > 0)) {
 		logger.printf("left -> straight\n");
-		// set relevant states
-		// get path 
-		// extract tasks
+		accept.insert(3);
+		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
+		logger.printf("3: size = %d\n", plan.size());
 		return plan;
 	}
 
@@ -249,9 +236,9 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 	// no room so go south S_s = {s13, s14}
 	if (!(westDirectionSafe || eastDirectionSafe)) {
 		logger.printf("2left/2right -> straight\n");
-		// set relevant states
-		// get path 
-		// extract tasks
+		accept.insert(14);
+		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
+		logger.printf("14: size = %d", plan.size());
 		return plan;
 	}
 
@@ -309,11 +296,13 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 		if (northEastHorizon.size() == 0) {
 			logger.printf("north east safe!\n");
 			// set state
+			accept.insert(8);
 		}
 		// S_se = {s10, s12}
 		if (southEastHorizon.size() == 0) {
 			logger.printf("south east safe!\n");
 			// set state
+			accept.insert(12);
 		}
 	}
 
@@ -324,16 +313,19 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 		if (northWestHorizon.size() == 0) {
 			logger.printf("north west safe!\n");
 			// set state
+			accept.insert(7);
 		}
 		// S_sw = {s9, s11}
 		if (southWestHorizon.size() == 0) {
 			logger.printf("south west safe!\n");
 			// set state
+			accept.insert(11);
 		}
 	}
 
-	// get path 
-	// extract tasks
+	
+	vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
+	logger.printf("accept size = %d size = %d\n", accept.size(), plan.size());
 
  	return plan;
 }

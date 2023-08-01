@@ -8,6 +8,11 @@
 #include <math.h>
 #include <memory>
 #include <string>
+#include <stack>
+#include <set>
+#include <algorithm>
+#include <random>
+#include <list>
 
 using namespace std;
 
@@ -295,42 +300,113 @@ struct Rotate90Right : Rotate90Task<1> {};
 
 ////////////////////////////// Planner /////////////////////////////////////////////
 
-struct Vertex {
-	int label;
-	bool safe = false;
-	bool horizon = false;
-	Vertex* next;
-};
-
-struct Edge {
-	int source;
-	int destination;
-	shared_ptr<AbstractTask> &task;
+struct StateTransition {
+	int src;
+	int dest;
+	shared_ptr<AbstractTask> task;
 };
 
 class AbstractPlanner {
 public:
 
 	virtual vector<shared_ptr<AbstractTask>> eventNewDisturbance(
-		vector<shared_ptr<AbstractTask>> plan, 
 		const vector<Observation>& obs, const Observation& disturbance) = 0;
-
 };
 
-struct SimpleInvariantLTL : AbstractPlanner {
+struct StateMachineLTL : AbstractPlanner {
+
+	int nStates;
+	const int init = 0;
+
+	list<int> *graph;
+	vector<StateTransition> trans;
 
 	// fixme: invalid obs when increased
-	float lateralHorizon = 0.4;
+	float lateralHorizon = 0.4; // m
+
+	StateMachineLTL(int _nStates) {
+		graph = new list<int>[_nStates]();
+		nStates = _nStates;
+	}
 
 	virtual vector<shared_ptr<AbstractTask>> eventNewDisturbance(
-		vector<shared_ptr<AbstractTask>> plan, 
 		const vector<Observation>& obs, const Observation& disturbance);
+
+	// consider making const method
+	void setTransition(int src, int dest, shared_ptr<AbstractTask> task) {
+		graph[src].push_back(dest);
+        StateTransition st = {src, dest, task};
+        trans.push_back(st);
+	}
 
 	void setLateralHorizon(float _lateralHorizon) {
 		lateralHorizon = _lateralHorizon;
 	}
 
-	
+	vector<shared_ptr<AbstractTask>> generatePlan(set<int> accept) {
+		vector<int> path = generatePath(accept);
+		vector<shared_ptr<AbstractTask>> plan;
+
+		// get tasks for state transitons
+		for (unsigned i = 1; i < path.size(); i++) {
+			for (auto& st : trans) {
+				if (st.src == path[i-1]
+					&& st.dest == path[i]) {
+					plan.push_back(st.task);
+				}
+			}
+		}
+		return plan;
+	}
+
+	vector<int> generatePath(set<int> accept) {
+		// random stuff
+		random_device rd; 
+		mt19937 gen(rd()); 
+		// set difference
+		vector<int> diff;
+
+		vector<int> stack;
+		set<int> reachable;
+		bool invariant = true;
+
+		stack.push_back(init);
+		reachable.insert(init);
+
+		while(!stack.empty() && invariant) {
+			int s = stack.back();
+
+			bool subset = includes(reachable.begin(), reachable.end(),
+			graph[s].begin(), graph[s].end());
+
+			if (subset) {
+				stack.pop_back();
+				invariant = accept.find(s) == accept.end();
+			} else {
+				set_difference(graph[s].begin(), graph[s].end(),
+				reachable.begin(), reachable.end(),
+				inserter(diff, diff.begin()));
+
+				if (!diff.empty()) {
+				    uniform_int_distribution<> distr(0, diff.size()-1);  
+					int s_ = diff[distr(gen)];
+					diff.clear();
+
+					stack.push_back(s_);
+					reachable.insert(s_);
+				} 
+			}
+		}
+
+		if (invariant) {
+			// empty path
+			stack.clear();
+			return stack;
+		} else {
+			// the path
+			return stack;
+		}
+	}	
 };
 
 

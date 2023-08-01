@@ -79,7 +79,24 @@ int main(int, char **) {
     MotorActionEvent takeAction(alphabot);
 
     shared_ptr<AbstractTask> targetTask = make_shared<StraightTask>();
-    shared_ptr<AbstractPlanner> planner = make_shared<SimpleInvariantLTL>();
+
+    // set up planner and initilize model
+    shared_ptr<StateMachineLTL> planner = make_shared<StateMachineLTL>(15);
+    planner->setTransition(0, 1, make_shared<Rotate90Left>());
+    planner->setTransition(0, 2, make_shared<Rotate90Right>());
+    planner->setTransition(1, 3, make_shared<StraightTask>());
+    planner->setTransition(2, 4, make_shared<StraightTask>());
+    planner->setTransition(3, 5, make_shared<Rotate90Right>());
+    planner->setTransition(5, 7, make_shared<StraightTask>());
+    planner->setTransition(3, 9, make_shared<Rotate90Left>());
+    planner->setTransition(9, 11, make_shared<StraightTask>());
+    planner->setTransition(4, 6, make_shared<Rotate90Left>());
+    planner->setTransition(6, 8, make_shared<StraightTask>());
+    planner->setTransition(4, 10, make_shared<Rotate90Right>());
+    planner->setTransition(10, 12, make_shared<StraightTask>());
+    planner->setTransition(2, 13, make_shared<Rotate90Right>());
+    planner->setTransition(1, 13, make_shared<Rotate90Left>());
+    planner->setTransition(13, 14, make_shared<StraightTask>());
 
     targetTask->registerInterface(&takeAction);
     targetTask->setInitialSpeed(0.8f);
