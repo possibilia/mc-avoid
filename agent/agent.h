@@ -18,7 +18,6 @@ const float wheelbase = 0.147;
 const float wheelRadius = 0.033;
 const float reactionThreshold = 0.22;
 const float lidarMinRange = 0.15;
-const float lateralHorizon = 0.4;
 
 ////////////////////////////////// Observations ///////////////////////////////////
 
@@ -291,7 +290,6 @@ struct Rotate90Task : AbstractTask {
 	}
 };
 
-// todo; flip the signs
 struct Rotate90Left : Rotate90Task<-1> {};
 struct Rotate90Right : Rotate90Task<1> {};
 
@@ -321,9 +319,18 @@ public:
 
 struct SimpleInvariantLTL : AbstractPlanner {
 
+	// fixme: invalid obs when increased
+	float lateralHorizon = 0.4;
+
 	virtual vector<shared_ptr<AbstractTask>> eventNewDisturbance(
 		vector<shared_ptr<AbstractTask>> plan, 
 		const vector<Observation>& obs, const Observation& disturbance);
+
+	void setLateralHorizon(float _lateralHorizon) {
+		lateralHorizon = _lateralHorizon;
+	}
+
+	
 };
 
 

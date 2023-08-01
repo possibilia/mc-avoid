@@ -152,9 +152,8 @@ vector<shared_ptr<AbstractTask>> SimpleInvariantLTL::eventNewDisturbance(vector<
 	shared_ptr<AbstractTask> t = make_shared<StraightTask>();
  	plan.push_back(t);
 
-	// forward simulate disturbance
+	// get offset from distrbance for forward simulation 
  	float northOffset = abs(disturbance.getLocation().x - reactionThreshold);
- 	Observation forwardSimDisturbance(disturbance.getLocation().x - northOffset, disturbance.getLocation().y);
 
  	// forward simulate obs and filter
  	vector<Observation> westHorizon;

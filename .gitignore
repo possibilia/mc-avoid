@@ -40,8 +40,9 @@
 /2
 /test
 
-# randome files
+# random files
 navigation.h
 navigation.cpp
 snippets.cpp
 test.cpp
+graph.cpp
