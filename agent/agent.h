@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <random>
 #include <list>
+#include <cstdio>
+#include <cmath>
 
 using namespace std;
 
@@ -21,7 +23,7 @@ extern float detectionThreshold;
 
 const float wheelbase = 0.147;
 const float wheelRadius = 0.033;
-const float reactionThreshold = 0.22;
+const float reactionThreshold = 0.22 + 0.02;
 const float lidarMinRange = 0.15;
 
 ////////////////////////////////// Observations ///////////////////////////////////
@@ -107,7 +109,7 @@ public:
 	* invalidates observation when avoided
 	*/
 	void invalidate() {
-		assert(isValid());
+		//assert(isValid());
 		label = ObsType::invalid;
 	}
 
@@ -192,6 +194,10 @@ public:
 		desiredMotorDrive = speed;
 		motorDriveLeft = desiredMotorDrive;
 		motorDriveRight = desiredMotorDrive;
+	}
+
+	void resetTaskDuration() {
+		taskDuration = 0;
 	}
 
 	/*
@@ -286,6 +292,7 @@ struct Rotate90Task : AbstractTask {
 			tr.result = ResultCodes::disturbance_gone;
 			// todo: new motor action -> straight
 			// todo: what if prev action was avoid?
+			disturbance.invalidate();
 			return tr;
 		}
 
@@ -303,7 +310,7 @@ struct Rotate90Right : Rotate90Task<1> {};
 struct StateTransition {
 	int src;
 	int dest;
-	shared_ptr<AbstractTask> task;
+	int label;
 };
 
 class AbstractPlanner {
@@ -333,9 +340,9 @@ struct StateMachineLTL : AbstractPlanner {
 		const vector<Observation>& obs, const Observation& disturbance);
 
 	// consider making const method
-	void setTransition(int src, int dest, shared_ptr<AbstractTask> task) {
+	void setTransition(int src, int dest, int label) {
 		graph[src].push_back(dest);
-        StateTransition st = {src, dest, task};
+        StateTransition st = {src, dest, label};
         trans.push_back(st);
 	}
 
@@ -352,7 +359,19 @@ struct StateMachineLTL : AbstractPlanner {
 			for (auto& st : trans) {
 				if (st.src == path[i-1]
 					&& st.dest == path[i]) {
-					plan.push_back(st.task);
+					shared_ptr<AbstractTask> task;
+			        switch (st.label) {
+			            case 0:
+			                task = make_shared<StraightTask>();
+			                break;
+			            case 1:
+			            	task = make_shared<Rotate90Right>();
+			                break;
+			            case -1:
+			            	task = make_shared<Rotate90Left>();
+			                break;
+			        }
+					plan.push_back(task);
 				}
 			}
 		}

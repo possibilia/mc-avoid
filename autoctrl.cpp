@@ -80,23 +80,23 @@ int main(int, char **) {
 
     shared_ptr<AbstractTask> targetTask = make_shared<StraightTask>();
 
-    // set up planner and initilize model
+    // set up planner and initilize model  (0 straing, 1 right, -1 left)
     shared_ptr<StateMachineLTL> planner = make_shared<StateMachineLTL>(15);
-    planner->setTransition(0, 1, make_shared<Rotate90Left>());
-    planner->setTransition(0, 2, make_shared<Rotate90Right>());
-    planner->setTransition(1, 3, make_shared<StraightTask>());
-    planner->setTransition(2, 4, make_shared<StraightTask>());
-    planner->setTransition(3, 5, make_shared<Rotate90Right>());
-    planner->setTransition(5, 7, make_shared<StraightTask>());
-    planner->setTransition(3, 9, make_shared<Rotate90Left>());
-    planner->setTransition(9, 11, make_shared<StraightTask>());
-    planner->setTransition(4, 6, make_shared<Rotate90Left>());
-    planner->setTransition(6, 8, make_shared<StraightTask>());
-    planner->setTransition(4, 10, make_shared<Rotate90Right>());
-    planner->setTransition(10, 12, make_shared<StraightTask>());
-    planner->setTransition(2, 13, make_shared<Rotate90Right>());
-    planner->setTransition(1, 13, make_shared<Rotate90Left>());
-    planner->setTransition(13, 14, make_shared<StraightTask>());
+    planner->setTransition(0, 1, -1);
+    planner->setTransition(0, 2, 1);
+    planner->setTransition(1, 3, 0);
+    planner->setTransition(2, 4, 0);
+    planner->setTransition(3, 5, 1);
+    planner->setTransition(5, 7, 0);
+    planner->setTransition(3, 9, -1);
+    planner->setTransition(9, 11, 0);
+    planner->setTransition(4, 6, -1);
+    planner->setTransition(6, 8, 0);
+    planner->setTransition(4, 10, 1);
+    planner->setTransition(10, 12, 0);
+    planner->setTransition(2, 13, 1);
+    planner->setTransition(1, 13, -1);
+    planner->setTransition(13, 14, 0);
 
     targetTask->registerInterface(&takeAction);
     targetTask->setInitialSpeed(0.8f);

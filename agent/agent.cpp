@@ -11,29 +11,51 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 	const vector<Observation>& obs) { 
 
 	AbstractTask::TaskResult tr = currentTask->taskExecutionStep(samplingrate, obs);
-	logger.printf("Task result %d\n", tr.result);
-	logger.printf("Plan size %d\n", plan.size());
+	logger.printf("Sampling rate = %f  Task result = %d\n", samplingrate, tr.result);
 
-	if (tr.result == AbstractTask::disturbance_gone)
-	{
+	if (tr.result == AbstractTask::disturbance_gone) {
+		logger.printf("Disturbance gone!\n");
 		if (plan.empty()) {
 			currentTask = targetTask;
+			logger.printf("Plan empty so back to default task...\n");
 		} else {
+			// launching straight task
 			plan[0]->init(currentTask, tr.newDisturbance);
 			currentTask = plan[0];
 			plan.erase(plan.begin());
+			logger.printf("Next task in the plan...\n");
+
 		}
 	}
 
 	if (tr.result == AbstractTask::new_disturbance) {
+		if(plan.empty()) {
+			logger.printf("New disturbance! x = %f y = %f r = %f phi = %f\n", tr.newDisturbance.getLocation().x, 
+				tr.newDisturbance.getLocation().y, tr.newDisturbance.getDistance(),
+				tr.newDisturbance.getAngle());
+		} else {
+			logger.printf("Waiting to execute plan\n");
+			logger.printf("Distance to disturbance = %f\n", tr.newDisturbance.getDistance());
+		}
+
 		if (tr.newDisturbance.isValid() && plan.empty()) {
+			logger.printf("Plan empty so creating a new one...\n");
 			plan = planner->eventNewDisturbance(obs, tr.newDisturbance);
 		}
 
-		if (tr.newDisturbance.getDistance() <= reactionThreshold) {
-			plan[0]->init(currentTask, tr.newDisturbance);
-			currentTask = plan[0];
-			plan.erase(plan.begin());
+		if ((tr.newDisturbance.isValid()) 
+			&& (tr.newDisturbance.getDistance() <= reactionThreshold)) {
+			if (!plan.empty()) {
+				// launching avoid task
+				plan[0]->init(currentTask, tr.newDisturbance);
+				currentTask = plan[0];
+				targetTask->resetTaskDuration();
+				plan.erase(plan.begin());
+				logger.printf("Plan not empty so on to the next task..\n");
+			} else {
+				logger.printf("Plan empty so stopping...\n");
+				exit(1);
+			}
 		}
 	}
 
@@ -105,20 +127,27 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 	// fixme: need to adjust linear velocity with error
 	detectionThreshold = motorLinearVelocity * disturbanceLookahead;
 
+	logger.printf("taskDuration = %f", taskDuration);
+	
 	Observation disturbance;
 	float minx = detectionThreshold;
 
-	for (unsigned i = 0; i < obs.size(); i++) {
-		if ((obs[i].isValid())) {
-			Point location = obs[i].getLocation();
-			if ((abs(location.x) < detectionThreshold) 
-				&& (abs(location.y) <= wheelbase) 
-				&& (location.x > lidarMinRange) 
-				&& (location.x < minx)) {
-				disturbance = obs[i];
-				minx = location.x;
-			}
-		} 
+	// delay to stop things catching 
+	// but better if distance dependent 
+	// on the motor speed
+	if (taskDuration > 0.5) {
+		for (unsigned i = 0; i < obs.size(); i++) {
+			if ((obs[i].isValid())) {
+				Point location = obs[i].getLocation();
+				if ((abs(location.x) < detectionThreshold) 
+					&& (abs(location.y) <= wheelbase) 
+					&& (location.x > lidarMinRange) 
+					&& (location.x < minx)) {
+					disturbance = obs[i];
+					minx = location.x;
+				}
+			} 
+		}
 	}
 
 	TaskResult tr;
@@ -127,7 +156,9 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 		tr.setDisturbance(disturbance);
 	} 
 
-	taskDuration += (1/samplingrate);
+	if (samplingrate > 0) {
+		taskDuration += (1/samplingrate);
+	}
 	return tr;
 }
 
@@ -139,6 +170,7 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	// get offset from distrbance for forward simulation 
  	float northOffset = abs(disturbance.getLocation().x - reactionThreshold);
 
+ 	logger.printf("north offset = %f\n", northOffset);
  	// forward simulate obs and filter
  	vector<Observation> westHorizon;
  	vector<Observation> eastHorizon;
@@ -148,20 +180,20 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 			Observation ob(location.x - northOffset, location.y);
 			// S_w = {s1, s3}
 			if ((ob.getLocation().y < lateralHorizon)
-				&& (abs(ob.getLocation().x) <= reactionThreshold) 
-				&& (ob.getLocation().y > reactionThreshold)) {
+				&& (abs(ob.getLocation().x) <= reactionThreshold)
+				&& (ob.getLocation().y > 0)) {
 				westHorizon.push_back(ob);
 			}
 			// S_e = {s2, s4}
 			if ((ob.getLocation().y > -lateralHorizon)
-				&& (abs(ob.getLocation().x) <= reactionThreshold) 
-				&& (ob.getLocation().y < -reactionThreshold)) {
+				&& (abs(ob.getLocation().x) <= reactionThreshold)
+				&& (ob.getLocation().y < 0)) {
 				eastHorizon.push_back(ob);
 			}
 		} 
 	}
 
-	logger.printf("east size = %d  west size = %d\n", eastHorizon.size(), westHorizon.size());
+	logger.printf("west size = %d  east size = %d\n", westHorizon.size(), eastHorizon.size());
 
 	// way is clear either direction S_w U S_e = {s1, s2, s3, s4}
 	if ((westHorizon.size() == 0)  && (eastHorizon.size() == 0)) {
@@ -170,6 +202,7 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		accept.insert(3);
 		accept.insert(4);
 		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
+
 		logger.printf("3 & 4: size = %d\n", plan.size());
 
 		return plan;
@@ -228,8 +261,14 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	logger.printf("east y = %f west y = %f\n", nearestEast.getLocation().y, nearestWest.getLocation().y);
 	logger.printf("eastOffset = %f westOffset = %f\n", eastOffset, westOffset);
 
-	bool westDirectionSafe = westOffset > 0.02; // max size of object
-	bool eastDirectionSafe = abs(eastOffset) > 0.02; // max size of object
+	// needs to be able to move some distance 
+	// in either direction, as delay of 0.5 secs
+	// required to stop detecting a disturbance 
+	// the moment an avoid action is completed
+	// however this is hard coded here, should 
+	// use estimated speed from the motors
+	bool westDirectionSafe = abs(westOffset) > 0.02; 
+	bool eastDirectionSafe = abs(eastOffset) > 0.02;
 
 	logger.printf("east safe = %d  west safe = %d\n", eastDirectionSafe, westDirectionSafe);
 
