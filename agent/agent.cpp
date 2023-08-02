@@ -180,13 +180,13 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 			Observation ob(location.x - northOffset, location.y);
 			// S_w = {s1, s3}
 			if ((ob.getLocation().y < lateralHorizon)
-				&& (ob.getLocation().y > reactionThreshold)
+				&& (ob.getLocation().y > lidarMinRange)
 				&& (abs(ob.getLocation().x) <= reactionThreshold)) {
 					westHorizon.push_back(ob);
 			}
 			// S_e = {s2, s4}
 			if ((ob.getLocation().y > -lateralHorizon)
-				&& (ob.getLocation().y < -reactionThreshold)
+				&& (ob.getLocation().y < -lidarMinRange)
 				&& (abs(ob.getLocation().x) <= reactionThreshold)) {
 				eastHorizon.push_back(ob);
 			}
@@ -266,8 +266,8 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	// the moment an avoid action is completed
 	// however this is hard coded here, should 
 	// use estimated speed from the motors
-	bool westDirectionSafe = abs(westOffset) < 0.1; 
-	bool eastDirectionSafe = abs(eastOffset) < 0.1;
+	bool westDirectionSafe = abs(nearestWest.getLocation().y) > reactionThreshold; 
+	bool eastDirectionSafe = abs(nearestEast.getLocation().y) > reactionThreshold;
 
 	logger.printf("east safe = %d  west safe = %d\n", eastDirectionSafe, westDirectionSafe);
 

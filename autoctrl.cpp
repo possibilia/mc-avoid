@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const float safeDistance = 0.2; 
+const float minDetectRange = 0.15; 
 const float maxDetectRange = 1.0; 
 
 bool running = true;
@@ -31,7 +31,7 @@ public:
         vector<Observation> obs;
         for(A1LidarData &data: data) {
             Observation ob; // invalid by default
-            if (data.valid && data.r > safeDistance 
+            if (data.valid && data.r > minDetectRange 
                 && data.r < maxDetectRange) {
                 ob.setObservation(data.x, data.y);
                 nData++;
