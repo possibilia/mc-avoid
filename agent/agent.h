@@ -241,7 +241,7 @@ protected:
 	// based on lidar rpm
 	float taskDuration = 0.0;
 
-	float reactionThreshold = 0.2;
+	//float reactionThreshold = 0.2;
 
 	// todo: motor speed conversion
 	float robotDrive2realSpeed = 0.1;
@@ -253,7 +253,7 @@ struct StraightTask : AbstractTask {
 	float accSteeringError = 0;
 	float accSpeedError = 0;
 
-	float disturbanceLookahead = 5; 
+	float disturbanceLookahead = 4; 
 
 	vector<Observation> prevTrackingObs;
 

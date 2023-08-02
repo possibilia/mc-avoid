@@ -140,7 +140,7 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 			if ((obs[i].isValid())) {
 				Point location = obs[i].getLocation();
 				if ((abs(location.x) < detectionThreshold) 
-					&& (abs(location.y) <= wheelbase) 
+					&& (abs(location.y) <= wheelbase * 0.9) 
 					&& (location.x > lidarMinRange) 
 					&& (location.x < minx)) {
 					disturbance = obs[i];
@@ -267,8 +267,8 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	// the moment an avoid action is completed
 	// however this is hard coded here, should 
 	// use estimated speed from the motors
-	bool westDirectionSafe = abs(westOffset) > 0.02; 
-	bool eastDirectionSafe = abs(eastOffset) > 0.02;
+	bool westDirectionSafe = abs(westOffset) > reactionThreshold; 
+	bool eastDirectionSafe = abs(eastOffset) > reactionThreshold;
 
 	logger.printf("east safe = %d  west safe = %d\n", eastDirectionSafe, westDirectionSafe);
 
