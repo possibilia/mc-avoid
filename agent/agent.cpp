@@ -140,7 +140,7 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 			if ((obs[i].isValid())) {
 				Point location = obs[i].getLocation();
 				if ((abs(location.x) < detectionThreshold) 
-					&& (abs(location.y) <= wheelbase * 0.9) 
+					&& (abs(location.y) <= wheelbase) 
 					&& (location.x > lidarMinRange) 
 					&& (location.x < minx)) {
 					disturbance = obs[i];

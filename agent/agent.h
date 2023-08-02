@@ -286,7 +286,7 @@ struct Rotate90Task : AbstractTask {
 
 		float omega = getMotorAngularVelocity();
 		// fixme: numbers don't quite add up hence constant 2
-		float angle = startAngle + omega * taskDuration * 2.3;
+		float angle = startAngle + omega * taskDuration * 2.5;
 
 		if (abs(angle - startAngle) > M_PI/2) {
 			tr.result = ResultCodes::disturbance_gone;
