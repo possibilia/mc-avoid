@@ -180,14 +180,14 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 			Observation ob(location.x - northOffset, location.y);
 			// S_w = {s1, s3}
 			if ((ob.getLocation().y < lateralHorizon)
-				&& (abs(ob.getLocation().x) <= reactionThreshold)
-				&& (ob.getLocation().y > 0)) {
-				westHorizon.push_back(ob);
+				&& (ob.getLocation().y > reactionThreshold)
+				&& (abs(ob.getLocation().x) <= reactionThreshold)) {
+					westHorizon.push_back(ob);
 			}
 			// S_e = {s2, s4}
 			if ((ob.getLocation().y > -lateralHorizon)
-				&& (abs(ob.getLocation().x) <= reactionThreshold)
-				&& (ob.getLocation().y < 0)) {
+				&& (ob.getLocation().y < -reactionThreshold)
+				&& (abs(ob.getLocation().x) <= reactionThreshold)) {
 				eastHorizon.push_back(ob);
 			}
 		} 
@@ -228,12 +228,11 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 
 	// nearest west
 	Observation nearestWest;
-	float miny = detectionThreshold;
+	float miny = lateralHorizon;
 	for (unsigned i = 0; i < westHorizon.size(); i++) {
 		if (westHorizon[i].isValid()) {
 			Point location = westHorizon[i].getLocation();
-			if ((abs(location.y) < miny)
-				&& (abs(location.x) < reactionThreshold)) {
+			if (abs(location.y) < miny) {
 				nearestWest = westHorizon[i];
 				miny = abs(location.y);
 			}
@@ -242,12 +241,11 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 
 	// nearest east
 	Observation nearestEast;
-	miny = detectionThreshold;
+	miny = lateralHorizon;
 	for (unsigned i = 0; i < eastHorizon.size(); i++) {
 		if (eastHorizon[i].isValid()) {
 			Point location = eastHorizon[i].getLocation();
-			if ((abs(location.y) < miny)
-				&& (abs(location.x) < reactionThreshold)) {
+			if (abs(location.y) < miny) {
 				nearestEast = eastHorizon[i];
 				miny = abs(location.y);
 			}
@@ -258,7 +256,8 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	float westOffset = nearestWest.getLocation().y - reactionThreshold;
 	float eastOffset = nearestEast.getLocation().y + reactionThreshold;
 
-	logger.printf("east y = %f west y = %f\n", nearestEast.getLocation().y, nearestWest.getLocation().y);
+	logger.printf("east x = %f y = %f west x = %f y = %f\n", nearestEast.getLocation().x,
+		nearestEast.getLocation().y, nearestEast.getLocation().x, nearestWest.getLocation().y);
 	logger.printf("eastOffset = %f westOffset = %f\n", eastOffset, westOffset);
 
 	// needs to be able to move some distance 
@@ -267,8 +266,8 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	// the moment an avoid action is completed
 	// however this is hard coded here, should 
 	// use estimated speed from the motors
-	bool westDirectionSafe = abs(westOffset) > reactionThreshold; 
-	bool eastDirectionSafe = abs(eastOffset) > reactionThreshold;
+	bool westDirectionSafe = abs(westOffset) < 0.1; 
+	bool eastDirectionSafe = abs(eastOffset) < 0.1;
 
 	logger.printf("east safe = %d  west safe = %d\n", eastDirectionSafe, westDirectionSafe);
 
