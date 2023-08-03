@@ -11,10 +11,16 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 	const vector<Observation>& obs) { 
 
 	AbstractTask::TaskResult tr = currentTask->taskExecutionStep(samplingrate, obs);
-	logger.printf("Sampling rate = %f  Task result = %d\n", samplingrate, tr.result);
+
+	if (tr.result == 3) {
+		logger.printf("TASK RESULT = DISTURBANCE!!!!!!\n", tr.result);
+	} else if (tr.result == 1) {
+		logger.printf("TASK RESULT = DISTURBANCE ELIMINATED\n", tr.result);
+	} else {
+		logger.printf("TASK RESULT = nothing\n", tr.result);
+	}
 
 	if (tr.result == AbstractTask::disturbance_gone) {
-		logger.printf("Disturbance gone!\n");
 		if (plan.empty()) {
 			currentTask = targetTask;
 			logger.printf("Plan empty so back to default task...\n");
@@ -23,19 +29,18 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 			plan[0]->init(currentTask, tr.newDisturbance);
 			currentTask = plan[0];
 			plan.erase(plan.begin());
-			logger.printf("Next task in the plan...\n");
+			logger.printf("Plan not empty so on to next task...\n");
 
 		}
 	}
 
 	if (tr.result == AbstractTask::new_disturbance) {
 		if(plan.empty()) {
-			logger.printf("New disturbance! x = %f y = %f r = %f phi = %f\n", tr.newDisturbance.getLocation().x, 
+			logger.printf("x = %f y = %f r = %f phi = %f\n", tr.newDisturbance.getLocation().x, 
 				tr.newDisturbance.getLocation().y, tr.newDisturbance.getDistance(),
 				tr.newDisturbance.getAngle());
 		} else {
-			logger.printf("Waiting to execute plan\n");
-			logger.printf("Distance to disturbance = %f\n", tr.newDisturbance.getDistance());
+			logger.printf("Waiting to execute plan, distance to disturbance = %f\n", tr.newDisturbance.getDistance());
 		}
 
 		if (tr.newDisturbance.isValid() && plan.empty()) {
@@ -127,8 +132,6 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 	// fixme: need to adjust linear velocity with error
 	detectionThreshold = motorLinearVelocity * disturbanceLookahead;
 
-	logger.printf("taskDuration = %f", taskDuration);
-	
 	Observation disturbance;
 	float minx = detectionThreshold;
 
@@ -164,13 +167,15 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 
 vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	const vector<Observation>& obs, const Observation& disturbance) {
+	logger.printf("UPDATING MODEL...\n");
 
 	set<int> accept;
 
 	// get offset from distrbance for forward simulation 
  	float northOffset = abs(disturbance.getLocation().x - reactionThreshold);
+ 	logger.printf("(1) forward sim reaction threshold to disturbance x...\noffset = %f\n", northOffset);
+ 	logger.printf("(2) checking if obstacles blocking west and east horizon states...\n");
 
- 	logger.printf("north offset = %f\n", northOffset);
  	// forward simulate obs and filter
  	vector<Observation> westHorizon;
  	vector<Observation> eastHorizon;
@@ -197,34 +202,31 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 
 	// way is clear either direction S_w U S_e = {s1, s2, s3, s4}
 	if ((westHorizon.size() == 0)  && (eastHorizon.size() == 0)) {
-		logger.printf("left/right -> straight\n");
-		// set relevant states
 		accept.insert(3);
 		accept.insert(4);
+		logger.printf("MODEL UPDATE COMPLETE!\n");
 		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
-
-		logger.printf("3 & 4: size = %d\n", plan.size());
-
 		return plan;
 	}
 
 	// disturbance left so go right S_e = {s2, s4}
 	if ((westHorizon.size() > 0) && (eastHorizon.size() == 0)) {
-		logger.printf("right -> straight\n");
 		accept.insert(4);
+		logger.printf("MODEL UPDATE COMPLETE!\n");
 		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
-		logger.printf("4: size = %d\n", plan.size());
 		return plan;
 	}
 
 	// disturbance right so go left S_w = {s1, s3}
 	if ((westHorizon.size() == 0)  && (eastHorizon.size() > 0)) {
-		logger.printf("left -> straight\n");
 		accept.insert(3);
+		logger.printf("MODEL UPDATE COMPLETE!\n");
 		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
-		logger.printf("3: size = %d\n", plan.size());
 		return plan;
 	}
+
+	logger.printf("obstacles either direction so planning an extra step\n");
+	logger.printf("(3) calculating the nearest disturbance in west and east directions...\n");
 
 	// nearest west
 	Observation nearestWest;
@@ -252,13 +254,17 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		} 
 	}
 
-	// check if the robot has room to plan an extra step
-	float westOffset = nearestWest.getLocation().y - reactionThreshold;
-	float eastOffset = nearestEast.getLocation().y + reactionThreshold;
+	logger.printf("nearest west x = %f y = %f, nearest east x = %f y = %f\n", 
+		nearestWest.getLocation().x, nearestWest.getLocation().y, 
+		nearestEast.getLocation().x, nearestEast.getLocation().y);
+	
 
-	logger.printf("east x = %f y = %f west x = %f y = %f\n", nearestEast.getLocation().x,
-		nearestEast.getLocation().y, nearestWest.getLocation().x, nearestWest.getLocation().y);
-	logger.printf("eastOffset = %f westOffset = %f\n", eastOffset, westOffset);
+	// // check if the robot has room to plan an extra step
+	// float westOffset = nearestWest.getLocation().y - reactionThreshold;
+	// float eastOffset = nearestEast.getLocation().y + reactionThreshold;
+
+	// logger.printf("");
+	// logger.printf("eastOffset = %f westOffset = %f\n", eastOffset, westOffset);
 
 	// needs to be able to move some distance 
 	// in either direction, as delay of 0.5 secs
@@ -266,19 +272,27 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	// the moment an avoid action is completed
 	// however this is hard coded here, should 
 	// use estimated speed from the motors
+
+	logger.printf("(4) checking whether agent can move at least %fm in each direction...\n", reactionThreshold);
 	bool westDirectionSafe = abs(nearestWest.getLocation().y) > reactionThreshold; 
 	bool eastDirectionSafe = abs(nearestEast.getLocation().y) > reactionThreshold;
-
-	logger.printf("east safe = %d  west safe = %d\n", eastDirectionSafe, westDirectionSafe);
+	logger.printf("west safe = %d  east safe = %d \n", westDirectionSafe, eastDirectionSafe);
 
 	// no room so go south S_s = {s13, s14}
 	if (!(westDirectionSafe || eastDirectionSafe)) {
-		logger.printf("2left/2right -> straight\n");
 		accept.insert(14);
+		logger.printf("MODEL UPDATE COMPLETE!\n");
 		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
-		logger.printf("14: size = %d", plan.size());
 		return plan;
 	}
+	logger.printf("enough room to move either side so checking polar states safe", westDirectionSafe, eastDirectionSafe);
+
+	// lateral sim offset
+	float westOffset = nearestWest.getLocation().y - reactionThreshold;
+	float eastOffset = nearestEast.getLocation().y + reactionThreshold;
+
+	logger.printf("(5) lateral sim reaction threshold to nearest distrubance y in each direction...\n");
+	logger.printf("west offset = %f east offset = %f\n", westOffset, eastOffset);
 
 	// forward sim and east offset
 	vector<Observation> northEastHorizon;
@@ -324,22 +338,19 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		} 
 	}
 
-	logger.printf("north east size = %d south east size = %d\n", northEastHorizon.size(), southEastHorizon.size());
-	logger.printf("north west size = %d south west size = %d\n", northWestHorizon.size(), southWestHorizon.size());
+	logger.printf("(6) checking if polar horizon states are disturbance free...\n");
+	logger.printf("nw size = %d  sw size = %d  ne size = %d  se size = %d\n", northWestHorizon.size(),
+		southWestHorizon.size(), northEastHorizon.size(), southEastHorizon.size());
 
 	// east north/south horizon states
 	if ((westDirectionSafe && eastDirectionSafe) 
 		|| (!westDirectionSafe && eastDirectionSafe)) {
 		// S_ne = {s6, s8}
 		if (northEastHorizon.size() == 0) {
-			logger.printf("north east safe!\n");
-			// set state
 			accept.insert(8);
 		}
 		// S_se = {s10, s12}
 		if (southEastHorizon.size() == 0) {
-			logger.printf("south east safe!\n");
-			// set state
 			accept.insert(12);
 		}
 	}
@@ -349,21 +360,15 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		|| (westDirectionSafe && !eastDirectionSafe)) {
 		// S_nw = {s5, s7}
 		if (northWestHorizon.size() == 0) {
-			logger.printf("north west safe!\n");
-			// set state
 			accept.insert(7);
 		}
 		// S_sw = {s9, s11}
 		if (southWestHorizon.size() == 0) {
-			logger.printf("south west safe!\n");
-			// set state
 			accept.insert(11);
 		}
 	}
 
-	
+	logger.printf("MODEL UPDATE COMPLETE!\n");
 	vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
-	logger.printf("accept size = %d size = %d\n", accept.size(), plan.size());
-
  	return plan;
 }

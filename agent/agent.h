@@ -383,34 +383,7 @@ struct StateMachineLTL : AbstractPlanner {
 			}
 		}
 
-		logger.printf("***********************\n");
-
-		// log accept states
-		logger.printf("ACCEPT STATES: ");
-		for (auto& a : accept) {
-			logger.printf("%d ", a);
-		}
-		logger.printf("\n");
-
-		// log path
-		logger.printf("PATH: ");
-		for (auto&  p: path) {
-			logger.printf("%d ", p);
-		}
-		logger.printf("\n");
-
-		// log plan
-		logger.printf("PLAN: ");
-		for (unsigned i = 0; i < trajectory.size(); i++) {
-			if (i < (trajectory.size()-1)) {
-				logger.printf("%s -> ", trajectory[i]);
-			} else {
-				logger.printf("%s -> default\n", trajectory[i]);
-			}
-		}
-
-		logger.printf("***********************\n");
-
+		logMe(accept, path, trajectory);
 		return plan;
 	}
 
@@ -461,6 +434,37 @@ struct StateMachineLTL : AbstractPlanner {
 			// the path
 			return stack;
 		}
+	}
+
+	void logMe(set<int> accept, vector<int> path, 
+		vector<const char*> trajectory) {
+		logger.printf("*****************************************\n");
+
+		// log accept states
+		logger.printf("ACCEPT: ");
+		for (auto& a : accept) {
+			logger.printf("%d ", a);
+		}
+		logger.printf("\n");
+
+		// log path
+		logger.printf("PATH: ");
+		for (auto&  p: path) {
+			logger.printf("%d ", p);
+		}
+		logger.printf("\n");
+
+		// log plan
+		logger.printf("PLAN: ");
+		for (unsigned i = 0; i < trajectory.size(); i++) {
+			if (i < (trajectory.size()-1)) {
+				logger.printf("%s -> ", trajectory[i]);
+			} else {
+				logger.printf("%s -> default\n", trajectory[i]);
+			}
+		}
+
+		logger.printf("*****************************************\n");
 	}	
 };
 
