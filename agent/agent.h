@@ -15,6 +15,7 @@
 #include <list>
 #include <cstdio>
 #include <cmath>
+#include <string>
 
 using namespace std;
 
@@ -354,6 +355,9 @@ struct StateMachineLTL : AbstractPlanner {
 		vector<int> path = generatePath(accept);
 		vector<shared_ptr<AbstractTask>> plan;
 
+		// logging stuff
+		vector<const char*> trajectory;
+
 		// get tasks for state transitons
 		for (unsigned i = 1; i < path.size(); i++) {
 			for (auto& st : trans) {
@@ -362,12 +366,15 @@ struct StateMachineLTL : AbstractPlanner {
 					shared_ptr<AbstractTask> task;
 			        switch (st.label) {
 			            case 0:
+			            	trajectory.push_back("straight");
 			                task = make_shared<StraightTask>();
 			                break;
 			            case 1:
+			            	trajectory.push_back("right");
 			            	task = make_shared<Rotate90Right>();
 			                break;
 			            case -1:
+			            	trajectory.push_back("left");
 			            	task = make_shared<Rotate90Left>();
 			                break;
 			        }
@@ -375,6 +382,35 @@ struct StateMachineLTL : AbstractPlanner {
 				}
 			}
 		}
+
+		logger.printf("***********************\n");
+
+		// log accept states
+		logger.printf("ACCEPT STATES: ");
+		for (auto& a : accept) {
+			logger.printf("%d ", a);
+		}
+		logger.printf("\n");
+
+		// log path
+		logger.printf("PATH: ");
+		for (auto&  p: path) {
+			logger.printf("%d ", p);
+		}
+		logger.printf("\n");
+
+		// log plan
+		logger.printf("PLAN: ");
+		for (unsigned i = 0; i < trajectory.size(); i++) {
+			if (i < (trajectory.size()-1)) {
+				logger.printf("%s -> ", trajectory[i]);
+			} else {
+				logger.printf("%s -> default\n", trajectory[i]);
+			}
+		}
+
+		logger.printf("***********************\n");
+
 		return plan;
 	}
 

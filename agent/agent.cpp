@@ -257,7 +257,7 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	float eastOffset = nearestEast.getLocation().y + reactionThreshold;
 
 	logger.printf("east x = %f y = %f west x = %f y = %f\n", nearestEast.getLocation().x,
-		nearestEast.getLocation().y, nearestEast.getLocation().x, nearestWest.getLocation().y);
+		nearestEast.getLocation().y, nearestWest.getLocation().x, nearestWest.getLocation().y);
 	logger.printf("eastOffset = %f westOffset = %f\n", eastOffset, westOffset);
 
 	// needs to be able to move some distance 
