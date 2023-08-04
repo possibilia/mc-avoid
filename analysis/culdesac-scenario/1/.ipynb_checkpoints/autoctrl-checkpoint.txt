@@ -1,0 +1,156 @@
+0 TASK RESULT = nothing
+1 TASK RESULT = nothing
+2 TASK RESULT = nothing
+3 TASK RESULT = nothing
+4 TASK RESULT = nothing
+5 TASK RESULT = nothing
+6 TASK RESULT = nothing
+7 TASK RESULT = nothing
+8 TASK RESULT = nothing
+9 TASK RESULT = nothing
+10 TASK RESULT = nothing
+11 TASK RESULT = nothing
+12 TASK RESULT = nothing
+13 TASK RESULT = nothing
+14 TASK RESULT = NEW DISTURBANCE!!!!!!
+x = 0.307826 y = -0.146712 r = 0.341000 phi = -0.444759
+Plan empty so creating a new one...
+UPDATING MODEL...
+lateralHorizon = 0.500000 reactionThreshold = 0.240000 detectionThreshold = 0.320000
+(1) forward sim reaction threshold to disturbance x...
+offset = 0.067826
+(2) checking if obstacles blocking west and east horizon states...
+west size = 65  east size = 338
+obstacles either direction so planning an extra step
+(3) calculating the nearest disturbance in west and east directions...
+nearest west x = -0.193907 y = 0.438223 r = 0.479207 phi = 1.987382
+nearest east x = 0.240000 y = -0.146712 r = 0.281291 phi = -0.548686
+(4) checking whether agent can move at least 0.240000m in each direction...
+west safe = 1  east safe = 0 
+enough room to move either side so checking polar states safe
+(5) lateral sim reaction threshold to nearest distrubance y in each direction...
+west offset = 0.198223 east offset = 0.093288
+(6) checking if polar horizon states are disturbance free...
+nw size = 0  sw size = 0  ne size = 0  se size = 0
+MODEL UPDATE COMPLETE!
+*****************************************
+ACCEPT: 7 11 
+PATH: 0 1 3 9 
+PLAN: left -> straight -> left -> default
+*****************************************
+15 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.322000
+x = 0.286795 y = -0.146399 r = 0.322000 phi = -0.471987
+16 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.297000
+x = 0.258584 y = -0.146093 r = 0.297000 phi = -0.514267
+17 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.276000
+x = 0.233744 y = -0.146764 r = 0.276000 phi = -0.560670
+18 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.255000
+x = 0.208414 y = -0.146931 r = 0.255000 phi = -0.614072
+19 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.235000
+x = 0.183473 y = -0.146842 r = 0.235000 phi = -0.674952
+Plan not empty so on to the next task..
+20 TASK RESULT = nothing
+21 TASK RESULT = nothing
+22 TASK RESULT = nothing
+23 TASK RESULT = nothing
+24 TASK RESULT = DISTURBANCE ELIMINATED
+Plan not empty so on to next task...
+25 TASK RESULT = nothing
+26 TASK RESULT = nothing
+27 TASK RESULT = nothing
+28 TASK RESULT = nothing
+29 TASK RESULT = nothing
+30 TASK RESULT = nothing
+31 TASK RESULT = nothing
+32 TASK RESULT = nothing
+33 TASK RESULT = nothing
+34 TASK RESULT = nothing
+35 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.336000
+x = 0.302433 y = 0.146390 r = 0.336000 phi = 0.450799
+36 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.313000
+x = 0.277109 y = 0.145532 r = 0.313000 phi = 0.483587
+37 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.292000
+x = 0.252547 y = 0.146573 r = 0.292000 phi = 0.525868
+38 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.271000
+x = 0.227879 y = 0.146671 r = 0.271000 phi = 0.571887
+39 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.250000
+x = 0.203843 y = 0.144735 r = 0.250000 phi = 0.617427
+40 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.231000
+x = 0.178874 y = 0.146168 r = 0.231000 phi = 0.685114
+Plan not empty so on to the next task..
+41 TASK RESULT = nothing
+42 TASK RESULT = nothing
+43 TASK RESULT = nothing
+44 TASK RESULT = nothing
+45 TASK RESULT = DISTURBANCE ELIMINATED
+Plan empty so back to default task...
+46 TASK RESULT = nothing
+47 TASK RESULT = nothing
+48 TASK RESULT = nothing
+49 TASK RESULT = nothing
+50 TASK RESULT = nothing
+51 TASK RESULT = nothing
+52 TASK RESULT = nothing
+53 TASK RESULT = nothing
+54 TASK RESULT = nothing
+55 TASK RESULT = nothing
+56 TASK RESULT = nothing
+57 TASK RESULT = nothing
+58 TASK RESULT = nothing
+59 TASK RESULT = nothing
+60 TASK RESULT = nothing
+61 TASK RESULT = nothing
+62 TASK RESULT = nothing
+63 TASK RESULT = nothing
+64 TASK RESULT = nothing
+65 TASK RESULT = nothing
+66 TASK RESULT = nothing
+67 TASK RESULT = nothing
+68 TASK RESULT = nothing
+69 TASK RESULT = nothing
+70 TASK RESULT = nothing
+71 TASK RESULT = nothing
+72 TASK RESULT = nothing
+73 TASK RESULT = nothing
+74 TASK RESULT = nothing
+75 TASK RESULT = nothing
+76 TASK RESULT = nothing
+77 TASK RESULT = nothing
+78 TASK RESULT = nothing
+79 TASK RESULT = nothing
+80 TASK RESULT = nothing
+81 TASK RESULT = nothing
+82 TASK RESULT = nothing
+83 TASK RESULT = nothing
+84 TASK RESULT = nothing
+85 TASK RESULT = nothing
+86 TASK RESULT = nothing
+87 TASK RESULT = nothing
+88 TASK RESULT = nothing
+89 TASK RESULT = nothing
+90 TASK RESULT = nothing
+91 TASK RESULT = nothing
+92 TASK RESULT = nothing
+93 TASK RESULT = nothing
+94 TASK RESULT = nothing
+95 TASK RESULT = nothing
+96 TASK RESULT = nothing
+97 TASK RESULT = nothing
+98 TASK RESULT = nothing
+99 TASK RESULT = nothing
+100 TASK RESULT = nothing
+101 TASK RESULT = nothing
+102 TASK RESULT = nothing
+103 TASK RESULT = nothing
+104 TASK RESULT = nothing
