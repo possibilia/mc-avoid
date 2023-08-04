@@ -80,7 +80,7 @@ int main(int, char **) {
 
     shared_ptr<AbstractTask> targetTask = make_shared<StraightTask>();
 
-    // set up planner and initilize model  (0 straing, 1 right, -1 left)
+    // set up planner and initilize model  (0 straight, 1 right, -1 left)
     shared_ptr<StateMachineLTL> planner = make_shared<StateMachineLTL>(15);
     planner->setTransition(0, 1, -1);
     planner->setTransition(0, 2, 1);
@@ -106,7 +106,7 @@ int main(int, char **) {
 
     alphabot.start();
 
-    logger.startLogging("../test/manualctrl.txt", true);
+    logger.startLogging("../6/autoctrl.txt", true);
     
     while(running) {
         // blocking

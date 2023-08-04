@@ -1,0 +1,267 @@
+0 TASK RESULT = nothing
+1 TASK RESULT = nothing
+2 TASK RESULT = nothing
+3 TASK RESULT = nothing
+4 TASK RESULT = nothing
+5 TASK RESULT = nothing
+6 TASK RESULT = nothing
+7 TASK RESULT = NEW DISTURBANCE!!!!!!
+x = 0.318753 y = 0.146962 r = 0.351000 phi = 0.432007
+Plan empty so creating a new one...
+UPDATING MODEL...
+lateralHorizon = 0.500000 reactionThreshold = 0.240000 detectionThreshold = 0.320000
+(1) forward sim reaction threshold to disturbance x...
+offset = 0.078753
+(2) checking if obstacles blocking west and east horizon states...
+west size = 206  east size = 257
+obstacles either direction so planning an extra step
+(3) calculating the nearest disturbance in west and east directions...
+nearest west x = 0.240000 y = 0.146962 r = 0.281421 phi = 0.549444
+nearest east x = 0.239135 y = -0.189335 r = 0.305013 phi = -0.669690
+(4) checking whether agent can move at least 0.240000m in each direction...
+west safe = 0  east safe = 0 
+MODEL UPDATE COMPLETE!
+*****************************************
+ACCEPT: 14 
+PATH: 0 2 13 
+PLAN: right -> right -> default
+*****************************************
+8 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.333000
+x = 0.299175 y = 0.146231 r = 0.333000 phi = 0.454634
+9 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.317000
+x = 0.281256 y = 0.146233 r = 0.317000 phi = 0.479465
+10 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.300000
+x = 0.261662 y = 0.146742 r = 0.300000 phi = 0.511103
+11 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.283000
+x = 0.242332 y = 0.146165 r = 0.283000 phi = 0.542742
+12 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.267000
+x = 0.223246 y = 0.146459 r = 0.267000 phi = 0.580612
+13 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.251000
+x = 0.203453 y = 0.146996 r = 0.251000 phi = 0.625672
+14 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.235000
+x = 0.184385 y = 0.145696 r = 0.235000 phi = 0.668720
+Plan not empty so on to the next task..
+15 TASK RESULT = nothing
+16 TASK RESULT = nothing
+17 TASK RESULT = nothing
+18 TASK RESULT = nothing
+19 TASK RESULT = DISTURBANCE ELIMINATED
+Plan not empty so on to next task...
+20 TASK RESULT = nothing
+21 TASK RESULT = nothing
+22 TASK RESULT = nothing
+23 TASK RESULT = nothing
+24 TASK RESULT = DISTURBANCE ELIMINATED
+Plan empty so back to default task...
+25 TASK RESULT = nothing
+26 TASK RESULT = nothing
+27 TASK RESULT = nothing
+28 TASK RESULT = nothing
+29 TASK RESULT = nothing
+30 TASK RESULT = nothing
+31 TASK RESULT = nothing
+32 TASK RESULT = nothing
+33 TASK RESULT = nothing
+34 TASK RESULT = nothing
+35 TASK RESULT = nothing
+36 TASK RESULT = nothing
+37 TASK RESULT = nothing
+38 TASK RESULT = nothing
+39 TASK RESULT = nothing
+40 TASK RESULT = nothing
+41 TASK RESULT = NEW DISTURBANCE!!!!!!
+x = 0.290087 y = 0.146541 r = 0.325000 phi = 0.467768
+Plan empty so creating a new one...
+UPDATING MODEL...
+lateralHorizon = 0.500000 reactionThreshold = 0.240000 detectionThreshold = 0.320000
+(1) forward sim reaction threshold to disturbance x...
+offset = 0.050087
+(2) checking if obstacles blocking west and east horizon states...
+west size = 323  east size = 31
+obstacles either direction so planning an extra step
+(3) calculating the nearest disturbance in west and east directions...
+nearest west x = 0.240000 y = 0.146541 r = 0.281201 phi = 0.548168
+nearest east x = -0.238517 y = -0.397611 r = 0.463664 phi = -2.111124
+(4) checking whether agent can move at least 0.240000m in each direction...
+west safe = 0  east safe = 1 
+enough room to move either side so checking polar states safe
+(5) lateral sim reaction threshold to nearest distrubance y in each direction...
+west offset = -0.093459 east offset = -0.157611
+(6) checking if polar horizon states are disturbance free...
+nw size = 8  sw size = 0  ne size = 0  se size = 14
+MODEL UPDATE COMPLETE!
+*****************************************
+ACCEPT: 8 
+PATH: 0 2 4 6 
+PLAN: right -> straight -> left -> default
+*****************************************
+42 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.302000
+x = 0.264083 y = 0.146506 r = 0.302000 phi = 0.506501
+43 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.281000
+x = 0.240019 y = 0.146123 r = 0.281000 phi = 0.546864
+44 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.258000
+x = 0.212253 y = 0.146672 r = 0.258000 phi = 0.604676
+45 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.238000
+x = 0.187416 y = 0.146695 r = 0.238000 phi = 0.664118
+Plan not empty so on to the next task..
+46 TASK RESULT = nothing
+47 TASK RESULT = nothing
+48 TASK RESULT = nothing
+49 TASK RESULT = DISTURBANCE ELIMINATED
+Plan not empty so on to next task...
+50 TASK RESULT = nothing
+51 TASK RESULT = nothing
+52 TASK RESULT = nothing
+53 TASK RESULT = nothing
+54 TASK RESULT = nothing
+55 TASK RESULT = nothing
+56 TASK RESULT = nothing
+57 TASK RESULT = nothing
+58 TASK RESULT = nothing
+59 TASK RESULT = nothing
+60 TASK RESULT = nothing
+61 TASK RESULT = nothing
+62 TASK RESULT = nothing
+63 TASK RESULT = nothing
+64 TASK RESULT = nothing
+65 TASK RESULT = nothing
+66 TASK RESULT = nothing
+67 TASK RESULT = nothing
+68 TASK RESULT = nothing
+69 TASK RESULT = nothing
+70 TASK RESULT = nothing
+71 TASK RESULT = nothing
+72 TASK RESULT = nothing
+73 TASK RESULT = nothing
+74 TASK RESULT = nothing
+75 TASK RESULT = nothing
+76 TASK RESULT = nothing
+77 TASK RESULT = nothing
+78 TASK RESULT = nothing
+79 TASK RESULT = nothing
+80 TASK RESULT = nothing
+81 TASK RESULT = nothing
+82 TASK RESULT = nothing
+83 TASK RESULT = nothing
+84 TASK RESULT = nothing
+85 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.343000
+x = 0.310321 y = -0.146116 r = 0.343000 phi = -0.440061
+86 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.319000
+x = 0.283410 y = -0.146423 r = 0.319000 phi = -0.476876
+87 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.295000
+x = 0.256046 y = -0.146511 r = 0.295000 phi = -0.519732
+88 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.274000
+x = 0.231980 y = -0.145812 r = 0.274000 phi = -0.561149
+89 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.253000
+x = 0.207808 y = -0.144308 r = 0.253000 phi = -0.606977
+90 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.235000
+x = 0.183754 y = -0.146490 r = 0.235000 phi = -0.673034
+Plan not empty so on to the next task..
+91 TASK RESULT = nothing
+92 TASK RESULT = nothing
+93 TASK RESULT = nothing
+94 TASK RESULT = DISTURBANCE ELIMINATED
+Plan empty so back to default task...
+95 TASK RESULT = nothing
+96 TASK RESULT = nothing
+97 TASK RESULT = nothing
+98 TASK RESULT = nothing
+99 TASK RESULT = nothing
+100 TASK RESULT = nothing
+101 TASK RESULT = nothing
+102 TASK RESULT = nothing
+103 TASK RESULT = nothing
+104 TASK RESULT = nothing
+105 TASK RESULT = nothing
+106 TASK RESULT = nothing
+107 TASK RESULT = nothing
+108 TASK RESULT = nothing
+109 TASK RESULT = nothing
+110 TASK RESULT = nothing
+111 TASK RESULT = nothing
+112 TASK RESULT = nothing
+113 TASK RESULT = nothing
+114 TASK RESULT = nothing
+115 TASK RESULT = nothing
+116 TASK RESULT = nothing
+117 TASK RESULT = nothing
+118 TASK RESULT = nothing
+119 TASK RESULT = nothing
+120 TASK RESULT = nothing
+121 TASK RESULT = nothing
+122 TASK RESULT = nothing
+123 TASK RESULT = nothing
+124 TASK RESULT = nothing
+125 TASK RESULT = nothing
+126 TASK RESULT = nothing
+127 TASK RESULT = nothing
+128 TASK RESULT = nothing
+129 TASK RESULT = nothing
+130 TASK RESULT = nothing
+131 TASK RESULT = nothing
+132 TASK RESULT = nothing
+133 TASK RESULT = nothing
+134 TASK RESULT = nothing
+135 TASK RESULT = nothing
+136 TASK RESULT = nothing
+137 TASK RESULT = nothing
+138 TASK RESULT = nothing
+139 TASK RESULT = nothing
+140 TASK RESULT = nothing
+141 TASK RESULT = nothing
+142 TASK RESULT = nothing
+143 TASK RESULT = nothing
+144 TASK RESULT = nothing
+145 TASK RESULT = nothing
+146 TASK RESULT = nothing
+147 TASK RESULT = NEW DISTURBANCE!!!!!!
+x = 0.303823 y = -0.126223 r = 0.329000 phi = -0.393754
+Plan empty so creating a new one...
+UPDATING MODEL...
+lateralHorizon = 0.500000 reactionThreshold = 0.240000 detectionThreshold = 0.320000
+(1) forward sim reaction threshold to disturbance x...
+offset = 0.063823
+(2) checking if obstacles blocking west and east horizon states...
+west size = 0  east size = 1
+MODEL UPDATE COMPLETE!
+*****************************************
+ACCEPT: 3 
+PATH: 0 1 
+PLAN: left -> default
+*****************************************
+148 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.306000
+x = 0.278656 y = -0.126440 r = 0.306000 phi = -0.425967
+149 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.283000
+x = 0.252782 y = -0.127240 r = 0.283000 phi = -0.466330
+150 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.263000
+x = 0.227554 y = -0.131864 r = 0.263000 phi = -0.525197
+151 TASK RESULT = NEW DISTURBANCE!!!!!!
+Waiting to execute plan, distance to disturbance = 0.238000
+x = 0.202766 y = -0.124619 r = 0.238000 phi = -0.551083
+Plan not empty so on to the next task..
+152 TASK RESULT = nothing
+153 TASK RESULT = nothing
+154 TASK RESULT = nothing
+155 TASK RESULT = DISTURBANCE ELIMINATED
+Plan empty so back to default task...
+156 TASK RESULT = nothing

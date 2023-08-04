@@ -22,6 +22,14 @@ using namespace std;
 extern int nEvents;
 extern float detectionThreshold;
 
+const int run = 6;
+const char west[] = "west";
+const char east[] = "east";
+const char northWest[] = "northWest";
+const char southWest[] = "southWest";
+const char northEast[] = "northEast";
+const char southEast[] = "southEast";
+
 const float wheelbase = 0.147;
 const float wheelRadius = 0.033;
 const float reactionThreshold = 0.22 + 0.02;
@@ -465,6 +473,24 @@ struct StateMachineLTL : AbstractPlanner {
 		}
 
 		logger.printf("*****************************************\n");
+	}
+
+	void saveObs(const char* name, const vector<Observation>& obs) {
+		char tmp[256];
+		sprintf(tmp,"../%d/%s%03d.dat", run, name, nEvents);
+		//fprintf(stderr,"%s\n",tmp);
+		FILE* f = fopen(tmp,"wt");
+		fprintf(f,"x\ty\tr\tphi\n");
+		for(unsigned i = 0; i < obs.size();i++) {
+			if (obs[i].isValid()) {
+				fprintf(f,"%4.4f\t%4.4f\t%4.4f\t%4.4f\n",
+				obs[i].getLocation().x,
+				obs[i].getLocation().y,
+				obs[i].getDistance(),
+				obs[i].getAngle());
+			}
+		}
+		fclose(f);
 	}	
 };
 
@@ -501,14 +527,17 @@ private:
 
 	void saveMap(const vector<Observation>& obs) {
 		char tmp[256];
-		sprintf(tmp,"../test/map%03d.dat",nEvents);
-		fprintf(stderr,"%s\n",tmp);
+		sprintf(tmp,"../%d/map%03d.dat", run, nEvents);
+		//fprintf(stderr,"%s\n",tmp);
 		FILE* f = fopen(tmp,"wt");
+		fprintf(f,"x\ty\tr\tphi\n");
 		for(unsigned i = 0; i < obs.size();i++) {
 			if (obs[i].isValid()) {
-				fprintf(f,"%4.4f %4.4f \n",
+				fprintf(f,"%4.4f\t%4.4f\t%4.4f\t%4.4f\n",
 				obs[i].getLocation().x,
-				obs[i].getLocation().y);
+				obs[i].getLocation().y,
+				obs[i].getDistance(),
+				obs[i].getAngle());
 			}
 		}
 		fclose(f);

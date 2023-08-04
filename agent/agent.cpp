@@ -12,12 +12,14 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 
 	AbstractTask::TaskResult tr = currentTask->taskExecutionStep(samplingrate, obs);
 
+	saveMap(obs);
+
 	if (tr.result == 3) {
-		logger.printf("TASK RESULT = DISTURBANCE!!!!!!\n", tr.result);
+		logger.printf("%d TASK RESULT = NEW DISTURBANCE!!!!!!\n", nEvents, tr.result);
 	} else if (tr.result == 1) {
-		logger.printf("TASK RESULT = DISTURBANCE ELIMINATED\n", tr.result);
+		logger.printf("%d TASK RESULT = DISTURBANCE ELIMINATED\n", nEvents, tr.result);
 	} else {
-		logger.printf("TASK RESULT = nothing\n", tr.result);
+		logger.printf("%d TASK RESULT = nothing\n", nEvents, tr.result);
 	}
 
 	if (tr.result == AbstractTask::disturbance_gone) {
@@ -35,13 +37,13 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 	}
 
 	if (tr.result == AbstractTask::new_disturbance) {
-		if(plan.empty()) {
-			logger.printf("x = %f y = %f r = %f phi = %f\n", tr.newDisturbance.getLocation().x, 
-				tr.newDisturbance.getLocation().y, tr.newDisturbance.getDistance(),
-				tr.newDisturbance.getAngle());
-		} else {
+		if(!plan.empty()) {
 			logger.printf("Waiting to execute plan, distance to disturbance = %f\n", tr.newDisturbance.getDistance());
 		}
+		
+		logger.printf("x = %f y = %f r = %f phi = %f\n", tr.newDisturbance.getLocation().x, 
+				tr.newDisturbance.getLocation().y, tr.newDisturbance.getDistance(),
+				tr.newDisturbance.getAngle());
 
 		if (tr.newDisturbance.isValid() && plan.empty()) {
 			logger.printf("Plan empty so creating a new one...\n");
@@ -167,12 +169,18 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 
 vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	const vector<Observation>& obs, const Observation& disturbance) {
+
 	logger.printf("UPDATING MODEL...\n");
+	logger.printf("lateralHorizon = %f reactionThreshold = %f detectionThreshold = %f\n", 
+		lateralHorizon, reactionThreshold, detectionThreshold);
 
 	set<int> accept;
 
-	// get offset from distrbance for forward simulation 
- 	float northOffset = abs(disturbance.getLocation().x - reactionThreshold);
+ 	float northOffset = 0;
+ 	if (abs(disturbance.getLocation().x) > reactionThreshold) {
+ 		northOffset = abs(disturbance.getLocation().x - reactionThreshold);
+ 	}
+
  	logger.printf("(1) forward sim reaction threshold to disturbance x...\noffset = %f\n", northOffset);
  	logger.printf("(2) checking if obstacles blocking west and east horizon states...\n");
 
@@ -185,18 +193,22 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 			Observation ob(location.x - northOffset, location.y);
 			// S_w = {s1, s3}
 			if ((ob.getLocation().y < lateralHorizon)
-				&& (ob.getLocation().y > lidarMinRange)
+				&& (ob.getLocation().y > 0) // changed from lidar min
 				&& (abs(ob.getLocation().x) <= reactionThreshold)) {
 					westHorizon.push_back(ob);
 			}
 			// S_e = {s2, s4}
 			if ((ob.getLocation().y > -lateralHorizon)
-				&& (ob.getLocation().y < -lidarMinRange)
+				&& (ob.getLocation().y < 0) // changed from lidar min
 				&& (abs(ob.getLocation().x) <= reactionThreshold)) {
 				eastHorizon.push_back(ob);
 			}
 		} 
 	}
+
+	// data collection
+	saveObs(west, westHorizon);
+	saveObs(east, eastHorizon);
 
 	logger.printf("west size = %d  east size = %d\n", westHorizon.size(), eastHorizon.size());
 
@@ -254,10 +266,13 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		} 
 	}
 
-	logger.printf("nearest west x = %f y = %f, nearest east x = %f y = %f\n", 
-		nearestWest.getLocation().x, nearestWest.getLocation().y, 
-		nearestEast.getLocation().x, nearestEast.getLocation().y);
-	
+	logger.printf("nearest west x = %f y = %f r = %f phi = %f\n", 
+		nearestWest.getLocation().x, nearestWest.getLocation().y,
+		nearestWest.getDistance(), nearestWest.getAngle());
+
+	logger.printf("nearest east x = %f y = %f r = %f phi = %f\n", 
+		nearestEast.getLocation().x, nearestEast.getLocation().y,
+		nearestEast.getDistance(), nearestEast.getAngle());
 
 	// // check if the robot has room to plan an extra step
 	// float westOffset = nearestWest.getLocation().y - reactionThreshold;
@@ -285,7 +300,7 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		return plan;
 	}
-	logger.printf("enough room to move either side so checking polar states safe", westDirectionSafe, eastDirectionSafe);
+	logger.printf("enough room to move either side so checking polar states safe\n", westDirectionSafe, eastDirectionSafe);
 
 	// lateral sim offset
 	float westOffset = nearestWest.getLocation().y - reactionThreshold;
@@ -337,6 +352,12 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 			}
 		} 
 	}
+
+	// data collection
+	saveObs(northEast, northEastHorizon);
+	saveObs(southEast, southEastHorizon);
+	saveObs(northWest, northWestHorizon);
+	saveObs(southWest, southWestHorizon);
 
 	logger.printf("(6) checking if polar horizon states are disturbance free...\n");
 	logger.printf("nw size = %d  sw size = %d  ne size = %d  se size = %d\n", northWestHorizon.size(),
