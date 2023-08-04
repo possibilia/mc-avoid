@@ -1,8 +1,0 @@
-Scenario: Overtake rectangular object, pass on the rigth.  
-Goal: Test lidar precprocessing algorithm for edge cases. 
-Issue: Cuts lines which intersect the x-axis of the lidar data 
-behind the robot into two lines.
-  
-
- 
-
