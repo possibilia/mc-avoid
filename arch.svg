@@ -49,6 +49,7 @@ viewBox="0 0 21000 29700"
     @font-face { font-family:"Arial";font-variant:normal;font-style:normal;font-weight:normal;src:url("#FontID0") format(svg)}
     .str1 {stroke:black;stroke-width:52.92;stroke-miterlimit:22.9256}
     .str0 {stroke:#666666;stroke-width:52.92;stroke-miterlimit:22.9256}
+    .fil6 {fill:none}
     .fil5 {fill:#2B2A29}
     .fil3 {fill:black}
     .fil1 {fill:#333333}
@@ -125,5 +126,6 @@ viewBox="0 0 21000 29700"
   <g transform="matrix(1 -0.000853064 0.000853064 1 -5792.97 -2037)">
    <text x="10618.18" y="15105.5"  class="fil5 fnt1">New plan</text>
   </g>
+  <rect class="fil6" x="237.98" y="7191.93" width="17289.07" height="14917.56"/>
  </g>
 </svg>
