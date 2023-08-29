@@ -20,10 +20,6 @@ Install the following SDKs:
 
 ### Compilation
 
-```mkdir build```
-
-```cd build```
-
 ```cmake ..```
 
 ```make```
