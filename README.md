@@ -11,12 +11,14 @@
 
 ## Software
 
+### Architecture
+
+<img src="https://github.com/possibilia/mcplanner/blob/main/arch.jpg" width="550" height="500">
+
 ### Dependencies
 
 - AlphaBot SDK https://github.com/berndporr/alphabot
 - RPLIDAR A1M8 SDK https://github.com/berndporr/rplidar_rpi
 
-### Architecture
-
-<img src="https://github.com/possibilia/mcplanner/blob/main/arch.jpg" width="550" height="500">
+### Installation 
   
