@@ -1,6 +1,6 @@
 # Closed-loop model checking for tactical planning in C++
 
-Closed-loop system for local obstacle avoidance on a mobile robot using model checking 
+Closed-loop system for egocentric obstacle avoidance on a mobile robot using live model checking.
 
 ## Hardware 
 
