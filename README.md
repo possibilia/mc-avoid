@@ -18,7 +18,7 @@ Install the following SDKs:
 - AlphaBot SDK https://github.com/berndporr/alphabot
 - RPLIDAR A1M8 SDK https://github.com/berndporr/rplidar_rpi
 
-### Compile
+### Compile program
 
 ```mkdir build```
 
@@ -28,7 +28,7 @@ Install the following SDKs:
 
 ```make```
 
-### Run
+### Run program
 
 ```sudo ./autoctrl```
 
