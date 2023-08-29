@@ -11,7 +11,7 @@
 
 ## Software
 
-Dependent on the followng bespoke SDKs:
+### Dependencies
 
 - AlphaBot SDK https://github.com/berndporr/alphabot
 - RPLIDAR A1M8 SDK https://github.com/berndporr/rplidar_rpi
