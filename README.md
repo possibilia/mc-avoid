@@ -20,5 +20,11 @@ Install the following SDKs:
 
 ### Installation 
 
-``sss''
+```mkdir build```
+
+```cd build```
+
+```cmake ..```
+
+```make```
   
