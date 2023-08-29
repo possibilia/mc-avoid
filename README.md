@@ -20,7 +20,7 @@ Install the following SDKs:
 
 ### Compile 
 
-First create a build directory ```mkdir build``` and ```cd build```.  
+First create a build directory using ```mkdir build``` and ```cd build```.  
 
 Then generate the build files
 
