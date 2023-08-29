@@ -1,10 +1,10 @@
 # Closed-loop model checking for tactical planning in C++
 
-<img src="https://github.com/possibilia/mcplanner/blob/main/robot.jpg" width="550" height="500">
-
 Closed-loop system for local obstacle avoidance on a mobile robot using model checking 
 
 ## Hardware 
+
+<img src="https://github.com/possibilia/mcplanner/blob/main/robot.jpg" width="550" height="500">
 
 Adapted from a widely available mobile robot development platform. Details:
 
