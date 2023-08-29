@@ -11,6 +11,8 @@
 
 ## Software
 
+<img src="https://github.com/possibilia/mcplanner/blob/main/arch.jpg" width="550" height="500">
+
 ### Prerequisites 
 
 Install the following SDKs:
