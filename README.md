@@ -11,7 +11,7 @@
 
 ## Software
 
-### Architecture
+Closed-loop architecture: 
 
 <img src="https://github.com/possibilia/mcplanner/blob/main/arch.jpg" width="550" height="500">
 
