@@ -1,1 +1,1 @@
-# C++ in situ model checking for local tactical planning
+# Model checking for local obstacle avoidance in C++
