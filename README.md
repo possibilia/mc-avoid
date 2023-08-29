@@ -11,10 +11,6 @@
 
 ## Software
 
-Closed-loop architecture: 
-
-<img src="https://github.com/possibilia/mcplanner/blob/main/arch.jpg" width="550" height="500">
-
 ### Dependencies
 
 - AlphaBot SDK https://github.com/berndporr/alphabot
