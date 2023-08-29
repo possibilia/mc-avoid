@@ -1,1 +1,1 @@
-# Closed-loop model checking for egocentric planning in C++
+# Closed-loop model checking for tactical planning in C++
