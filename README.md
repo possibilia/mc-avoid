@@ -32,8 +32,6 @@ Compile the program
 
 ### Run
 
-Run the program
-
 ```sudo ./autoctrl```
 
 
