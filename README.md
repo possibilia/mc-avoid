@@ -1,8 +1,10 @@
 # Model checking for obstacle avoidance in C++
 
-<img src="https://github.com/possibilia/mcplanner/blob/main/robot.jpg" width="550" height="500">
+Implementation of model checking for chaining of temporary control systems in response to distrubances in the environment.  At present the program is limited to static environments is not goal-directed.  
 
 ## Hardware 
+
+<img src="https://github.com/possibilia/mcplanner/blob/main/robot.jpg" width="550" height="500">
 
 - AlphaBot mobile robot development kit by Waveshare https://www.waveshare.com/alphabot-robot.htm. 
 - 360 degree 2D laser scanner, RPLIDAR A1MB by Slamtec https://www.slamtec.com/en/Lidar/A1/
