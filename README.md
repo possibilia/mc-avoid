@@ -20,13 +20,11 @@ Install the following SDKs:
 
 ### Compile 
 
-To compile the program, create a build directory ```mkdir build``` and ```cd build```.  
-
-Generate the build files:
+First create a build directory ```mkdir build``` and ```cd build```.  Then generate the build files using
 
 ```cmake .```
 
-Compile the program:
+and Compile the program with
 
 ```make```
 
