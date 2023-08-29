@@ -2,7 +2,7 @@
 
 <img src="https://github.com/possibilia/mcplanner/blob/main/robot.jpg" width="550" height="500">
 
-Closed-loop system for local reactive planning on a bespoke differential drive robot. 
+Closed-loop system for local obstacle avoidance on a differential drive robot using model checking 
 
 ## Hardware 
 
