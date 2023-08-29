@@ -20,19 +20,17 @@ Install the following SDKs:
 
 ### Compile 
 
-First create a build directory using ```mkdir build``` and ```cd build```.  
-
-Then generate the build files
+Generate the build files:
 
 ```cmake .```
 
-and compile the program
+Compile the program:
 
 ```make```
 
 ### Run
 
-To compile the program enter the command:
+To run the program enter the command:
 
 ```sudo ./autoctrl```
 
