@@ -2,9 +2,9 @@
 
 <img src="https://github.com/possibilia/mcplanner/blob/main/robot.jpg" width="550" height="500">
 
-Closed-loop system for egocentric obstacle avoidance on a mobile robot using live model checking.
+## Prerequisites 
 
-## Hardware 
+### Hardware 
 
 Adapted from a widely available mobile robot development platform. Details:
 
@@ -13,6 +13,9 @@ Adapted from a widely available mobile robot development platform. Details:
 - Continuous rotation servos by Parallax https://www.parallax.com/product/parallax-continuous-rotation-servo/
 - Raspberry Pi 3 Model B https://www.raspberrypi.com/products/raspberry-pi-3-model-b/
 
-## Software
+### Software
 
-<img src="https://github.com/possibilia/mcplanner/blob/main/arch.jpg" width="550" height="500">
+Agent implementation is depednent on the following bespoke libraries:
+
+- Alphabot https://github.com/berndporr/alphabot
+- 
