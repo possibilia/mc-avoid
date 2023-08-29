@@ -1,6 +1,6 @@
 # Model checking for obstacle avoidance in C++
 
-Implementation of model checking for the chaining of temporary control systems in response to distrubances in the environment for obstacle avoidance.  At present the program is limited to static environments is not goal-directed.  
+Implementation of model checking for the chaining of temporary control systems in response to distrubances in the environment for obstacle avoidance.  At present the program is limited to static environments is not goal-directed, however this is on the immediate agenda.
 
 ## Hardware 
 
