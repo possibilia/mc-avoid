@@ -18,13 +18,20 @@ Install the following SDKs:
 - AlphaBot SDK https://github.com/berndporr/alphabot
 - RPLIDAR A1M8 SDK https://github.com/berndporr/rplidar_rpi
 
-### Installation 
+### Compilation 
+
+Make directory for build files:
 
 ```mkdir build```
+
+Generate build files:
 
 ```cd build```
 
 ```cmake ..```
 
+Compile:
+
 ```make```
+
   
