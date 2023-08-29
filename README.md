@@ -1,6 +1,6 @@
 # Model checking for obstacle avoidance in C++
 
-Implementation of model checking for planning obstacle avoidance maneuvers by chaining temporary control systems for disturbance elimination.  At present the program is limited to static environments is not goal-directed.
+Implementation of model checking for planning obstacle avoidance maneuvers by chaining temporary control systems in response to disturbances.  At present the program is limited to static environments is not goal-directed.
 
 ## Hardware 
 
