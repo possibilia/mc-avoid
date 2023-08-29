@@ -11,8 +11,8 @@
 
 ## Software
 
-### Prerequisites
+The system is dependent on the followng bespoke sdks:
 
-- Bespoke AlphaBot SDK https://github.com/berndporr/alphabot
-- Bespoke RPLIDAR A1M8 SDK https://github.com/berndporr/rplidar_rpi
+- AlphaBot SDK https://github.com/berndporr/alphabot
+- RPLIDAR A1M8 SDK https://github.com/berndporr/rplidar_rpi
   
