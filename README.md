@@ -20,17 +20,17 @@ Install the following SDKs:
 
 ### Compile 
 
-Generate the build files:
+Generate the build files
 
 ```cmake .```
 
-Compile the program:
+Compile the program
 
 ```make```
 
 ### Run
 
-To run the program enter the command:
+Run the program
 
 ```sudo ./autoctrl```
 
