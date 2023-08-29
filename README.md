@@ -1,1 +1,1 @@
-# Model checking for local obstacle avoidance in C++
+# Model checking for egocentric planning in C++
