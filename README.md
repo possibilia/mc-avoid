@@ -1,3 +1,3 @@
 # Closed-loop model checking for tactical planning in C++
 
-![alt text](../system.jpg?raw=true)
+![alt text](https://github.com/possibilia/mcplanner/blob/master/system.jpg?raw=true)
