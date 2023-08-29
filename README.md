@@ -16,7 +16,7 @@ The system is dependent on the followng bespoke SDKs:
 - AlphaBot SDK https://github.com/berndporr/alphabot
 - RPLIDAR A1M8 SDK https://github.com/berndporr/rplidar_rpi
 
-### Architecture
+### System architecture
 
 <img src="https://github.com/possibilia/mcplanner/blob/main/arch.jpg" width="550" height="500">
   
