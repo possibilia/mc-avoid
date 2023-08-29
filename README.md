@@ -20,7 +20,7 @@ Install the following SDKs:
 
 ### Compile program
 
-Generate build files in a dedicated directory and compile the program. 
+Generate build files in a dedicated build directory and compile the program. 
 
 ```mkdir build```
 
@@ -31,6 +31,8 @@ Generate build files in a dedicated directory and compile the program.
 ```make```
 
 ### Run program
+
+From the build directory enter
 
 ```sudo ./autoctrl```
 
