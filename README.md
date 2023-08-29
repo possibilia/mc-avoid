@@ -1,4 +1,4 @@
-# Closed-loop model checking for obstacle avoidance in C++
+# Model checking for obstacle avoidance in C++
 
 <img src="https://github.com/possibilia/mcplanner/blob/main/robot.jpg" width="550" height="500">
 
