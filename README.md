@@ -6,7 +6,7 @@ Closed-loop system for reactive planning on a differential drive robot.
 
 ## Hardware 
 
-Adapted from a widely available mobile development platform:
+Adapted from a widely available mobile robot development platform. Details:
 
 - AlphaBot mobile robot development kit by Waveshare https://www.waveshare.com/alphabot-robot.htm. 
 - 360 degree 2D laser scanner, RPLIDAR A1MB by Slamtec https://www.slamtec.com/en/Lidar/A1/
