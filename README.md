@@ -2,7 +2,7 @@
 
 <img src="https://github.com/possibilia/mcplanner/blob/main/robot.jpg" width="550" height="500">
 
-Closed-loop system for local obstacle avoidance on a differential drive robot using model checking 
+Closed-loop system for local obstacle avoidance on a mobile robot using model checking 
 
 ## Hardware 
 
