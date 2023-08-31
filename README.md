@@ -36,6 +36,6 @@ Compile the program
 
 ```sudo ./autoctrl```
 
-
+[![DOI](https://zenodo.org/badge/457007482.svg)](https://zenodo.org/badge/latestdoi/457007482)
 
   
