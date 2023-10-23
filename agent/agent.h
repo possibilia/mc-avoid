@@ -16,13 +16,15 @@
 #include <cstdio>
 #include <cmath>
 #include <string>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 extern int nEvents;
 extern float detectionThreshold;
 
-const int run = 6;
+const int run = 10;
 const char west[] = "west";
 const char east[] = "east";
 const char northWest[] = "northWest";
@@ -32,7 +34,7 @@ const char southEast[] = "southEast";
 
 const float wheelbase = 0.147;
 const float wheelRadius = 0.033;
-const float reactionThreshold = 0.22 + 0.02;
+const float reactionThreshold = 0.22 + 0.04;
 const float lidarMinRange = 0.15;
 
 ////////////////////////////////// Observations ///////////////////////////////////
@@ -338,7 +340,7 @@ struct StateMachineLTL : AbstractPlanner {
 	vector<StateTransition> trans;
 
 	// fixme: invalid obs when increased
-	float lateralHorizon = 0.5; // m
+	float lateralHorizon = 1.0; // m
 
 	StateMachineLTL(int _nStates) {
 		graph = new list<int>[_nStates]();

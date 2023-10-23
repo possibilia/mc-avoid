@@ -22,51 +22,79 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 		logger.printf("%d TASK RESULT = nothing\n", nEvents, tr.result);
 	}
 
-	if (tr.result == AbstractTask::disturbance_gone) {
-		if (plan.empty()) {
-			currentTask = targetTask;
-			logger.printf("Plan empty so back to default task...\n");
-		} else {
-			// launching straight task
-			plan[0]->init(currentTask, tr.newDisturbance);
-			currentTask = plan[0];
-			plan.erase(plan.begin());
-			logger.printf("Plan not empty so on to next task...\n");
+	/////////////////////////////////// reactive /////////////////////////////////
 
-		}
-	}
-
-	if (tr.result == AbstractTask::new_disturbance) {
-		if(!plan.empty()) {
-			logger.printf("Waiting to execute plan, distance to disturbance = %f\n", tr.newDisturbance.getDistance());
-		}
-		
+	if (tr.result == 3 && tr.newDisturbance.isValid()) {
 		logger.printf("x = %f y = %f r = %f phi = %f\n", tr.newDisturbance.getLocation().x, 
 				tr.newDisturbance.getLocation().y, tr.newDisturbance.getDistance(),
 				tr.newDisturbance.getAngle());
-
-		if (tr.newDisturbance.isValid() && plan.empty()) {
-			logger.printf("Plan empty so creating a new one...\n");
-			plan = planner->eventNewDisturbance(obs, tr.newDisturbance);
-		}
-
-		if ((tr.newDisturbance.isValid()) 
-			&& (tr.newDisturbance.getDistance() <= reactionThreshold)) {
-			if (!plan.empty()) {
-				// launching avoid task
-				plan[0]->init(currentTask, tr.newDisturbance);
-				currentTask = plan[0];
-				targetTask->resetTaskDuration();
-				plan.erase(plan.begin());
-				logger.printf("Plan not empty so on to the next task..\n");
-			} else {
-				logger.printf("Plan empty so stopping...\n");
-				exit(1);
-			}
+		float angle = tr.newDisturbance.getAngle();	
+		if ((angle < 0) && tr.newDisturbance.getDistance() < reactionThreshold) {
+			logger.printf("LEFT TURN!!!\n");
+			auto left = make_shared<Rotate90Left>();
+			left->init(currentTask, tr.newDisturbance);
+			currentTask = left;
+		} else if (tr.newDisturbance.getDistance() < reactionThreshold) {
+			logger.printf("RIGHT TURN!!!\n");
+			auto right = make_shared<Rotate90Right>();
+			right->init(currentTask, tr.newDisturbance);
+			currentTask = right;
 		}
 	}
 
+	if (tr.result == 1) {
+		currentTask = targetTask;
+	}
+
 	nEvents++;
+
+	/////////////////////////////// non-reactive /////////////////////////////////////
+
+	// if (tr.result == AbstractTask::disturbance_gone) {
+	// 	if (plan.empty()) {
+	// 		currentTask = targetTask;
+	// 		logger.printf("Plan empty so back to default task...\n");
+	// 	} else {
+	// 		// launching straight task
+	// 		plan[0]->init(currentTask, tr.newDisturbance);
+	// 		currentTask = plan[0];
+	// 		plan.erase(plan.begin());
+	// 		logger.printf("Plan not empty so on to next task...\n");
+
+	// 	}
+	// }
+
+	// if (tr.result == AbstractTask::new_disturbance) {
+	// 	if(!plan.empty()) {
+	// 		logger.printf("Waiting to execute plan, distance to disturbance = %f\n", tr.newDisturbance.getDistance());
+	// 	}
+		
+	// 	logger.printf("x = %f y = %f r = %f phi = %f\n", tr.newDisturbance.getLocation().x, 
+	// 			tr.newDisturbance.getLocation().y, tr.newDisturbance.getDistance(),
+	// 			tr.newDisturbance.getAngle());
+
+	// 	if (tr.newDisturbance.isValid() && plan.empty()) {
+	// 		logger.printf("Plan empty so creating a new one...\n");
+	// 		plan = planner->eventNewDisturbance(obs, tr.newDisturbance);
+	// 	}
+
+	// 	if ((tr.newDisturbance.isValid()) 
+	// 		&& (tr.newDisturbance.getDistance() <= reactionThreshold)) {
+	// 		if (!plan.empty()) {
+	// 			// launching avoid task
+	// 			plan[0]->init(currentTask, tr.newDisturbance);
+	// 			currentTask = plan[0];
+	// 			targetTask->resetTaskDuration();
+	// 			plan.erase(plan.begin());
+	// 			logger.printf("Plan not empty so on to the next task..\n");
+	// 		} else {
+	// 			logger.printf("Plan empty so stopping...\n");
+	// 			exit(1);
+	// 		}
+	// 	}
+	// }
+
+	// nEvents++;
 }
 
 AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
@@ -170,6 +198,8 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	const vector<Observation>& obs, const Observation& disturbance) {
 
+	auto start = high_resolution_clock::now();
+
 	logger.printf("UPDATING MODEL...\n");
 	logger.printf("lateralHorizon = %f reactionThreshold = %f detectionThreshold = %f\n", 
 		lateralHorizon, reactionThreshold, detectionThreshold);
@@ -216,7 +246,8 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	if ((westHorizon.size() == 0)  && (eastHorizon.size() == 0)) {
 		accept.insert(3);
 		accept.insert(4);
-		logger.printf("MODEL UPDATE COMPLETE!\n");
+		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
+		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
 		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		return plan;
 	}
@@ -224,7 +255,8 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	// disturbance left so go right S_e = {s2, s4}
 	if ((westHorizon.size() > 0) && (eastHorizon.size() == 0)) {
 		accept.insert(4);
-		logger.printf("MODEL UPDATE COMPLETE!\n");
+		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
+		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
 		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		return plan;
 	}
@@ -232,7 +264,8 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	// disturbance right so go left S_w = {s1, s3}
 	if ((westHorizon.size() == 0)  && (eastHorizon.size() > 0)) {
 		accept.insert(3);
-		logger.printf("MODEL UPDATE COMPLETE!\n");
+		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
+		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
 		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		return plan;
 	}
@@ -246,11 +279,17 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	for (unsigned i = 0; i < westHorizon.size(); i++) {
 		if (westHorizon[i].isValid()) {
 			Point location = westHorizon[i].getLocation();
-			if (abs(location.y) < miny) {
+			if (abs(location.y) < miny 
+				&& abs(location.y) > reactionThreshold
+				&& location.x >= -wheelbase) {
 				nearestWest = westHorizon[i];
 				miny = abs(location.y);
 			}
 		} 
+	}
+
+	if (miny == lateralHorizon) {
+		nearestWest.setObservation(0, lateralHorizon);
 	}
 
 	// nearest east
@@ -259,11 +298,17 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	for (unsigned i = 0; i < eastHorizon.size(); i++) {
 		if (eastHorizon[i].isValid()) {
 			Point location = eastHorizon[i].getLocation();
-			if (abs(location.y) < miny) {
+			if (abs(location.y) < miny
+				&& abs(location.y) > reactionThreshold
+				&& location.x >= -wheelbase) {
 				nearestEast = eastHorizon[i];
 				miny = abs(location.y);
 			}
 		} 
+	}
+
+	if (miny == lateralHorizon) {
+		nearestEast.setObservation(0, -lateralHorizon);
 	}
 
 	logger.printf("nearest west x = %f y = %f r = %f phi = %f\n", 
@@ -288,15 +333,16 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	// however this is hard coded here, should 
 	// use estimated speed from the motors
 
-	logger.printf("(4) checking whether agent can move at least %fm in each direction...\n", reactionThreshold);
-	bool westDirectionSafe = abs(nearestWest.getLocation().y) > reactionThreshold; 
-	bool eastDirectionSafe = abs(nearestEast.getLocation().y) > reactionThreshold;
+	logger.printf("(4) checking whether agent can move at least %fm in each direction...\n", 0.5);
+	bool westDirectionSafe = abs(nearestWest.getLocation().y) > 0.5; 
+	bool eastDirectionSafe = abs(nearestEast.getLocation().y) > 0.5;
 	logger.printf("west safe = %d  east safe = %d \n", westDirectionSafe, eastDirectionSafe);
 
 	// no room so go south S_s = {s13, s14}
 	if (!(westDirectionSafe || eastDirectionSafe)) {
 		accept.insert(14);
-		logger.printf("MODEL UPDATE COMPLETE!\n");
+		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
+		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
 		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		return plan;
 	}
@@ -318,13 +364,13 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 			Observation ob(location.x - northOffset, location.y - eastOffset);
 			// S_ne = {s6, s8}
 			if ((ob.getLocation().x > reactionThreshold) 
-				&& (ob.getLocation().x <= reactionThreshold * 1.5) 
+				&& (ob.getLocation().x <= reactionThreshold * 2) 
 				&& (abs(ob.getLocation().y) <= wheelbase)) {
 				northEastHorizon.push_back(ob);
 			}
 			// S_se = {s10, s12}
 			if ((ob.getLocation().x < -reactionThreshold) 
-				&& (ob.getLocation().x >= -reactionThreshold * 1.5) 
+				&& (ob.getLocation().x >= -reactionThreshold * 2) 
 				&& (abs(ob.getLocation().y) <= wheelbase)) {
 				southEastHorizon.push_back(ob);
 			}
@@ -340,13 +386,13 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 			Observation ob(location.x - northOffset, location.y - westOffset);
 			// S_nw = {s5, s7}
 			if ((ob.getLocation().x > reactionThreshold) 
-				&& (ob.getLocation().x <= reactionThreshold * 1.5) 
+				&& (ob.getLocation().x <= reactionThreshold * 2) 
 				&& (abs(ob.getLocation().y) <= wheelbase)) {
 				northWestHorizon.push_back(ob);
 			}
 			// S_sw = {s9, s11}
 			if ((ob.getLocation().x < -reactionThreshold) 
-				&& (ob.getLocation().x >= -(reactionThreshold * 1.5)) 
+				&& (ob.getLocation().x >= -(reactionThreshold * 2)) 
 				&& (abs(ob.getLocation().y) <= wheelbase)) {
 				southWestHorizon.push_back(ob);
 			}
@@ -389,7 +435,8 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		}
 	}
 
-	logger.printf("MODEL UPDATE COMPLETE!\n");
+	auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
+	logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
 	vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
  	return plan;
 }

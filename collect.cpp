@@ -1,38 +1,76 @@
 #include "alphabot.h"
 #include "a1lidarrpi.h"
-#include <signal.h>
 
-class DataInterface : public A1Lidar::DataInterface {
+using namespace std;
+
+const float minDetectRange = 0.15; 
+const float maxDetectRange = 1.0; 
+
+bool running = true;
+
+// every 200 ms
+// 8192 data points 
+// (invalid: corrupted/outside detection zone)
+// scan event -> actor event handler
+class A1LidarScanEvent : public A1Lidar::DataInterface {
 public:
-	void newScanAvail(float, A1LidarData (&data)[A1Lidar::nDistance]) {
-		if (scan) {
-			for(A1LidarData &data: data) {
-				if (data.valid) {
-					std::cout << data.x << "\t" << data.y << "\t" << data.r << "\t" << data.phi << "\n";
-				}
-			
-			}
-			scan = false;
-		}
-		
-	}
+    AlphaBot& agent;
 
-private:
-	bool scan = true;
+    A1LidarScanEvent(AlphaBot& _agent) : agent(_agent) {};
+
+public:
+    void newScanAvail(float rpm, A1LidarData (&data)[A1Lidar::nDistance]) {
+        int nData = 0;
+
+        for(A1LidarData &data: data) {
+            if (data.valid) {
+                cout << data.x << "\t" << data.y << "\t" << data.r << "\t" << data.phi << "\n";
+                nData++;
+            }
+        }
+    }
 };
 
+
 int main(int, char **) { 
-	std::cout << "x\ty\tr\tphi\n";
 
-	DataInterface data;
+    cout << "x\ty\tr\tphi\n";
 
-	A1Lidar lidar;
+    AlphaBot alphabot;
+
+    A1LidarScanEvent data(alphabot);
+    A1Lidar lidar;
+
     lidar.registerInterface(&data);
     lidar.start();
 
-	while(true) {
-		// do nothing
-	}
+    alphabot.start();
+    
+    while(running) {
+        // blocking
+        int ch = getchar();
+        switch (ch) {
+            case 27:
+                running = false;
+                break;
+            case 'a':
+                alphabot.setLeftWheelSpeed(-0.8);
+                alphabot.setRightWheelSpeed(0.8);
+                break;
+            case 'd':
+                alphabot.setLeftWheelSpeed(0.8);
+                alphabot.setRightWheelSpeed(-0.8);
+                break;
+            case 'w':
+                alphabot.setLeftWheelSpeed(0.8);
+                alphabot.setRightWheelSpeed(0.8);
+                break;
+            default:
+                break;
+        }
+    }
 
-	return 0;
+    lidar.stop();
+    alphabot.stop();
+    return 0;
 }

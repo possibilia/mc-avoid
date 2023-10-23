@@ -106,7 +106,7 @@ int main(int, char **) {
 
     alphabot.start();
 
-    logger.startLogging("../6/autoctrl.txt", true);
+    logger.startLogging("../10/reactive.txt", true);
     
     while(running) {
         // blocking
