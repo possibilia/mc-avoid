@@ -24,77 +24,77 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 
 	/////////////////////////////////// reactive /////////////////////////////////
 
-	if (tr.result == 3 && tr.newDisturbance.isValid()) {
-		logger.printf("x = %f y = %f r = %f phi = %f\n", tr.newDisturbance.getLocation().x, 
-				tr.newDisturbance.getLocation().y, tr.newDisturbance.getDistance(),
-				tr.newDisturbance.getAngle());
-		float angle = tr.newDisturbance.getAngle();	
-		if ((angle < 0) && tr.newDisturbance.getDistance() < reactionThreshold) {
-			logger.printf("LEFT TURN!!!\n");
-			auto left = make_shared<Rotate90Left>();
-			left->init(currentTask, tr.newDisturbance);
-			currentTask = left;
-		} else if (tr.newDisturbance.getDistance() < reactionThreshold) {
-			logger.printf("RIGHT TURN!!!\n");
-			auto right = make_shared<Rotate90Right>();
-			right->init(currentTask, tr.newDisturbance);
-			currentTask = right;
-		}
-	}
-
-	if (tr.result == 1) {
-		currentTask = targetTask;
-	}
-
-	nEvents++;
-
-	/////////////////////////////// non-reactive /////////////////////////////////////
-
-	// if (tr.result == AbstractTask::disturbance_gone) {
-	// 	if (plan.empty()) {
-	// 		currentTask = targetTask;
-	// 		logger.printf("Plan empty so back to default task...\n");
-	// 	} else {
-	// 		// launching straight task
-	// 		plan[0]->init(currentTask, tr.newDisturbance);
-	// 		currentTask = plan[0];
-	// 		plan.erase(plan.begin());
-	// 		logger.printf("Plan not empty so on to next task...\n");
-
-	// 	}
-	// }
-
-	// if (tr.result == AbstractTask::new_disturbance) {
-	// 	if(!plan.empty()) {
-	// 		logger.printf("Waiting to execute plan, distance to disturbance = %f\n", tr.newDisturbance.getDistance());
-	// 	}
-		
+	// if (tr.result == 3 && tr.newDisturbance.isValid()) {
 	// 	logger.printf("x = %f y = %f r = %f phi = %f\n", tr.newDisturbance.getLocation().x, 
 	// 			tr.newDisturbance.getLocation().y, tr.newDisturbance.getDistance(),
 	// 			tr.newDisturbance.getAngle());
-
-	// 	if (tr.newDisturbance.isValid() && plan.empty()) {
-	// 		logger.printf("Plan empty so creating a new one...\n");
-	// 		plan = planner->eventNewDisturbance(obs, tr.newDisturbance);
-	// 	}
-
-	// 	if ((tr.newDisturbance.isValid()) 
-	// 		&& (tr.newDisturbance.getDistance() <= reactionThreshold)) {
-	// 		if (!plan.empty()) {
-	// 			// launching avoid task
-	// 			plan[0]->init(currentTask, tr.newDisturbance);
-	// 			currentTask = plan[0];
-	// 			targetTask->resetTaskDuration();
-	// 			plan.erase(plan.begin());
-	// 			logger.printf("Plan not empty so on to the next task..\n");
-	// 		} else {
-	// 			logger.printf("Plan empty so stopping...\n");
-	// 			exit(1);
-	// 		}
+	// 	float angle = tr.newDisturbance.getAngle();	
+	// 	if ((angle < 0) && tr.newDisturbance.getDistance() < reactionThreshold) {
+	// 		logger.printf("LEFT TURN!!!\n");
+	// 		auto left = make_shared<Rotate90Left>();
+	// 		left->init(currentTask, tr.newDisturbance);
+	// 		currentTask = left;
+	// 	} else if (tr.newDisturbance.getDistance() < reactionThreshold) {
+	// 		logger.printf("RIGHT TURN!!!\n");
+	// 		auto right = make_shared<Rotate90Right>();
+	// 		right->init(currentTask, tr.newDisturbance);
+	// 		currentTask = right;
 	// 	}
 	// }
 
+	// if (tr.result == 1) {
+	// 	currentTask = targetTask;
+	// }
+
 	// nEvents++;
+
+	/////////////////////////////// non-reactive /////////////////////////////////////
+
+	if (tr.result == AbstractTask::disturbance_gone) {
+		if (plan.empty()) {
+			currentTask = targetTask;
+			logger.printf("Plan empty so back to default task...\n");
+		} else {
+			// launching straight task
+			plan[0]->init(currentTask, tr.newDisturbance);
+			currentTask = plan[0];
+			plan.erase(plan.begin());
+			logger.printf("Plan not empty so on to next task...\n");
+
+		}
+	}
+
+	if (tr.result == AbstractTask::new_disturbance) {
+		if(!plan.empty()) {
+			logger.printf("Waiting to execute plan, distance to disturbance = %f\n", tr.newDisturbance.getDistance());
+		}
+		
+		logger.printf("x = %f y = %f r = %f phi = %f\n", tr.newDisturbance.getLocation().x, 
+				tr.newDisturbance.getLocation().y, tr.newDisturbance.getDistance(),
+				tr.newDisturbance.getAngle());
+
+		if (tr.newDisturbance.isValid() && plan.empty()) {
+			logger.printf("Plan empty so creating a new one...\n");
+			plan = planner->eventNewDisturbance(obs, tr.newDisturbance);
+		}
+
+		if ((tr.newDisturbance.isValid()) 
+			&& (tr.newDisturbance.getDistance() <= reactionThreshold)) {
+			if (!plan.empty()) {
+				// launching avoid task
+				plan[0]->init(currentTask, tr.newDisturbance);
+				currentTask = plan[0];
+				targetTask->resetTaskDuration();
+				plan.erase(plan.begin());
+				logger.printf("Plan not empty so on to the next task..\n");
+			} else {
+				logger.printf("Plan empty so stopping...\n");
+				exit(1);
+			}
+		}
+	}
+
+	nEvents++;
 }
 
 AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
@@ -152,10 +152,10 @@ AbstractTask::TaskResult StraightTask::taskExecutionStep(float samplingrate,
 		}
 	} 
 
-	// fixme: tune gain for PI steering control
-	robotSteering = steeringError * 1.0 + accSteeringError * 1.0; 
-	motorDriveLeft = desiredMotorDrive + robotSteering;
-	motorDriveRight = desiredMotorDrive - robotSteering;
+	// NOTE Took out PI control as levelled motors to go straight
+	//robotSteering = steeringError * 1.0 + accSteeringError * 1.0; 
+	//motorDriveLeft = desiredMotorDrive + robotSteering;
+	//otorDriveRight = desiredMotorDrive - robotSteering;
 	eventNewMotorAction();
 
 	/* step 2: look for disturbance  */
