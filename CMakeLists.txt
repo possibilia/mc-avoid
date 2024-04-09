@@ -22,8 +22,11 @@ add_subdirectory(agent)
 add_executable(autoctrl autoctrl.cpp)
 target_link_libraries(autoctrl alphabot a1lidarrpi pigpio pthread agent ncurses)
 
-add_executable(collect collect.cpp)
-target_link_libraries(collect alphabot a1lidarrpi pigpio pthread)
+# add_executable(collect collect.cpp)
+# target_link_libraries(collect alphabot a1lidarrpi pigpio pthread)
 
-add_executable(graph graph.cpp)
-target_link_libraries(graph alphabot a1lidarrpi pigpio pthread agent ncurses)
+# add_executable(graph graph.cpp)
+# target_link_libraries(graph alphabot a1lidarrpi pigpio pthread agent ncurses)
+
+add_executable(resource resource.cpp)
+target_link_libraries(resource alphabot a1lidarrpi pigpio pthread agent ncurses)

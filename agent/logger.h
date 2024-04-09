@@ -5,6 +5,12 @@
 
 #include<stdio.h>
 #include <stdarg.h>
+#include <unistd.h>
+#include <thread>
+#include <cstdlib>
+#include <iostream>
+#include <cstring>
+#include <chrono>
 
 class Logger {
 public:
@@ -18,6 +24,18 @@ public:
 		}
 		fLog = NULL;
 		doConsoleLog = false;
+	}
+	void startResourceLogging(const char* filename) {
+		const char* cmd = "top -H -b -d 0.001 -p $(pidof ./autoctrl) >> ";
+		char *s = new char[strlen(cmd)+strlen(filename)+1];
+
+		strcat(s, cmd);
+		strcat(s, filename);
+
+		FILE* usage = fopen(filename,"wt");
+		fclose(usage);
+
+		new std::thread(system, s);	
 	}
 	void setConsoleLog(bool l = true) {
 		doConsoleLog = l;

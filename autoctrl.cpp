@@ -107,6 +107,9 @@ int main(int, char **) {
     alphabot.start();
 
     logger.startLogging("../10/reactive.txt", true);
+    logger.startResourceLogging("../10/usage.txt");
+    FILE* usage = fopen("meta.txt","wt");
+    fclose(usage);
     
     while(running) {
         // blocking
