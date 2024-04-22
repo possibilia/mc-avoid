@@ -13,6 +13,7 @@ const float minDetectRange = 0.15;
 const float maxDetectRange = 1.0; 
 
 bool running = true;
+bool reactive = false;
 
 // every 200 ms
 // 8192 data points 
@@ -64,8 +65,14 @@ void sig_handler(int signo) {
     }
 }
 
-int main(int, char **) { 
+int main(int argc, char* argv[]) { 
     signal(SIGINT, sig_handler);
+    logger.startLogging("../10/reactive.txt", true);
+    logger.startResourceLogging("../10/usage.txt");
+
+    if (argc > 1) {
+        reactive = true;
+    }
 
     Agent agent;
 
@@ -73,7 +80,17 @@ int main(int, char **) {
     A1Lidar lidar;
 
     lidar.registerInterface(&data);
-    lidar.start();
+
+    try {
+        logger.printf("Starting LiDAR...");
+        lidar.start();
+        logger.printf("SUCCESS \n");
+    } 
+    catch (string m) {
+        logger.printf("Error: %s \n", m);
+        lidar.stop();
+        return 0;
+    }
 
     AlphaBot alphabot;
     MotorActionEvent takeAction(alphabot);
@@ -104,12 +121,17 @@ int main(int, char **) {
     agent.setTargetTask(targetTask);
     agent.setPlanner(planner);
 
-    alphabot.start();
-
-    logger.startLogging("../10/reactive.txt", true);
-    logger.startResourceLogging("../10/usage.txt");
-    FILE* usage = fopen("meta.txt","wt");
-    fclose(usage);
+     try {
+        logger.printf("Starting motors...");
+        alphabot.start();
+        logger.printf("SUCCESS \n");
+    }
+    catch (string m) {
+        logger.printf("Error: %s \n", m);
+        lidar.stop();
+        alphabot.stop();
+        return 0;
+    }
     
     while(running) {
         // blocking

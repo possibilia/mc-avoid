@@ -23,8 +23,9 @@ using namespace std::chrono;
 
 extern int nEvents;
 extern float detectionThreshold;
+extern bool reactive;
 
-const int run = 10;
+const char run[] = "0000";
 const char west[] = "west";
 const char east[] = "east";
 const char northWest[] = "northWest";
@@ -450,6 +451,9 @@ struct StateMachineLTL : AbstractPlanner {
 		vector<const char*> trajectory) {
 		logger.printf("*****************************************\n");
 
+		// log model size
+		logger.printf("MODEL: %d bytes\n", sizeof(graph));
+
 		// log accept states
 		logger.printf("ACCEPT: ");
 		for (auto& a : accept) {
@@ -479,7 +483,7 @@ struct StateMachineLTL : AbstractPlanner {
 
 	void saveObs(const char* name, const vector<Observation>& obs) {
 		char tmp[256];
-		sprintf(tmp,"../%d/%s%03d.dat", run, name, nEvents);
+		sprintf(tmp,"../%s/%s%03d.dat", run, name, nEvents);
 		//fprintf(stderr,"%s\n",tmp);
 		FILE* f = fopen(tmp,"wt");
 		fprintf(f,"x\ty\tr\tphi\n");
@@ -529,7 +533,7 @@ private:
 
 	void saveMap(const vector<Observation>& obs) {
 		char tmp[256];
-		sprintf(tmp,"../%d/map%03d.dat", run, nEvents);
+		sprintf(tmp,"../%s/map%03d.dat", run, nEvents);
 		//fprintf(stderr,"%s\n",tmp);
 		FILE* f = fopen(tmp,"wt");
 		fprintf(f,"x\ty\tr\tphi\n");
