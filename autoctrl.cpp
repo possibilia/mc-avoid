@@ -13,7 +13,7 @@ const float minDetectRange = 0.15;
 const float maxDetectRange = 1.0; 
 
 bool running = true;
-bool reactive = false;
+bool onestep = false;
 
 // every 200 ms
 // 8192 data points 
@@ -67,11 +67,10 @@ void sig_handler(int signo) {
 
 int main(int argc, char* argv[]) { 
     signal(SIGINT, sig_handler);
-    logger.startLogging("../10/reactive.txt", true);
-    logger.startResourceLogging("../10/usage.txt");
+    logger.startLogging("../data/1001/autoctrl.txt", true);
 
     if (argc > 1) {
-        reactive = true;
+        onestep = true;
     }
 
     Agent agent;
@@ -132,6 +131,8 @@ int main(int argc, char* argv[]) {
         alphabot.stop();
         return 0;
     }
+
+    logger.startResourceLogging("../data/1001/usage.txt");
     
     while(running) {
         // blocking

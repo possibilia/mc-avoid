@@ -23,9 +23,9 @@ using namespace std::chrono;
 
 extern int nEvents;
 extern float detectionThreshold;
-extern bool reactive;
+extern bool onestep;
 
-const char run[] = "0000";
+const char run[] = "data/1001";
 const char west[] = "west";
 const char east[] = "east";
 const char northWest[] = "northWest";
@@ -399,6 +399,11 @@ struct StateMachineLTL : AbstractPlanner {
 	}
 
 	vector<int> generatePath(set<int> accept) {
+		// performance stats
+		vector<int> stackSize;
+		vector<int> stackCapacity;
+		vector<int> setSize;
+
 		// random stuff
 		random_device rd; 
 		mt19937 gen(rd()); 
@@ -414,6 +419,11 @@ struct StateMachineLTL : AbstractPlanner {
 
 		while(!stack.empty() && invariant) {
 			int s = stack.back();
+
+			// performance stats
+			stackSize.push_back(stack.size());
+			stackCapacity.push_back(stack.capacity());
+			setSize.push_back(reachable.size());	
 
 			bool subset = includes(reachable.begin(), reachable.end(),
 			graph[s].begin(), graph[s].end());
@@ -437,6 +447,9 @@ struct StateMachineLTL : AbstractPlanner {
 			}
 		}
 
+		saveDfsData(stackSize, sizeof(stack), stackCapacity, 
+			setSize, sizeof(reachable));
+
 		if (invariant) {
 			// empty path
 			stack.clear();
@@ -450,9 +463,6 @@ struct StateMachineLTL : AbstractPlanner {
 	void logMe(set<int> accept, vector<int> path, 
 		vector<const char*> trajectory) {
 		logger.printf("*****************************************\n");
-
-		// log model size
-		logger.printf("MODEL: %d bytes\n", sizeof(graph));
 
 		// log accept states
 		logger.printf("ACCEPT: ");
@@ -496,6 +506,29 @@ struct StateMachineLTL : AbstractPlanner {
 				obs[i].getAngle());
 			}
 		}
+		fclose(f);
+	}
+
+	void saveDfsData(const vector<int> stackSize, const int stackMemory, 
+		const vector<int> stackCapacity, const vector<int> setSize, const int setMemory) {
+		char tmp[256];
+		sprintf(tmp,"../%s/dfs%03d.dat", run, nEvents);
+		//fprintf(stderr,"%s\n",tmp);
+		FILE* f = fopen(tmp,"wt");
+		fprintf(f,"STACK:\nn\tcapacity\n");
+		for(unsigned i = 0; i < stackSize.size();i++) {
+			fprintf(f,"%d\t%d\n",
+			stackSize[i], stackCapacity[i]);
+		}
+		fprintf(f,"COMPILE MEM: %d bytes\n\n", + stackMemory);
+		fprintf(f,"SET:\nn\n");
+		for(unsigned i = 0; i < setSize.size();i++) {
+			fprintf(f,"%d\n", setSize[i]);
+		}
+		fprintf(f,"COMPILE MEM: %d bytes", + setMemory);
+		fprintf(f,"\n\nADJ. LIST COMPILE MEM: %d bytes", sizeof(graph) + sizeof(list<int>) * nStates);
+		fprintf(f,"\nSTATE SIZE: %d bytes", sizeof(int));
+		fprintf(f,"\nSTATE SPACE SIZE: %d bytes", sizeof(int) * nStates);
 		fclose(f);
 	}	
 };

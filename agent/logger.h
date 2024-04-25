@@ -26,7 +26,7 @@ public:
 		doConsoleLog = false;
 	}
 	void startResourceLogging(const char* filename) {
-		const char* cmd = "top -H -b -d 0.001 -p $(pidof ./autoctrl) >> ";
+		const char* cmd = "top -b -d 0.001 -p $(pidof ./autoctrl) >> ";
 		char *s = new char[strlen(cmd)+strlen(filename)+1];
 
 		strcat(s, cmd);

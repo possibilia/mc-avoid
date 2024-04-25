@@ -24,7 +24,7 @@ void Agent::eventNewRelativeCoordinates(float samplingrate,
 
 	/////////////////////////////////// reactive /////////////////////////////////
 
-	if (reactive) {
+	if (onestep) {
 		if (tr.result == 3 && tr.newDisturbance.isValid()) {
 			logger.printf("x = %f y = %f r = %f phi = %f\n", tr.newDisturbance.getLocation().x, 
 					tr.newDisturbance.getLocation().y, tr.newDisturbance.getDistance(),
@@ -244,27 +244,27 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	if ((westHorizon.size() == 0)  && (eastHorizon.size() == 0)) {
 		accept.insert(3);
 		accept.insert(4);
+		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
 		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
-		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		return plan;
 	}
 
 	// disturbance left so go right S_e = {s2, s4}
 	if ((westHorizon.size() > 0) && (eastHorizon.size() == 0)) {
 		accept.insert(4);
+		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
 		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
-		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		return plan;
 	}
 
 	// disturbance right so go left S_w = {s1, s3}
 	if ((westHorizon.size() == 0)  && (eastHorizon.size() > 0)) {
 		accept.insert(3);
+		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
 		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
-		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		return plan;
 	}
 
@@ -317,20 +317,6 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		nearestEast.getLocation().x, nearestEast.getLocation().y,
 		nearestEast.getDistance(), nearestEast.getAngle());
 
-	// // check if the robot has room to plan an extra step
-	// float westOffset = nearestWest.getLocation().y - reactionThreshold;
-	// float eastOffset = nearestEast.getLocation().y + reactionThreshold;
-
-	// logger.printf("");
-	// logger.printf("eastOffset = %f westOffset = %f\n", eastOffset, westOffset);
-
-	// needs to be able to move some distance 
-	// in either direction, as delay of 0.5 secs
-	// required to stop detecting a disturbance 
-	// the moment an avoid action is completed
-	// however this is hard coded here, should 
-	// use estimated speed from the motors
-
 	logger.printf("(4) checking whether agent can move at least %fm in each direction...\n", 0.5);
 	bool westDirectionSafe = abs(nearestWest.getLocation().y) > 0.5; 
 	bool eastDirectionSafe = abs(nearestEast.getLocation().y) > 0.5;
@@ -339,9 +325,9 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	// no room so go south S_s = {s13, s14}
 	if (!(westDirectionSafe || eastDirectionSafe)) {
 		accept.insert(14);
+		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
 		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
-		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 		return plan;
 	}
 	logger.printf("enough room to move either side so checking polar states safe\n", westDirectionSafe, eastDirectionSafe);
@@ -433,8 +419,8 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		}
 	}
 
+	vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
 	auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
 	logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
-	vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
  	return plan;
 }
