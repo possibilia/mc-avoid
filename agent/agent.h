@@ -25,7 +25,7 @@ extern int nEvents;
 extern float detectionThreshold;
 extern bool onestep;
 
-const char run[] = "data/1001";
+const char run[] = "data/2114";
 const char west[] = "west";
 const char east[] = "east";
 const char northWest[] = "northWest";

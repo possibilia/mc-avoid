@@ -67,7 +67,7 @@ void sig_handler(int signo) {
 
 int main(int argc, char* argv[]) { 
     signal(SIGINT, sig_handler);
-    logger.startLogging("../data/1001/autoctrl.txt", true);
+    logger.startLogging("../data/2114/autoctrl.txt", true);
 
     if (argc > 1) {
         onestep = true;
@@ -132,7 +132,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    logger.startResourceLogging("../data/1001/usage.txt");
+    logger.startResourceLogging("../data/2114/usage.txt");
     
     while(running) {
         // blocking
