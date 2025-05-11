@@ -239,36 +239,6 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 	saveObs(east, eastHorizon);
 
 	logger.printf("west size = %d  east size = %d\n", westHorizon.size(), eastHorizon.size());
-
-	// way is clear either direction S_w U S_e = {s1, s2, s3, s4}
-	if ((westHorizon.size() == 0)  && (eastHorizon.size() == 0)) {
-		accept.insert(3);
-		accept.insert(4);
-		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
-		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
-		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
-		return plan;
-	}
-
-	// disturbance left so go right S_e = {s2, s4}
-	if ((westHorizon.size() > 0) && (eastHorizon.size() == 0)) {
-		accept.insert(4);
-		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
-		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
-		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
-		return plan;
-	}
-
-	// disturbance right so go left S_w = {s1, s3}
-	if ((westHorizon.size() == 0)  && (eastHorizon.size() > 0)) {
-		accept.insert(3);
-		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
-		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
-		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
-		return plan;
-	}
-
-	logger.printf("obstacles either direction so planning an extra step\n");
 	logger.printf("(3) calculating the nearest disturbance in west and east directions...\n");
 
 	// nearest west
@@ -278,7 +248,7 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		if (westHorizon[i].isValid()) {
 			Point location = westHorizon[i].getLocation();
 			if (abs(location.y) < miny 
-				&& abs(location.y) > reactionThreshold
+				//&& abs(location.y) > reactionThreshold
 				&& location.x >= -wheelbase) {
 				nearestWest = westHorizon[i];
 				miny = abs(location.y);
@@ -297,7 +267,7 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		if (eastHorizon[i].isValid()) {
 			Point location = eastHorizon[i].getLocation();
 			if (abs(location.y) < miny
-				&& abs(location.y) > reactionThreshold
+				//&& abs(location.y) > reactionThreshold
 				&& location.x >= -wheelbase) {
 				nearestEast = eastHorizon[i];
 				miny = abs(location.y);
@@ -317,11 +287,44 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 		nearestEast.getLocation().x, nearestEast.getLocation().y,
 		nearestEast.getDistance(), nearestEast.getAngle());
 
-	logger.printf("(4) checking whether agent can move at least %fm in each direction...\n", 0.5);
-	bool westDirectionSafe = abs(nearestWest.getLocation().y) > 0.5; 
-	bool eastDirectionSafe = abs(nearestEast.getLocation().y) > 0.5;
+	logger.printf("(4) checking whether agent can move at least %fm in each direction...\n", 0.35);
+	bool westDirectionSafe = abs(nearestWest.getLocation().y) > 0.35; 
+	bool eastDirectionSafe = abs(nearestEast.getLocation().y) > 0.35;
 	logger.printf("west safe = %d  east safe = %d \n", westDirectionSafe, eastDirectionSafe);
 
+	// way is clear either direction S_w U S_e = {s1, s2, s3, s4}
+	if ((westHorizon.size() == 0 || abs(nearestWest.getLocation().y) == lateralHorizon)  
+		&& (eastHorizon.size() == 0 || abs(nearestEast.getLocation().y) == lateralHorizon)) {
+		accept.insert(3);
+		accept.insert(4);
+		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
+		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
+		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
+		return plan;
+	}
+
+	// disturbance left so go right S_e = {s2, s4}
+	if ((westHorizon.size() > 0) 
+		&& (eastHorizon.size() == 0 || abs(nearestEast.getLocation().y) == lateralHorizon)) {
+		accept.insert(4);
+		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
+		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
+		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
+		return plan;
+	}
+
+	// disturbance right so go left S_w = {s1, s3}
+	if ((westHorizon.size() == 0 || abs(nearestWest.getLocation().y) == lateralHorizon) 
+		&& (eastHorizon.size() > 0)) {
+		accept.insert(3);
+		vector<shared_ptr<AbstractTask>> plan = generatePlan(accept);
+		auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
+		logger.printf("MODEL UPDATE COMPLETE!  %f ms\n", duration * 0.001);
+		return plan;
+	}
+
+	logger.printf("obstacles either direction so planning an extra step\n");
+	
 	// no room so go south S_s = {s13, s14}
 	if (!(westDirectionSafe || eastDirectionSafe)) {
 		accept.insert(14);
@@ -349,13 +352,13 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 			// S_ne = {s6, s8}
 			if ((ob.getLocation().x > reactionThreshold) 
 				&& (ob.getLocation().x <= reactionThreshold * 2) 
-				&& (abs(ob.getLocation().y) <= wheelbase)) {
+				&& (abs(ob.getLocation().y) <= (wheelbase+tol) * 0.5)) {
 				northEastHorizon.push_back(ob);
 			}
 			// S_se = {s10, s12}
 			if ((ob.getLocation().x < -reactionThreshold) 
 				&& (ob.getLocation().x >= -reactionThreshold * 2) 
-				&& (abs(ob.getLocation().y) <= wheelbase)) {
+				&& (abs(ob.getLocation().y) <= (wheelbase+tol) * 0.5)) {
 				southEastHorizon.push_back(ob);
 			}
 		} 
@@ -371,13 +374,13 @@ vector<shared_ptr<AbstractTask>> StateMachineLTL::eventNewDisturbance(
 			// S_nw = {s5, s7}
 			if ((ob.getLocation().x > reactionThreshold) 
 				&& (ob.getLocation().x <= reactionThreshold * 2) 
-				&& (abs(ob.getLocation().y) <= wheelbase)) {
+				&& (abs(ob.getLocation().y) <= (wheelbase+tol) * 0.5)) {
 				northWestHorizon.push_back(ob);
 			}
 			// S_sw = {s9, s11}
 			if ((ob.getLocation().x < -reactionThreshold) 
 				&& (ob.getLocation().x >= -(reactionThreshold * 2)) 
-				&& (abs(ob.getLocation().y) <= wheelbase)) {
+				&& (abs(ob.getLocation().y) <= (wheelbase+tol) * 0.5)) {
 				southWestHorizon.push_back(ob);
 			}
 		} 

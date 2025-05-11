@@ -25,7 +25,7 @@ extern int nEvents;
 extern float detectionThreshold;
 extern bool onestep;
 
-const char run[] = "data/2114";
+const char run[] = "10";
 const char west[] = "west";
 const char east[] = "east";
 const char northWest[] = "northWest";
@@ -33,9 +33,12 @@ const char southWest[] = "southWest";
 const char northEast[] = "northEast";
 const char southEast[] = "southEast";
 
+const float rightWheelCoeff = 1.034; 
+
 const float wheelbase = 0.147;
+const float tol = wheelbase * 0.1;
 const float wheelRadius = 0.033;
-const float reactionThreshold = 0.22 + 0.04;
+const float reactionThreshold = 0.22 + 0.06;
 const float lidarMinRange = 0.15;
 
 ////////////////////////////////// Observations ///////////////////////////////////
@@ -205,7 +208,7 @@ public:
 		// fixme: review variables
 		desiredMotorDrive = speed;
 		motorDriveLeft = desiredMotorDrive;
-		motorDriveRight = desiredMotorDrive;
+		motorDriveRight = desiredMotorDrive * rightWheelCoeff;
 	}
 
 	void resetTaskDuration() {
@@ -341,7 +344,7 @@ struct StateMachineLTL : AbstractPlanner {
 	vector<StateTransition> trans;
 
 	// fixme: invalid obs when increased
-	float lateralHorizon = 1.0; // m
+	float lateralHorizon = 0.5; // m
 
 	StateMachineLTL(int _nStates) {
 		graph = new list<int>[_nStates]();
