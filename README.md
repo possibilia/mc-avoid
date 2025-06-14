@@ -2,6 +2,8 @@
 
 Implementation of model checking for planning obstacle avoidance maneuvers by chaining temporary control tasks in response to disturbances.  At present the program is limited to static environments is not goal-directed.
 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/FpOAJW28D9s/0.jpg)](https://www.youtube.com/watch?v=FpOAJW28D9s)
+
 ## Hardware 
 
 <img src="https://github.com/possibilia/mcplanner/blob/main/robot.jpg" width="550" height="500">
