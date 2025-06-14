@@ -2,8 +2,6 @@
 
 Implementation of model checking for planning obstacle avoidance maneuvers by chaining temporary control tasks in response to disturbances.  At present the program is limited to static environments is not goal-directed.
 
-[I'm an inline-style link](https://youtu.be/FpOAJW28D9s)
-
 ## Hardware 
 
 <img src="https://github.com/possibilia/mcplanner/blob/main/robot.jpg" width="550" height="500">
@@ -37,6 +35,9 @@ Compile the program
 ### Run
 
 ```sudo ./autoctrl```
+
+
+<!-- [I'm an inline-style link](https://youtu.be/FpOAJW28D9s) -->
 
 [![DOI](https://zenodo.org/badge/457007482.svg)](https://zenodo.org/badge/latestdoi/457007482)
 
