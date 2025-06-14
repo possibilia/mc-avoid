@@ -2,9 +2,7 @@
 
 Implementation of model checking for planning obstacle avoidance maneuvers by chaining temporary control tasks in response to disturbances.  At present the program is limited to static environments is not goal-directed.
 
-[![Preliminary testing](https://img.youtube.com/vi/FpOAJW28D9s/0.jpg)](https://www.youtube.com/watch?v=FpOAJW28D9s)
-
-TODO: add a bit more background (brief)
+[I'm an inline-style link](https://youtu.be/FpOAJW28D9s)
 
 ## Hardware 
 
