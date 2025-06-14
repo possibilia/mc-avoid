@@ -13,7 +13,7 @@ Implementation of model checking for planning obstacle avoidance maneuvers by ch
 
 ## Software
 
-<img src="https://github.com/possibilia/mcplanner/blob/main/arch.jpg" width="550" height="500">
+<img src="https://github.com/possibilia/mcplanner/blob/main/agent.jpg" width="550" height="500">
 
 ### Prerequisites 
 
