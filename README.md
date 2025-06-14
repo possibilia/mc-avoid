@@ -1,6 +1,10 @@
-# Model checking for obstacle avoidance in C++
+# Model checking for obstacle avoidance
 
 Implementation of model checking for planning obstacle avoidance maneuvers by chaining temporary control tasks in response to disturbances.  At present the program is limited to static environments is not goal-directed.
+
+[![Preliminary testing](https://img.youtube.com/vi/FpOAJW28D9s/0.jpg)](https://www.youtube.com/watch?v=FpOAJW28D9s)
+
+TODO: add a bit more background (brief)
 
 ## Hardware 
 
@@ -35,10 +39,6 @@ Compile the program
 ### Run
 
 ```sudo ./autoctrl```
-
-### Demo
-
-[![Preliminary testing](https://img.youtube.com/vi/FpOAJW28D9s/0.jpg)](https://www.youtube.com/watch?v=FpOAJW28D9s)
 
 [![DOI](https://zenodo.org/badge/457007482.svg)](https://zenodo.org/badge/latestdoi/457007482)
 
