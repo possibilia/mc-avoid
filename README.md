@@ -34,7 +34,7 @@ Compile the program
 
 ### Run
 
-```sudo ./autoctrl``
+```sudo ./autoctrl```
 
 <!-- [I'm an inline-style link](https://youtu.be/FpOAJW28D9s) -->
 
